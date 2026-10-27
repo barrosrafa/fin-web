@@ -1,8 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { formatPercent } from "@/lib/formatters";
+import { getBenchmarks, BenchmarkItem } from "@/lib/api";
 
-interface TickerItem {
+export interface TickerItem {
   ticker: string;
   name: string;
   value: number;
@@ -12,10 +15,37 @@ interface TickerItem {
 }
 
 interface TickerTapeProps {
-  items: TickerItem[];
+  items?: TickerItem[];
 }
 
-export function TickerTape({ items }: TickerTapeProps) {
+const DEFAULT_BENCHMARKS: TickerItem[] = [
+  { name: "IBOVESPA", ticker: "IBOV", value: 176608.23, change: 0.85 },
+  { name: "Índice de FIIs", ticker: "IFIX", value: 3763.90, change: 0.22 },
+  { name: "Dólar Comercial", ticker: "USDBRL", value: 5.409, change: -0.45 },
+  { name: "Taxa SELIC Meta", ticker: "SELIC", value: 13.75, change: 0.0, suffix: "%" },
+  { name: "S&P 500", ticker: "SPX", value: 7676.77, change: 0.62 },
+  { name: "Bitcoin / BRL", ticker: "BTCBRL", value: 430849.35, change: 3.14 },
+];
+
+export function TickerTape({ items: initialItems }: TickerTapeProps) {
+  const [items, setItems] = useState<TickerItem[]>(initialItems || DEFAULT_BENCHMARKS);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await getBenchmarks();
+        if (data && data.length > 0) {
+          setItems(data);
+        }
+      } catch (err) {
+        console.error("Failed to load ticker tape benchmarks:", err);
+      }
+    }
+    load();
+    const interval = setInterval(load, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Duplicate array to achieve smooth infinite marquee loop
   const duplicated = [...items, ...items];
 

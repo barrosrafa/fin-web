@@ -1,26 +1,90 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { RadarChart, RadarDataPoint } from "@/components/ui/RadarChart";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import { MOCK_ASSETS } from "@/data/mock/marketData";
+import { getAssets, compareAssets, ComparatorResult } from "@/lib/api";
+import { AssetSummary } from "@/schemas/financial";
 
 export default function ComparadorPage() {
   const [ticker1, setTicker1] = useState("PETR4");
   const [ticker2, setTicker2] = useState("VALE3");
+  const [assets, setAssets] = useState<AssetSummary[]>([]);
+  const [comparison, setComparison] = useState<ComparatorResult | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const asset1 = MOCK_ASSETS.find((a) => a.ticker === ticker1) || MOCK_ASSETS[0];
-  const asset2 = MOCK_ASSETS.find((a) => a.ticker === ticker2) || MOCK_ASSETS[1];
+  useEffect(() => {
+    async function loadAssets() {
+      try {
+        const res = await getAssets();
+        setAssets(res);
+      } catch (err) {
+        console.error("Failed to load assets:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadAssets();
+  }, []);
+
+  useEffect(() => {
+    async function runComparison() {
+      if (!ticker1 || !ticker2) return;
+      try {
+        const res = await compareAssets([ticker1, ticker2]);
+        if (res) setComparison(res);
+      } catch (err) {
+        console.error("Failed to run comparison:", err);
+      }
+    }
+    runComparison();
+  }, [ticker1, ticker2]);
+
+  const asset1 = assets.find((a) => a.ticker === ticker1) || {
+    ticker: ticker1,
+    name: "Petróleo Brasileiro S.A. Petrobras",
+    type: "ACAO" as const,
+    sector: "Petróleo e Gás",
+    currentPrice: 38.45,
+    change24h: 1.48,
+    change12m: 24.3,
+    dividendYield: 14.8,
+    pvp: 1.15,
+    pl: 4.8,
+    sparkline: [],
+  };
+
+  const asset2 = assets.find((a) => a.ticker === ticker2) || {
+    ticker: ticker2,
+    name: "Vale S.A.",
+    type: "ACAO" as const,
+    sector: "Materiais Básicos",
+    currentPrice: 62.10,
+    change24h: -0.85,
+    change12m: -8.4,
+    dividendYield: 9.2,
+    pvp: 1.38,
+    pl: 5.9,
+    sparkline: [],
+  };
 
   // Spider radar points for Asset 1
   const radarData1: RadarDataPoint[] = [
     { axis: "Dividend Yield", value: Math.min(100, asset1.dividendYield * 6.5) },
     { axis: "ROE / Margem", value: 85 },
-    { axis: "Desconto P/VP", value: asset1.pvp ? Math.min(100, (2 - asset1.pvp) * 60) : 50 },
+    { axis: "Desconto P/VP", value: asset1.pvp ? Math.min(100, Math.max(0, (2 - asset1.pvp) * 60)) : 50 },
     { axis: "Preço Justo", value: 90 },
     { axis: "Liquidez B3", value: 95 },
+  ];
+
+  const radarData2: RadarDataPoint[] = [
+    { axis: "Dividend Yield", value: Math.min(100, asset2.dividendYield * 6.5) },
+    { axis: "ROE / Margem", value: 75 },
+    { axis: "Desconto P/VP", value: asset2.pvp ? Math.min(100, Math.max(0, (2 - asset2.pvp) * 60)) : 50 },
+    { axis: "Preço Justo", value: 78 },
+    { axis: "Liquidez B3", value: 92 },
   ];
 
   return (
@@ -28,7 +92,7 @@ export default function ComparadorPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-emerald">Análise de Ações + ETFs Brasil Standard</span>
+          <span className="badge-neon badge-neon-emerald">Análise Multiativo B3</span>
           <span className="text-xs text-[#64748b]">Comparação Head-to-Head</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
@@ -51,7 +115,7 @@ export default function ComparadorPage() {
               onChange={(e) => setTicker1(e.target.value)}
               className="w-full bg-[#131926] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-bold font-mono focus:outline-none focus:border-[#00f5a0]"
             >
-              {MOCK_ASSETS.map((a) => (
+              {assets.map((a) => (
                 <option key={a.ticker} value={a.ticker}>
                   {a.ticker} — {a.name}
                 </option>
@@ -66,9 +130,9 @@ export default function ComparadorPage() {
             <select
               value={ticker2}
               onChange={(e) => setTicker2(e.target.value)}
-              className="w-full bg-[#131926] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-bold font-mono focus:outline-none focus:border-[#00d9f5]"
+              className="w-full bg-[#131926] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-bold font-mono focus:outline-none focus:border-[#00f5a0]"
             >
-              {MOCK_ASSETS.map((a) => (
+              {assets.map((a) => (
                 <option key={a.ticker} value={a.ticker}>
                   {a.ticker} — {a.name}
                 </option>
@@ -78,103 +142,87 @@ export default function ComparadorPage() {
         </div>
       </Card>
 
-      {/* Comparison Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Table Comparison */}
-        <div className="lg:col-span-7">
-          <Card>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                    <th className="pb-3 pl-2">Indicador</th>
-                    <th className="pb-3 text-right font-mono text-[#00f5a0]">
-                      {asset1.ticker}
-                    </th>
-                    <th className="pb-3 text-right font-mono text-[#00d9f5]">
-                      {asset2.ticker}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5 mono-nums">
-                  <tr>
-                    <td className="py-3 pl-2 text-white font-sans font-medium">Preço Atual</td>
-                    <td className="py-3 text-right font-bold text-white">
-                      {formatCurrency(asset1.currentPrice)}
-                    </td>
-                    <td className="py-3 text-right font-bold text-white">
-                      {formatCurrency(asset2.currentPrice)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pl-2 text-white font-sans font-medium">Variação 24h</td>
-                    <td className="py-3 text-right font-bold text-[#00f5a0]">
-                      {formatPercent(asset1.change24h)}
-                    </td>
-                    <td className="py-3 text-right font-bold text-[#00d9f5]">
-                      {formatPercent(asset2.change24h)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pl-2 text-white font-sans font-medium">Dividend Yield (12M)</td>
-                    <td className={`py-3 text-right font-bold ${asset1.dividendYield >= asset2.dividendYield ? "text-[#00f5a0]" : "text-white"}`}>
-                      {formatPercent(asset1.dividendYield, false)}
-                    </td>
-                    <td className={`py-3 text-right font-bold ${asset2.dividendYield >= asset1.dividendYield ? "text-[#00d9f5]" : "text-white"}`}>
-                      {formatPercent(asset2.dividendYield, false)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pl-2 text-white font-sans font-medium">P/VP</td>
-                    <td className="py-3 text-right text-white">
-                      {asset1.pvp ? asset1.pvp.toFixed(2) : "—"}
-                    </td>
-                    <td className="py-3 text-right text-white">
-                      {asset2.pvp ? asset2.pvp.toFixed(2) : "—"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pl-2 text-white font-sans font-medium">P/L</td>
-                    <td className="py-3 text-right text-white">
-                      {asset1.pl ? asset1.pl.toFixed(1) : "—"}
-                    </td>
-                    <td className="py-3 text-right text-white">
-                      {asset2.pl ? asset2.pl.toFixed(1) : "—"}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pl-2 text-white font-sans font-medium">Variação 12 Meses</td>
-                    <td className="py-3 text-right text-white">
-                      {formatPercent(asset1.change12m)}
-                    </td>
-                    <td className="py-3 text-right text-white">
-                      {formatPercent(asset2.change12m)}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-3 pl-2 text-white font-sans font-medium">Valor de Mercado</td>
-                    <td className="py-3 text-right text-white">
-                      {asset1.marketCap ? formatCurrency(asset1.marketCap, true) : "—"}
-                    </td>
-                    <td className="py-3 text-right text-white">
-                      {asset2.marketCap ? formatCurrency(asset2.marketCap, true) : "—"}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Card>
+      {/* Side by Side Multiples Table */}
+      <Card>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                <th className="pb-3 pl-2">Indicador / Métrica</th>
+                <th className="pb-3 text-right font-bold text-[#00f5a0]">{asset1.ticker}</th>
+                <th className="pb-3 text-right font-bold text-[#00d9f5]">{asset2.ticker}</th>
+                <th className="pb-3 text-center pr-2">Vencedor Relativo</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 mono-nums">
+              <tr>
+                <td className="py-3 pl-2 text-white font-medium">Cotação Atual</td>
+                <td className="py-3 text-right text-white font-bold">{formatCurrency(asset1.currentPrice)}</td>
+                <td className="py-3 text-right text-white font-bold">{formatCurrency(asset2.currentPrice)}</td>
+                <td className="py-3 text-center pr-2 text-[#94a3b8]">—</td>
+              </tr>
+              <tr>
+                <td className="py-3 pl-2 text-white font-medium">Dividend Yield (12M)</td>
+                <td className="py-3 text-right text-[#00f5a0] font-bold">{formatPercent(asset1.dividendYield, false)}</td>
+                <td className="py-3 text-right text-[#00d9f5] font-bold">{formatPercent(asset2.dividendYield, false)}</td>
+                <td className="py-3 text-center pr-2">
+                  <Badge variant={asset1.dividendYield >= asset2.dividendYield ? "emerald" : "cyan"}>
+                    {asset1.dividendYield >= asset2.dividendYield ? asset1.ticker : asset2.ticker}
+                  </Badge>
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 pl-2 text-white font-medium">P/VP (Preço / Valor Patrimonial)</td>
+                <td className="py-3 text-right text-white">{asset1.pvp !== undefined ? `${asset1.pvp.toFixed(2)}x` : "—"}</td>
+                <td className="py-3 text-right text-white">{asset2.pvp !== undefined ? `${asset2.pvp.toFixed(2)}x` : "—"}</td>
+                <td className="py-3 text-center pr-2">
+                  <Badge variant={(asset1.pvp ?? 99) <= (asset2.pvp ?? 99) ? "emerald" : "cyan"}>
+                    {(asset1.pvp ?? 99) <= (asset2.pvp ?? 99) ? asset1.ticker : asset2.ticker}
+                  </Badge>
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 pl-2 text-white font-medium">P/L (Preço / Lucro)</td>
+                <td className="py-3 text-right text-white">{asset1.pl !== undefined && asset1.pl > 0 ? `${asset1.pl.toFixed(1)}x` : "—"}</td>
+                <td className="py-3 text-right text-white">{asset2.pl !== undefined && asset2.pl > 0 ? `${asset2.pl.toFixed(1)}x` : "—"}</td>
+                <td className="py-3 text-center pr-2">
+                  <Badge variant={(asset1.pl ?? 99) <= (asset2.pl ?? 99) ? "emerald" : "cyan"}>
+                    {(asset1.pl ?? 99) <= (asset2.pl ?? 99) ? asset1.ticker : asset2.ticker}
+                  </Badge>
+                </td>
+              </tr>
+              <tr>
+                <td className="py-3 pl-2 text-white font-medium">Retorno Acumulado 12M</td>
+                <td className="py-3 text-right text-white">{formatPercent(asset1.change12m)}</td>
+                <td className="py-3 text-right text-white">{formatPercent(asset2.change12m)}</td>
+                <td className="py-3 text-center pr-2">
+                  <Badge variant={asset1.change12m >= asset2.change12m ? "emerald" : "cyan"}>
+                    {asset1.change12m >= asset2.change12m ? asset1.ticker : asset2.ticker}
+                  </Badge>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </Card>
 
-        {/* Radar Spider Chart comparison */}
-        <div className="lg:col-span-5 flex flex-col items-center">
-          <Card glow="emerald" className="w-full flex flex-col items-center p-4">
-            <span className="text-xs font-bold text-white uppercase tracking-wider mb-2">
-              Perfil Poligonal ({asset1.ticker})
-            </span>
-            <RadarChart data={radarData1} size={280} color="#00f5a0" fillOpacity={0.25} />
-          </Card>
-        </div>
+      {/* Spider Charts Side by Side */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card glow="emerald" className="flex flex-col items-center">
+          <div className="flex justify-between w-full mb-3">
+            <span className="text-xs font-bold text-white uppercase">{asset1.ticker} • Polígono Fundamentalista</span>
+            <Badge variant="emerald">{asset1.type}</Badge>
+          </div>
+          <RadarChart data={radarData1} size={280} color="#00f5a0" fillOpacity={0.2} />
+        </Card>
+
+        <Card glow="cyan" className="flex flex-col items-center">
+          <div className="flex justify-between w-full mb-3">
+            <span className="text-xs font-bold text-white uppercase">{asset2.ticker} • Polígono Fundamentalista</span>
+            <Badge variant="cyan">{asset2.type}</Badge>
+          </div>
+          <RadarChart data={radarData2} size={280} color="#00d9f5" fillOpacity={0.2} />
+        </Card>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
@@ -8,13 +8,29 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import { MOCK_ASSETS } from "@/data/mock/marketData";
+import { getAssets } from "@/lib/api";
+import { AssetSummary } from "@/schemas/financial";
 
 export default function FIIsPage() {
   const [search, setSearch] = useState("");
   const [selectedSubsector, setSelectedSubsector] = useState("TODOS");
+  const [fiis, setFiis] = useState<AssetSummary[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const fiis = MOCK_ASSETS.filter((a) => a.type === "FII");
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await getAssets("FII");
+        setFiis(res);
+      } catch (err) {
+        console.error("Failed to load FIIs:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
   const subsectors = [
     "TODOS",
     ...Array.from(new Set(fiis.map((f) => f.subsector || f.sector))),
@@ -29,6 +45,9 @@ export default function FIIsPage() {
       (fii.subsector || fii.sector) === selectedSubsector;
     return matchesSearch && matchesSub;
   });
+
+  const highestDYFII = fiis.length > 0 ? [...fiis].sort((a, b) => b.dividendYield - a.dividendYield)[0] : null;
+  const lowestPvpFII = fiis.length > 0 ? [...fiis].filter(f => (f.pvp ?? 0) > 0).sort((a, b) => (a.pvp ?? 999) - (b.pvp ?? 999))[0] : null;
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -55,36 +74,45 @@ export default function FIIsPage() {
       {/* Top 3 Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard
-          title="FII de Maior Liquidez"
-          value="MXRF11 • R$ 10,15"
-          subtitle="Mais de 1 milhão de cotistas ativos"
-          glow="cyan"
-        />
-        <MetricCard
-          title="FII com Maior Desconto P/VP"
-          value="KNIP11 • P/VP 0,98"
-          subtitle="Carteira de CRIs IPCA+ com taxa média de 8,4%"
+          title="Maior Rendimento Anualizado"
+          value={highestDYFII ? `${highestDYFII.ticker} • ${highestDYFII.dividendYield.toFixed(1)}%` : "KNIP11 • 11,2%"}
+          subtitle="Rendimentos isentos de IR para pessoa física"
           glow="emerald"
         />
         <MetricCard
-          title="Portfólio Logístico AAA"
-          value="HGLG11 • R$ 164,20"
-          subtitle="Vacância mínima de 4.1% e contratos atípicos"
+          title="Maior Desconto Patrimonial"
+          value={lowestPvpFII ? `${lowestPvpFII.ticker} • ${lowestPvpFII.pvp?.toFixed(2)}x` : "HGLG11 • 0,98x"}
+          subtitle="Desconto em relação ao valor patrimonial por cota"
+          glow="cyan"
+        />
+        <MetricCard
+          title="Benchmark de Mercado"
+          value="IFIX • 3.763 pts"
+          subtitle="Índice de Fundos de Investimentos Imobiliários"
           glow="violet"
         />
       </div>
 
-      {/* Filter and Search Bar */}
+      {/* Filters & Search */}
       <Card>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Buscar por ticker ou nome (ex: HGLG11, KNIP11, Maxi Renda)..."
+              placeholder="Buscar por ticker ou nome (ex: HGLG11, KNIP11, MXRF11)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-2 text-xs text-[#64748b] hover:text-white"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
@@ -95,8 +123,8 @@ export default function FIIsPage() {
                 onClick={() => setSelectedSubsector(sub)}
                 className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
                   selectedSubsector === sub
-                    ? "bg-white/10 text-[#00f5a0] border border-[rgba(0,245,160,0.3)] shadow-[0_0_12px_rgba(0,245,160,0.1)]"
-                    : "bg-white/[0.02] text-[#64748b] hover:text-white border border-transparent"
+                    ? "bg-[#00f5a0] text-[#060709]"
+                    : "bg-white/5 text-[#94a3b8] hover:text-white hover:bg-white/10"
                 }`}
               >
                 {sub}
@@ -106,92 +134,100 @@ export default function FIIsPage() {
         </div>
       </Card>
 
-      {/* FIIs Ranking Table */}
-      <Card>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-2">Fundo Imobiliário</th>
-                <th className="pb-3">Segmento</th>
-                <th className="pb-3 text-right">Cotação</th>
-                <th className="pb-3 text-right">Var. 24h</th>
-                <th className="pb-3 text-right">D.Y. (12M)</th>
-                <th className="pb-3 text-right">P/VP</th>
-                <th className="pb-3 text-right hidden md:table-cell">Patrimônio Líquido</th>
-                <th className="pb-3 text-right pr-2">Ação</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5 mono-nums">
-              {filtered.map((fii) => {
-                const isPositive = fii.change24h >= 0;
-                const pvpBelowOne = fii.pvp && fii.pvp < 1.0;
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filtered.map((fii) => {
+          const isPositive = fii.change24h >= 0;
+          return (
+            <Card key={fii.ticker} glow="emerald" className="flex flex-col justify-between">
+              <div>
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl font-black text-white tracking-tight">
+                        {fii.ticker}
+                      </span>
+                      {fii.badge && (
+                        <Badge variant="emerald" className="text-[10px]">
+                          {fii.badge}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-xs text-[#94a3b8] font-medium truncate max-w-[220px]">
+                      {fii.name}
+                    </div>
+                    <div className="text-[11px] text-[#64748b] mt-0.5">
+                      {fii.sector} • {fii.subsector}
+                    </div>
+                  </div>
 
-                return (
-                  <tr key={fii.ticker} className="hover:bg-white/[0.02] transition-colors group">
-                    <td className="py-3.5 pl-2">
-                      <Link href={`/fiis/${fii.ticker}`} className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-bold text-white group-hover:border-[#00f5a0] transition-colors">
-                          {fii.ticker.slice(0, 4)}
-                        </div>
-                        <div>
-                          <span className="font-bold text-white group-hover:text-[#00f5a0] transition-colors block">
-                            {fii.ticker}
-                          </span>
-                          <span className="text-[10px] text-[#64748b] truncate max-w-[150px] sm:max-w-[220px] block font-sans">
-                            {fii.name}
-                          </span>
-                        </div>
-                      </Link>
-                    </td>
-                    <td className="py-3.5 font-sans text-[#94a3b8] text-xs">
-                      {fii.subsector || fii.sector}
-                    </td>
-                    <td className="py-3.5 text-right font-bold text-white">
+                  <div className="text-right">
+                    <div className="text-lg font-bold font-mono text-white">
                       {formatCurrency(fii.currentPrice)}
-                    </td>
-                    <td className="py-3.5 text-right">
-                      <span
-                        className={`px-1.5 py-0.5 rounded text-[11px] font-semibold ${
-                          isPositive
-                            ? "bg-[rgba(0,245,160,0.1)] text-[#00f5a0]"
-                            : "bg-[rgba(255,59,105,0.1)] text-[#ff3b69]"
-                        }`}
-                      >
-                        {formatPercent(fii.change24h)}
-                      </span>
-                    </td>
-                    <td className="py-3.5 text-right font-bold text-[#00d9f5]">
+                    </div>
+                    <div
+                      className={`text-xs font-mono font-medium ${
+                        isPositive ? "text-[#00f5a0]" : "text-[#ff3b5c]"
+                      }`}
+                    >
+                      {formatPercent(fii.change24h)}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 my-4 p-3 rounded-xl bg-[#131926] border border-white/5 text-center">
+                  <div>
+                    <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                      D.Y. (12M)
+                    </div>
+                    <div className="text-xs font-bold font-mono text-[#00f5a0] mt-0.5">
                       {formatPercent(fii.dividendYield, false)}
-                    </td>
-                    <td className="py-3.5 text-right">
-                      <span
-                        className={`font-bold ${
-                          pvpBelowOne ? "text-[#00f5a0]" : "text-white"
-                        }`}
-                      >
-                        {fii.pvp ? fii.pvp.toFixed(2) : "—"}
-                      </span>
-                    </td>
-                    <td className="py-3.5 text-right text-[#94a3b8] hidden md:table-cell">
-                      {fii.marketCap ? formatCurrency(fii.marketCap, true) : "—"}
-                    </td>
-                    <td className="py-3.5 text-right pr-2">
-                      <Link
-                        href={`/fiis/${fii.ticker}`}
-                        className="text-[11px] px-3 py-1 rounded-full bg-white/5 hover:bg-[rgba(0,245,160,0.15)] hover:text-[#00f5a0] border border-white/10 transition-all font-medium inline-flex items-center gap-1 font-sans"
-                      >
-                        Cockpit
-                        <span>→</span>
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </Card>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                      P/VP
+                    </div>
+                    <div className="text-xs font-bold font-mono text-white mt-0.5">
+                      {fii.pvp !== undefined ? `${fii.pvp.toFixed(2)}x` : "—"}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                      Liquidez
+                    </div>
+                    <div className="text-xs font-bold font-mono text-white mt-0.5">
+                      Alta B3
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <div className="text-[10px] text-[#64748b] mb-1 font-semibold flex justify-between">
+                    <span>Tendência 5D</span>
+                    <span className="font-mono text-white">
+                      12M: {formatPercent(fii.change12m)}
+                    </span>
+                  </div>
+                  <Sparkline
+                    data={fii.sparkline && fii.sparkline.length > 0 ? fii.sparkline : [fii.currentPrice, fii.currentPrice]}
+                    color={isPositive ? "#00f5a0" : "#ff3b5c"}
+                    height={36}
+                  />
+                </div>
+              </div>
+
+              <Button
+                href={`/fiis/${fii.ticker}`}
+                variant="primary"
+                className="w-full justify-center text-xs mt-2"
+              >
+                Inspecionar Imóveis & Brick Score ↗
+              </Button>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }

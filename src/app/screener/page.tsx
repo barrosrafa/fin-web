@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import { MOCK_ASSETS } from "@/data/mock/marketData";
+import { getAssets } from "@/lib/api";
+import { AssetSummary } from "@/schemas/financial";
 
 export default function ScreenerPage() {
+  const [assets, setAssets] = useState<AssetSummary[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [assetType, setAssetType] = useState<string>("TODOS");
   const [minDY, setMinDY] = useState<number>(0);
@@ -16,21 +18,37 @@ export default function ScreenerPage() {
   const [sortField, setSortField] = useState<"dividendYield" | "currentPrice" | "pvp" | "change24h">("dividendYield");
   const [sortAsc, setSortAsc] = useState<boolean>(false);
 
-  // Filter pipeline
-  const filtered = MOCK_ASSETS.filter((a) => {
-    const matchesSearch =
-      a.ticker.toLowerCase().includes(search.toLowerCase()) ||
-      a.name.toLowerCase().includes(search.toLowerCase());
-    const matchesType = assetType === "TODOS" || a.type === assetType;
-    const matchesDY = a.dividendYield >= minDY;
-    const matchesPVP = a.pvp !== undefined ? a.pvp <= maxPVP : true;
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await getAssets(undefined, 200);
+        setAssets(data);
+      } catch (err) {
+        console.error("Failed to load screener assets:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
-    return matchesSearch && matchesType && matchesDY && matchesPVP;
-  }).sort((a, b) => {
-    const valA = a[sortField] ?? 0;
-    const valB = b[sortField] ?? 0;
-    return sortAsc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
-  });
+  // Filter pipeline
+  const filtered = assets
+    .filter((a) => {
+      const matchesSearch =
+        a.ticker.toLowerCase().includes(search.toLowerCase()) ||
+        a.name.toLowerCase().includes(search.toLowerCase());
+      const matchesType = assetType === "TODOS" || a.type === assetType;
+      const matchesDY = a.dividendYield >= minDY;
+      const matchesPVP = a.pvp !== undefined ? a.pvp <= maxPVP : true;
+
+      return matchesSearch && matchesType && matchesDY && matchesPVP;
+    })
+    .sort((a, b) => {
+      const valA = a[sortField] ?? 0;
+      const valB = b[sortField] ?? 0;
+      return sortAsc ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+    });
 
   const toggleSort = (field: typeof sortField) => {
     if (sortField === field) {
@@ -127,103 +145,113 @@ export default function ScreenerPage() {
       <Card>
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs text-[#94a3b8] font-mono">
-            {filtered.length} ativos encontrados
+            {loading ? "Carregando ativos da API..." : `${filtered.length} ativos encontrados`}
           </span>
           <span className="text-xs text-[#64748b]">
             Clique nos cabeçalhos para ordenar
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-2">Ticker</th>
-                <th className="pb-3">Tipo</th>
-                <th
-                  className="pb-3 text-right cursor-pointer hover:text-white"
-                  onClick={() => toggleSort("currentPrice")}
-                >
-                  Preço {sortField === "currentPrice" && (sortAsc ? "↑" : "↓")}
-                </th>
-                <th
-                  className="pb-3 text-right cursor-pointer hover:text-white"
-                  onClick={() => toggleSort("change24h")}
-                >
-                  Var. 24h {sortField === "change24h" && (sortAsc ? "↑" : "↓")}
-                </th>
-                <th
-                  className="pb-3 text-right cursor-pointer hover:text-white"
-                  onClick={() => toggleSort("dividendYield")}
-                >
-                  D.Y. (12M) {sortField === "dividendYield" && (sortAsc ? "↑" : "↓")}
-                </th>
-                <th
-                  className="pb-3 text-right cursor-pointer hover:text-white"
-                  onClick={() => toggleSort("pvp")}
-                >
-                  P/VP {sortField === "pvp" && (sortAsc ? "↑" : "↓")}
-                </th>
-                <th className="pb-3 text-right pr-2">Ação</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5 mono-nums">
-              {filtered.map((a) => (
-                <tr key={a.ticker} className="hover:bg-white/[0.02]">
-                  <td className="py-3 pl-2 font-bold text-white font-sans">
-                    <Link
-                      href={
-                        a.type === "FII"
-                          ? `/fiis/${a.ticker}`
-                          : a.type === "ETF"
-                          ? `/etfs/${a.ticker}`
-                          : `/acoes/${a.ticker}`
-                      }
-                      className="hover:text-[#00f5a0] transition-colors"
-                    >
-                      {a.ticker}
-                    </Link>
-                  </td>
-                  <td className="py-3 font-sans">
-                    <Badge variant="neutral">{a.type}</Badge>
-                  </td>
-                  <td className="py-3 text-right font-bold text-white">
-                    {formatCurrency(a.currentPrice)}
-                  </td>
-                  <td className="py-3 text-right">
-                    <span
-                      className={`font-bold ${
-                        a.change24h >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"
-                      }`}
-                    >
-                      {formatPercent(a.change24h)}
-                    </span>
-                  </td>
-                  <td className="py-3 text-right font-bold text-[#00d9f5]">
-                    {formatPercent(a.dividendYield, false)}
-                  </td>
-                  <td className="py-3 text-right text-white">
-                    {a.pvp ? a.pvp.toFixed(2) : "—"}
-                  </td>
-                  <td className="py-3 text-right pr-2 font-sans">
-                    <Link
-                      href={
-                        a.type === "FII"
-                          ? `/fiis/${a.ticker}`
-                          : a.type === "ETF"
-                          ? `/etfs/${a.ticker}`
-                          : `/acoes/${a.ticker}`
-                      }
-                      className="text-[11px] px-2.5 py-1 rounded bg-white/5 hover:bg-[#00f5a0] hover:text-black font-semibold transition-all"
-                    >
-                      Ver
-                    </Link>
-                  </td>
+        {loading ? (
+          <div className="py-12 text-center text-xs text-[#64748b] animate-pulse">
+            Consultando cotações e múltiplos em tempo real no banco de dados...
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="py-12 text-center text-xs text-[#64748b]">
+            Nenhum ativo correspondeu aos filtros aplicados.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                  <th className="pb-3 pl-2">Ticker</th>
+                  <th className="pb-3">Tipo</th>
+                  <th
+                    className="pb-3 text-right cursor-pointer hover:text-white"
+                    onClick={() => toggleSort("currentPrice")}
+                  >
+                    Preço {sortField === "currentPrice" && (sortAsc ? "↑" : "↓")}
+                  </th>
+                  <th
+                    className="pb-3 text-right cursor-pointer hover:text-white"
+                    onClick={() => toggleSort("change24h")}
+                  >
+                    Var. 24h {sortField === "change24h" && (sortAsc ? "↑" : "↓")}
+                  </th>
+                  <th
+                    className="pb-3 text-right cursor-pointer hover:text-white"
+                    onClick={() => toggleSort("dividendYield")}
+                  >
+                    D.Y. (12M) {sortField === "dividendYield" && (sortAsc ? "↑" : "↓")}
+                  </th>
+                  <th
+                    className="pb-3 text-right cursor-pointer hover:text-white"
+                    onClick={() => toggleSort("pvp")}
+                  >
+                    P/VP {sortField === "pvp" && (sortAsc ? "↑" : "↓")}
+                  </th>
+                  <th className="pb-3 text-right pr-2">Ação</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-white/5 mono-nums">
+                {filtered.map((a) => (
+                  <tr key={a.ticker} className="hover:bg-white/[0.02]">
+                    <td className="py-3 pl-2 font-bold text-white font-sans">
+                      <Link
+                        href={
+                          a.type === "FII"
+                            ? `/fiis/${a.ticker}`
+                            : a.type === "ETF"
+                            ? `/etfs/${a.ticker}`
+                            : `/acoes/${a.ticker}`
+                        }
+                        className="hover:text-[#00f5a0] transition-colors"
+                      >
+                        {a.ticker}
+                      </Link>
+                    </td>
+                    <td className="py-3 font-sans">
+                      <Badge variant="neutral">{a.type}</Badge>
+                    </td>
+                    <td className="py-3 text-right font-bold text-white">
+                      {formatCurrency(a.currentPrice)}
+                    </td>
+                    <td className="py-3 text-right">
+                      <span
+                        className={`font-bold ${
+                          a.change24h >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"
+                        }`}
+                      >
+                        {formatPercent(a.change24h)}
+                      </span>
+                    </td>
+                    <td className="py-3 text-right font-bold text-[#00d9f5]">
+                      {formatPercent(a.dividendYield, false)}
+                    </td>
+                    <td className="py-3 text-right text-white">
+                      {a.pvp ? a.pvp.toFixed(2) : "—"}
+                    </td>
+                    <td className="py-3 text-right pr-2 font-sans">
+                      <Link
+                        href={
+                          a.type === "FII"
+                            ? `/fiis/${a.ticker}`
+                            : a.type === "ETF"
+                            ? `/etfs/${a.ticker}`
+                            : `/acoes/${a.ticker}`
+                        }
+                        className="text-[11px] px-2.5 py-1 rounded bg-white/5 hover:bg-[#00f5a0] hover:text-black font-semibold transition-all"
+                      >
+                        Ver
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
     </div>
   );

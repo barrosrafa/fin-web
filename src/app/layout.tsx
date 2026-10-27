@@ -5,7 +5,6 @@ import "./globals.css";
 import { TickerTape } from "@/components/ui/TickerTape";
 import { Navbar } from "@/components/ui/Navbar";
 import { Footer } from "@/components/ui/Footer";
-import { MOCK_BENCHMARKS } from "@/data/mock/marketData";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +34,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-[#060709] text-[#f0f4f8]">
         {/* Real-time Ticker Tape */}
-        <TickerTape items={MOCK_BENCHMARKS} />
+        <TickerTape />
 
         {/* Floating Glass Island Nav */}
         <Suspense fallback={<div className="h-14" />}>

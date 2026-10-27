@@ -1,26 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { getDemoPortfolioPositions, DemoPosition } from "@/lib/api";
 
 export default function CarteiraPage() {
   const [targetMonthlyYield, setTargetMonthlyYield] = useState(3000);
+  const [portfolioItems, setPortfolioItems] = useState<DemoPosition[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const portfolioItems = [
-    { ticker: "PETR4", type: "AÇÃO", shares: 800, price: 38.45, total: 30760, yieldAnn: 14.8, monthlyEstimate: 379.37 },
-    { ticker: "VALE3", type: "AÇÃO", shares: 400, price: 62.10, total: 24840, yieldAnn: 9.2, monthlyEstimate: 190.44 },
-    { ticker: "HGLG11", type: "FII", shares: 250, price: 164.20, total: 41050, yieldAnn: 8.65, monthlyEstimate: 295.91 },
-    { ticker: "KNIP11", type: "FII", shares: 500, price: 94.80, total: 47400, yieldAnn: 11.2, monthlyEstimate: 442.40 },
-    { ticker: "BOVA11", type: "ETF", shares: 150, price: 128.50, total: 19275, yieldAnn: 0.0, monthlyEstimate: 0.0 },
-    { ticker: "TESOURO IPCA+ 2035", type: "RENDA FIXA", shares: 12, price: 2240.80, total: 26889.6, yieldAnn: 6.48, monthlyEstimate: 145.20 },
-  ];
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await getDemoPortfolioPositions();
+        setPortfolioItems(res);
+      } catch (err) {
+        console.error("Failed to load portfolio positions:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
   const totalPortfolioValue = portfolioItems.reduce((acc, curr) => acc + curr.total, 0);
   const totalMonthlyIncome = portfolioItems.reduce((acc, curr) => acc + curr.monthlyEstimate, 0);
-  const averageYield = totalPortfolioValue > 0 ? (totalMonthlyIncome * 12 / totalPortfolioValue) * 100 : 0;
+  const averageYield = totalPortfolioValue > 0 ? ((totalMonthlyIncome * 12) / totalPortfolioValue) * 100 : 0;
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -28,7 +36,7 @@ export default function CarteiraPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <span className="badge-neon badge-neon-emerald">Status Invest + FIIs.com.br Standard</span>
-          <span className="text-xs text-[#64748b]">Simulador & Portfólio Inteligente</span>
+          <span className="text-xs text-[#64748b]">Simulador & Portfólio Inteligente Neon DB</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
           Gestão de Carteira & Renda Passiva
@@ -43,7 +51,7 @@ export default function CarteiraPage() {
         <MetricCard
           title="Patrimônio Total Alocado"
           value={formatCurrency(totalPortfolioValue)}
-          subtitle="6 Ativos em 4 Classes"
+          subtitle={`${portfolioItems.length} Ativos em Custódia`}
           glow="emerald"
         />
         <MetricCard
@@ -60,60 +68,89 @@ export default function CarteiraPage() {
         />
       </div>
 
-      {/* Portfolio Table */}
-      <Card>
+      {/* Tabela de Posições em Custódia */}
+      <Card glow="emerald">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-bold text-white tracking-tight">
-            Distribuição de Posições Ativas
+            Ativos em Custódia & Renda Passiva Projetada
           </h3>
-          <Badge variant="cyan">Diversificação Equilibrada</Badge>
+          <Badge variant="emerald">Auditado D-0</Badge>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-2">Ativo</th>
+                <th className="pb-3 pl-2">Ticker / Ativo</th>
                 <th className="pb-3">Classe</th>
-                <th className="pb-3 text-right">Qtd. Cotas</th>
-                <th className="pb-3 text-right">Preço Médio</th>
-                <th className="pb-3 text-right">Saldo Atual</th>
-                <th className="pb-3 text-right">% Carteira</th>
-                <th className="pb-3 text-right pr-2">Renda Mensal Est.</th>
+                <th className="pb-3 text-right">Quantidade</th>
+                <th className="pb-3 text-right">Preço de Fechamento</th>
+                <th className="pb-3 text-right">Posição Total</th>
+                <th className="pb-3 text-right">D.Y. Anual</th>
+                <th className="pb-3 text-right pr-2">Provento Mensal Est.</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 mono-nums">
-              {portfolioItems.map((item) => {
-                const partPct = (item.total / totalPortfolioValue) * 100;
-
-                return (
-                  <tr key={item.ticker} className="hover:bg-white/[0.02]">
-                    <td className="py-3.5 pl-2 font-bold text-white font-sans">
-                      {item.ticker}
-                    </td>
-                    <td className="py-3.5 font-sans">
-                      <Badge variant="neutral">{item.type}</Badge>
-                    </td>
-                    <td className="py-3.5 text-right text-white">
-                      {item.shares.toLocaleString("pt-BR")}
-                    </td>
-                    <td className="py-3.5 text-right text-[#94a3b8]">
-                      {formatCurrency(item.price)}
-                    </td>
-                    <td className="py-3.5 text-right font-bold text-white">
-                      {formatCurrency(item.total)}
-                    </td>
-                    <td className="py-3.5 text-right text-[#00d9f5] font-bold">
-                      {partPct.toFixed(1)}%
-                    </td>
-                    <td className="py-3.5 text-right pr-2 text-[#00f5a0] font-bold">
-                      {item.monthlyEstimate > 0 ? formatCurrency(item.monthlyEstimate) : "—"}
-                    </td>
-                  </tr>
-                );
-              })}
+              {portfolioItems.map((item) => (
+                <tr key={item.ticker} className="hover:bg-white/[0.02]">
+                  <td className="py-3 pl-2 font-bold text-white font-sans">{item.ticker}</td>
+                  <td className="py-3 font-sans">
+                    <Badge variant={item.type === "AÇÃO" ? "cyan" : item.type === "FII" ? "emerald" : "violet"}>
+                      {item.type}
+                    </Badge>
+                  </td>
+                  <td className="py-3 text-right text-white">{item.shares.toLocaleString("pt-BR")}</td>
+                  <td className="py-3 text-right text-white font-bold">{formatCurrency(item.price)}</td>
+                  <td className="py-3 text-right font-bold text-white">{formatCurrency(item.total)}</td>
+                  <td className="py-3 text-right text-[#00f5a0] font-bold">{item.yieldAnn.toFixed(2)}%</td>
+                  <td className="py-3 text-right pr-2 font-bold text-[#00d9f5]">
+                    {formatCurrency(item.monthlyEstimate)}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
+        </div>
+      </Card>
+
+      {/* Simulador de Aporte para Renda Desejada */}
+      <Card glow="cyan">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-bold text-white tracking-tight">
+            Simulador de Liberdade Financeira (Viver de Renda)
+          </h3>
+          <Badge variant="cyan">Projeção Composta</Badge>
+        </div>
+
+        <div className="mb-4">
+          <div className="flex justify-between text-xs mb-1.5">
+            <span className="text-[#94a3b8]">Renda Passiva Desejada:</span>
+            <span className="font-mono text-white font-bold">{formatCurrency(targetMonthlyYield)} / mês</span>
+          </div>
+          <input
+            type="range"
+            min="1000"
+            max="20000"
+            step="500"
+            value={targetMonthlyYield}
+            onChange={(e) => setTargetMonthlyYield(parseFloat(e.target.value))}
+            className="w-full accent-[#00d9f5] bg-white/10 rounded-lg h-1.5 cursor-pointer"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-2xl bg-[#131926] border border-white/5">
+          <div>
+            <span className="text-xs text-[#64748b] block mb-1">Patrimônio Alvo Necessário (Yield 9,5% a.a.)</span>
+            <div className="text-2xl font-black font-mono text-[#00f5a0]">
+              {formatCurrency((targetMonthlyYield * 12) / 0.095, true)}
+            </div>
+          </div>
+          <div>
+            <span className="text-xs text-[#64748b] block mb-1">Aporte Adicional Necessário</span>
+            <div className="text-2xl font-black font-mono text-[#00d9f5]">
+              {formatCurrency(Math.max(0, (targetMonthlyYield * 12) / 0.095 - totalPortfolioValue), true)}
+            </div>
+          </div>
         </div>
       </Card>
     </div>

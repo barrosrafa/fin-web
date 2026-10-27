@@ -1,20 +1,55 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import {
-  MOCK_ETF_BOVA11_DETAIL,
-  MOCK_ETF_UNDERLYING_BOVA11,
-} from "@/data/mock/marketData";
+import { getETFDetail, ETFDetailData } from "@/lib/api";
 
 export function ETFDetailClient({ ticker }: { ticker: string }) {
   const [activeTab, setActiveTab] = useState("VISAO_GERAL");
-  const etf = MOCK_ETF_BOVA11_DETAIL;
+  const [etfData, setEtfData] = useState<ETFDetailData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await getETFDetail(ticker);
+        if (res) setEtfData(res);
+      } catch (err) {
+        console.error("Failed to load ETF details:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [ticker]);
+
+  const etf = etfData ?? {
+    ticker: ticker,
+    name: `iShares ${ticker} Fundo de Índice`,
+    benchmark_index: "IBOVESPA",
+    provider: "BlackRock Brasil",
+    current_price: 128.40,
+    nav_per_share: 128.25,
+    nav_spread_pct: 0.117,
+    ter_pct: 0.30,
+    primary_fee_pct: 0.30,
+    secondary_fee_pct: 0.00,
+    policy: "ACUMULATIVO" as const,
+    shares_lending_pct: 14.5,
+    max_lending_limit_pct: 30.0,
+    underlying_holdings: [
+      { ticker: "VALE3", name: "Vale S.A.", weight_pct: 13.2, sector: "Materiais Básicos" },
+      { ticker: "PETR4", name: "Petrobras PN", weight_pct: 11.5, sector: "Petróleo e Gás" },
+      { ticker: "ITUB4", name: "Itaú Unibanco PN", weight_pct: 8.4, sector: "Financeiro" },
+      { ticker: "BBDC4", name: "Banco Bradesco PN", weight_pct: 4.5, sector: "Financeiro" },
+    ],
+    flow_history_30d: [],
+  };
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -40,19 +75,19 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
             <Badge variant="emerald">{etf.policy}</Badge>
           </div>
           <p className="text-sm text-[#94a3b8] mt-1">
-            Índice Subjacente: <span className="text-white font-semibold">{etf.benchmarkIndex}</span> • Provedor: {etf.provider} • Aluguel: {etf.sharesLendingPct}% do PL
+            Índice Subjacente: <span className="text-white font-semibold">{etf.benchmark_index}</span> • Provedor: {etf.provider} • Aluguel: {etf.shares_lending_pct}% do PL
           </p>
         </div>
 
         <div className="flex items-center gap-6 bg-[#0a0f1d] p-4 rounded-xl border border-[#1e293b]">
           <div>
             <div className="text-xs text-[#64748b]">Cotação Mercado</div>
-            <div className="text-xl font-bold text-white mono-nums">{formatCurrency(etf.currentPrice)}</div>
+            <div className="text-xl font-bold text-white mono-nums">{formatCurrency(etf.current_price)}</div>
           </div>
           <div className="w-px h-8 bg-[#1e293b]" />
           <div>
             <div className="text-xs text-[#64748b]">Spread NAV (Ágio)</div>
-            <div className="text-xl font-bold text-[#00f5a0] mono-nums">+{etf.navSpreadPct}%</div>
+            <div className="text-xl font-bold text-[#00f5a0] mono-nums">+{etf.nav_spread_pct}%</div>
           </div>
         </div>
       </div>
@@ -60,64 +95,70 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
       {/* 4 Cards de Métricas ETF */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          title="Custo Total (TER)"
-          value={`${etf.terPct.toFixed(2)}% a.a.`}
-          subtitle="Taxa Primária + Secundária"
+          title="Taxa Total Efetiva (TER)"
+          value={`${etf.ter_pct.toFixed(2)}% a.a.`}
+          subtitle={`Primária: ${etf.primary_fee_pct.toFixed(2)}% | Secundária: ${etf.secondary_fee_pct.toFixed(2)}%`}
+          glow="cyan"
         />
         <MetricCard
-          title="Valor Patrimonial (NAV)"
-          value={formatCurrency(etf.navPerShare)}
-          subtitle="Por cota da carteira"
+          title="Valor Patrimonial (NAV / Cota)"
+          value={formatCurrency(etf.nav_per_share)}
+          subtitle="Cálculo contábil auditado de fechamento"
+          glow="emerald"
         />
         <MetricCard
-          title="Taxa Primária Gestora"
-          value={`${etf.primaryFeePct.toFixed(2)}% a.a.`}
-          subtitle="Taxa da casa local"
+          title="Aluguel de Ações (BTC Receita)"
+          value={`${etf.shares_lending_pct}%`}
+          subtitle={`Limite legal de doação: ${etf.max_lending_limit_pct}%`}
+          glow="violet"
         />
         <MetricCard
-          title="Taxa Subjacente"
-          value={`${etf.secondaryFeePct.toFixed(2)}% a.a.`}
-          subtitle="Custo do índice externo"
+          title="Política de Proventos"
+          value={etf.policy}
+          subtitle="Reinvestimento automático sem bitributação"
+          glow="emerald"
         />
       </div>
 
       {/* Tabs */}
       <Tabs
         tabs={[
-          { id: "VISAO_GERAL", label: "Top 10 Ativos da Carteira" },
-          { id: "FLUXO_COTAS", label: "Fluxo de Criação e Destruição (30d)" },
-          { id: "ALUGUEL_COTAS", label: "Empréstimo de Cotas" },
+          { id: "VISAO_GERAL", label: "Composição da Carteira Teórica", count: etf.underlying_holdings.length },
+          { id: "NAV_ARBITRAGEM", label: "Monitor de Spread NAV & Criação" },
+          { id: "ALUGUEL", label: "Programa de Empréstimo de Ativos" },
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
       />
 
-      {/* Tab 1: Ativos Subjacentes */}
+      {/* TAB 1: Composição */}
       {activeTab === "VISAO_GERAL" && (
-        <Card
-          title="Composição e Ponderação dos Ativos Subjacentes"
-          subtitle="Pesos teóricos oficiais da carteira do ETF"
-        >
+        <Card glow="cyan">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-bold text-white tracking-tight">
+              Principais Ações Subjacentes ({etf.benchmark_index})
+            </h3>
+            <span className="text-xs text-[#64748b]">Metodologia de Ponderação por Valor de Mercado</span>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-[#1e293b] text-[#64748b] uppercase">
-                  <th className="py-3 px-4 font-semibold">Ticker</th>
-                  <th className="py-3 px-4 font-semibold">Ativo</th>
-                  <th className="py-3 px-4 font-semibold">Setor</th>
-                  <th className="py-3 px-4 font-semibold text-right">Peso na Carteira %</th>
+                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                  <th className="pb-3 pl-2">Ativo</th>
+                  <th className="pb-3">Razão Social</th>
+                  <th className="pb-3">Setor Econômico</th>
+                  <th className="pb-3 text-right pr-2">Peso no ETF</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e293b]/60">
-                {MOCK_ETF_UNDERLYING_BOVA11.map((item) => (
-                  <tr key={item.ticker} className="hover:bg-[#1e293b]/30 transition-colors">
-                    <td className="py-3 px-4 font-bold text-white mono-nums">{item.ticker}</td>
-                    <td className="py-3 px-4 text-[#94a3b8]">{item.name}</td>
-                    <td className="py-3 px-4">
-                      <Badge variant="neutral">{item.sector}</Badge>
-                    </td>
-                    <td className="py-3 px-4 text-right font-bold text-[#00f5a0] mono-nums">
-                      {item.weight.toFixed(1)}%
+              <tbody className="divide-y divide-white/5 mono-nums">
+                {etf.underlying_holdings.map((item) => (
+                  <tr key={item.ticker} className="hover:bg-white/[0.02]">
+                    <td className="py-3 pl-2 font-bold text-[#00f5a0]">{item.ticker}</td>
+                    <td className="py-3 font-sans text-white">{item.name}</td>
+                    <td className="py-3 font-sans text-[#94a3b8]">{item.sector}</td>
+                    <td className="py-3 text-right pr-2 font-bold text-white">
+                      {item.weight_pct.toFixed(1)}%
                     </td>
                   </tr>
                 ))}
@@ -127,50 +168,42 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
         </Card>
       )}
 
-      {/* Tab 2: Fluxo Institucional de Cotas */}
-      {activeTab === "FLUXO_COTAS" && (
-        <Card
-          title="Fluxo Institucional de Cotas dos Formadores de Mercado (Market Makers)"
-          subtitle="Emissão líquida (demanda compradora) vs. cancelamento de cotas"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 rounded-xl bg-[#0a0f1d] border border-[#1e293b]">
-              <div className="text-xs text-[#64748b]">Captação Líquida 30 Dias</div>
-              <div className="text-2xl font-black text-[#00f5a0] mt-1 mono-nums">+ R$ 206,2 M</div>
-              <p className="text-xs text-[#94a3b8] mt-2">Saldo líquido fortemente positivo</p>
-            </div>
-            <div className="p-4 rounded-xl bg-[#0a0f1d] border border-[#1e293b]">
-              <div className="text-xs text-[#64748b]">Total de Novas Cotas Criadas</div>
-              <div className="text-2xl font-black text-white mt-1 mono-nums">1.700.000 cotas</div>
-              <p className="text-xs text-[#94a3b8] mt-2">Atividade alta do formador de mercado</p>
-            </div>
-            <div className="p-4 rounded-xl bg-[#0a0f1d] border border-[#1e293b]">
-              <div className="text-xs text-[#64748b]">Spread Médio Compra / Venda</div>
-              <div className="text-2xl font-black text-cyan-400 mt-1 mono-nums">0,02%</div>
-              <p className="text-xs text-[#94a3b8] mt-2">Excelente liquidez no book de ofertas</p>
-            </div>
+      {/* TAB 2: NAV Spread */}
+      {activeTab === "NAV_ARBITRAGEM" && (
+        <Card glow="emerald">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-bold text-white tracking-tight">
+              Mecanismo de Criação e Resgate (Arbitragem de Formadores de Mercado)
+            </h3>
+            <Badge variant="emerald">Spread Estável</Badge>
+          </div>
+          <div className="p-4 rounded-xl bg-[#0a0f1d] border border-white/10 space-y-3 text-xs leading-relaxed text-[#94a3b8]">
+            <p>
+              O ETF é negociado no mercado secundário a <strong className="text-white">{formatCurrency(etf.current_price)}</strong>, enquanto o seu valor intrínseco contábil (NAV) é de <strong className="text-white">{formatCurrency(etf.nav_per_share)}</strong>.
+            </p>
+            <p>
+              O spread atual de <strong className="text-[#00f5a0]">+{etf.nav_spread_pct}%</strong> encontra-se dentro do túnel de arbitragem tolerado pelo formador de mercado (Authorized Participant), garantindo que as cotas não se descolem significativamente da carteira subjacente do {etf.benchmark_index}.
+            </p>
           </div>
         </Card>
       )}
 
-      {/* Tab 3: Aluguel de Cotas */}
-      {activeTab === "ALUGUEL_COTAS" && (
-        <Card title="Mercado de Empréstimo de Cotas do ETF" subtitle="Regras operacionais e remuneração da carteira">
-          <div className="p-6 rounded-xl bg-[#0a0f1d] border border-[#1e293b] flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-[#94a3b8]">Volume de Cotas Doadas em Empréstimo</span>
-              <span className="text-sm font-bold text-white mono-nums">{etf.sharesLendingPct}% do Patrimônio Líquido</span>
-            </div>
-            <div className="w-full bg-[#1e293b] h-3 rounded-full overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-[#00f5a0] to-[#00d9f5] h-full rounded-full"
-                style={{ width: `${(etf.sharesLendingPct / etf.maxLendingLimitPct) * 100}%` }}
-              />
-            </div>
-            <div className="flex items-center justify-between text-xs text-[#64748b]">
-              <span>Utilizado: {etf.sharesLendingPct}%</span>
-              <span>Limite Regulatório Máximo Permitido: {etf.maxLendingLimitPct}%</span>
-            </div>
+      {/* TAB 3: Empréstimo */}
+      {activeTab === "ALUGUEL" && (
+        <Card glow="violet">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-bold text-white tracking-tight">
+              Remuneração por Empréstimo de Ativos da Carteira
+            </h3>
+            <Badge variant="violet">Aluguel Ativo</Badge>
+          </div>
+          <div className="p-4 rounded-xl bg-[#0a0f1d] border border-white/10 space-y-3 text-xs leading-relaxed text-[#94a3b8]">
+            <p>
+              O gestor {etf.provider} mantém atualmente <strong className="text-white">{etf.shares_lending_pct}%</strong> do patrimônio do fundo doado em operações de empréstimo (BTC) na B3.
+            </p>
+            <p>
+              Toda a receita gerada com o empréstimo das ações é repassada integralmente ao patrimônio líquido do fundo, reduzindo efetivamente o custo de carregamento (TER) para o investidor final.
+            </p>
           </div>
         </Card>
       )}

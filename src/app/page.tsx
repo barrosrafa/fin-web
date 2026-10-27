@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
@@ -10,19 +10,55 @@ import { Tabs } from "@/components/ui/Tabs";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
 import {
-  MOCK_BENCHMARKS,
-  MOCK_ASSETS,
-  MOCK_AI_VERDICT_PETR4,
-  MOCK_DIVIDENDS_PETR4,
-} from "@/data/mock/marketData";
+  getBenchmarks,
+  getAssets,
+  getDividends,
+  getAISentiment,
+  getStockValuation,
+  BenchmarkItem,
+  DividendCalendarItem,
+  AISentimentData,
+  StockValuationDetail,
+} from "@/lib/api";
+import { AssetSummary } from "@/schemas/financial";
 
 export default function HomePage() {
   const [activeAssetTab, setActiveAssetTab] = useState("TODOS");
+  const [benchmarks, setBenchmarks] = useState<BenchmarkItem[]>([]);
+  const [assets, setAssets] = useState<AssetSummary[]>([]);
+  const [dividends, setDividends] = useState<DividendCalendarItem[]>([]);
+  const [aiVerdict, setAiVerdict] = useState<AISentimentData | null>(null);
+  const [valuationPetr4, setValuationPetr4] = useState<StockValuationDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [bRes, aRes, dRes, aiRes, vRes] = await Promise.all([
+          getBenchmarks(),
+          getAssets(),
+          getDividends(5),
+          getAISentiment("PETR4"),
+          getStockValuation("PETR4"),
+        ]);
+        setBenchmarks(bRes);
+        setAssets(aRes);
+        setDividends(dRes);
+        setAiVerdict(aiRes);
+        setValuationPetr4(vRes);
+      } catch (err) {
+        console.error("Error loading home page market data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
   const filteredAssets =
     activeAssetTab === "TODOS"
-      ? MOCK_ASSETS
-      : MOCK_ASSETS.filter((a) => a.type === activeAssetTab);
+      ? assets
+      : assets.filter((a) => a.type === activeAssetTab);
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -35,7 +71,7 @@ export default function HomePage() {
               Mercado B3 Aberto
             </span>
             <span className="text-xs text-[#64748b] mono-nums">
-              Pregão Regular • Atualização contínua
+              Pregão Regular • Atualização contínua via Neon DB
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
@@ -58,7 +94,7 @@ export default function HomePage() {
 
       {/* Macro Indicators 4-Col Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {MOCK_BENCHMARKS.slice(0, 4).map((b) => (
+        {benchmarks.slice(0, 4).map((b) => (
           <MetricCard
             key={b.ticker}
             title={b.name}
@@ -93,7 +129,7 @@ export default function HomePage() {
 
               <Tabs
                 tabs={[
-                  { id: "TODOS", label: "Todos", count: MOCK_ASSETS.length },
+                  { id: "TODOS", label: "Todos", count: assets.length },
                   { id: "ACAO", label: "Ações" },
                   { id: "FII", label: "FIIs" },
                   { id: "ETF", label: "ETFs" },
@@ -138,56 +174,73 @@ export default function HomePage() {
                             <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-bold text-[#f0f4f8] text-[11px] group-hover:border-[#00f5a0] transition-colors">
                               {asset.ticker.slice(0, 2)}
                             </div>
-                            <div className="flex flex-col">
-                              <span className="font-bold text-white group-hover:text-[#00f5a0] transition-colors">
-                                {asset.ticker}
-                              </span>
-                              <span className="text-[10px] text-[#64748b] truncate max-w-[140px] sm:max-w-[200px]">
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-bold text-white text-xs group-hover:text-[#00f5a0] transition-colors">
+                                  {asset.ticker}
+                                </span>
+                                {asset.badge && (
+                                  <Badge
+                                    variant={
+                                      asset.badge.includes("Renda")
+                                        ? "emerald"
+                                        : asset.badge.includes("Desconto") || asset.badge.includes("P/VP")
+                                        ? "cyan"
+                                        : "violet"
+                                    }
+                                    className="hidden sm:inline-flex text-[9px] py-0 px-1.5"
+                                  >
+                                    {asset.badge}
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-[#64748b] truncate max-w-[140px] sm:max-w-[200px]">
                                 {asset.name}
-                              </span>
+                              </div>
                             </div>
                           </Link>
                         </td>
+
                         <td className="py-3.5 text-right font-mono font-medium text-white">
                           {formatCurrency(asset.currentPrice)}
                         </td>
-                        <td className="py-3.5 text-right font-mono">
-                          <span
-                            className={`px-1.5 py-0.5 rounded text-[11px] font-semibold ${
-                              isPositive
-                                ? "bg-[rgba(0,245,160,0.1)] text-[#00f5a0]"
-                                : "bg-[rgba(255,59,105,0.1)] text-[#ff3b69]"
-                            }`}
-                          >
-                            {formatPercent(asset.change24h)}
-                          </span>
+
+                        <td
+                          className={`py-3.5 text-right font-mono font-medium ${
+                            isPositive ? "text-[#00f5a0]" : "text-[#ff3b5c]"
+                          }`}
+                        >
+                          {formatPercent(asset.change24h)}
                         </td>
-                        <td className="py-3.5 text-right font-mono font-semibold text-[#00d9f5]">
+
+                        <td className="py-3.5 text-right font-mono font-medium text-white">
                           {formatPercent(asset.dividendYield, false)}
                         </td>
+
                         <td className="py-3.5 text-right font-mono text-[#94a3b8] hidden sm:table-cell">
-                          {asset.pvp ? asset.pvp.toFixed(2) : "—"}
+                          {asset.pvp !== undefined ? `${asset.pvp.toFixed(2)}x` : "—"}
                         </td>
+
                         <td className="py-3.5 text-right font-mono text-[#94a3b8] hidden md:table-cell">
-                          {asset.pl ? asset.pl.toFixed(1) : "—"}
+                          {asset.pl !== undefined && asset.pl !== 0 ? `${asset.pl.toFixed(1)}x` : "—"}
                         </td>
+
                         <td className="py-3.5 text-right hidden lg:table-cell">
-                          <div className="flex justify-end">
+                          <div className="inline-block w-20 h-5">
                             <Sparkline
-                              data={asset.sparkline}
-                              positive={isPositive}
-                              width={70}
-                              height={24}
+                              data={asset.sparkline && asset.sparkline.length > 0 ? asset.sparkline : [asset.currentPrice, asset.currentPrice]}
+                              color={isPositive ? "#00f5a0" : "#ff3b5c"}
+                              height={20}
                             />
                           </div>
                         </td>
+
                         <td className="py-3.5 text-right pr-2">
                           <Link
                             href={detailHref}
-                            className="text-[11px] px-2.5 py-1 rounded-full bg-white/5 hover:bg-[rgba(0,245,160,0.15)] hover:text-[#00f5a0] border border-white/10 transition-all font-medium inline-flex items-center gap-1"
+                            className="inline-flex items-center justify-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-white/5 hover:bg-white/10 text-white transition-colors"
                           >
                             Analisar
-                            <span>→</span>
                           </Link>
                         </td>
                       </tr>
@@ -210,21 +263,22 @@ export default function HomePage() {
                 </h3>
               </div>
               <Badge variant="violet">
-                Score {MOCK_AI_VERDICT_PETR4.confidenceScore}%
+                Score {aiVerdict?.confidence_score ?? 92}%
               </Badge>
             </div>
 
             <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 mb-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold text-white">
-                  Destaque: {MOCK_AI_VERDICT_PETR4.ticker}
+                  Destaque: {aiVerdict?.ticker ?? "PETR4"}
                 </span>
-                <Badge variant="emerald" dot>
-                  Bullish
+                <Badge variant={aiVerdict?.sentiment === "BEARISH" ? "crimson" : "emerald"} dot>
+                  {aiVerdict?.sentiment ?? "BULLISH"}
                 </Badge>
               </div>
               <p className="text-xs text-[#94a3b8] leading-relaxed line-clamp-4">
-                {MOCK_AI_VERDICT_PETR4.executiveSummary}
+                {aiVerdict?.executive_summary ??
+                  "O Comitê de IA analisou os fluxos operacionais com geração consistente de caixa livre e governança de capital sob controle."}
               </p>
             </div>
 
@@ -232,15 +286,20 @@ export default function HomePage() {
               <span className="text-[10px] uppercase tracking-wider font-semibold text-[#64748b]">
                 Principais Forças Detectadas:
               </span>
-              {MOCK_AI_VERDICT_PETR4.swot.strengths.slice(0, 2).map((s, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-2 text-xs text-[#f0f4f8]"
-                >
-                  <span className="text-[#00f5a0] mt-0.5">✓</span>
-                  <span>{s}</span>
-                </div>
-              ))}
+              {(aiVerdict?.swot?.strengths ?? [
+                "Liderança absoluta de mercado e margens elevadas",
+                "Geração robusta de Fluxo de Caixa Livre e baixo lifting cost",
+              ])
+                .slice(0, 2)
+                .map((s, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-2 text-xs text-[#f0f4f8]"
+                  >
+                    <span className="text-[#00f5a0] mt-0.5">✓</span>
+                    <span>{s}</span>
+                  </div>
+                ))}
             </div>
 
             <Button href="/radar-ia" variant="violet" className="w-full justify-between">
@@ -263,10 +322,10 @@ export default function HomePage() {
                   Preço Justo Graham
                 </div>
                 <div className="text-base font-bold text-[#00f5a0] font-mono mt-0.5">
-                  R$ 56,80
+                  {formatCurrency(valuationPetr4?.graham_fair_value ?? 56.80)}
                 </div>
                 <div className="text-[10px] text-[#00f5a0] font-medium">
-                  +47,7% Margem
+                  {formatPercent(valuationPetr4?.graham_upside_pct ?? 47.7)} Margem
                 </div>
               </div>
 
@@ -275,10 +334,10 @@ export default function HomePage() {
                   Preço Teto Bazin
                 </div>
                 <div className="text-base font-bold text-[#00d9f5] font-mono mt-0.5">
-                  R$ 64,10
+                  {formatCurrency(valuationPetr4?.bazin_ceiling_price ?? 64.10)}
                 </div>
                 <div className="text-[10px] text-[#00d9f5] font-medium">
-                  +66,7% Margem
+                  {formatPercent(valuationPetr4?.bazin_upside_pct ?? 66.7)} Margem
                 </div>
               </div>
             </div>
@@ -315,7 +374,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex flex-col divide-y divide-white/5">
-            {MOCK_DIVIDENDS_PETR4.map((div) => (
+            {dividends.map((div) => (
               <div
                 key={div.id}
                 className="py-3 flex items-center justify-between gap-4"
@@ -339,68 +398,71 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="text-right">
-                  <div className="font-mono font-bold text-white text-xs">
-                    {formatCurrency(div.valuePerShare)} / cota
+                <div className="text-right font-mono">
+                  <div className="text-xs font-bold text-[#00f5a0]">
+                    {formatCurrency(div.valuePerShare, false, 4)} / cota
                   </div>
-                  <span className="text-[10px] text-[#00f5a0] font-semibold">
+                  <div className="text-[10px] text-[#64748b]">
                     Yield {formatPercent(div.yieldOnCostPct, false)}
-                  </span>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </Card>
 
-        {/* FII Real Estate & Cap Rate Cockpit */}
-        <Card>
+        {/* Magic Number Simulator Callout */}
+        <Card glow="emerald">
           <div className="flex items-center justify-between mb-4">
             <div>
+              <span className="badge-neon badge-neon-emerald mb-2">
+                Fórmula da Bola de Neve
+              </span>
               <h3 className="text-base font-bold text-white tracking-tight">
-                Monitor Imobiliário FII (Dados SiiLA)
+                Simulador do Número Mágico
               </h3>
-              <p className="text-xs text-[#94a3b8]">
-                Ativos físicos, padrão construtivo AAA e vacância física.
+              <p className="text-xs text-[#94a3b8] mt-1">
+                Quantas cotas são necessárias para que os proventos mensais comprem uma nova cota automaticamente?
               </p>
             </div>
-            <Link
-              href="/fiis/HGLG11"
-              className="text-xs text-[#00d9f5] hover:underline font-medium"
-            >
-              Painel Completo ↗
-            </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-              <div className="text-[10px] text-[#64748b] uppercase font-semibold">
-                ABL Monitorada
-              </div>
-              <div className="text-lg font-bold text-white font-mono mt-1">
-                435k m²
-              </div>
+          <div className="p-4 rounded-xl bg-[#131926] border border-white/10 mb-4 flex flex-col gap-3">
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-[#94a3b8]">Ativo de Referência</span>
+              <span className="text-white font-bold">HGLG11 (CSHG Logística)</span>
             </div>
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-              <div className="text-[10px] text-[#64748b] uppercase font-semibold">
-                Vacância Média
-              </div>
-              <div className="text-lg font-bold text-[#00f5a0] font-mono mt-1">
-                4.1%
-              </div>
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-[#94a3b8]">Cotação Atual</span>
+              <span className="font-mono text-white">R$ 162,50</span>
             </div>
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-center">
-              <div className="text-[10px] text-[#64748b] uppercase font-semibold">
-                Padrão AAA
+            <div className="flex justify-between items-center text-xs">
+              <span className="text-[#94a3b8]">Último Rendimento Distribuído</span>
+              <span className="font-mono text-[#00f5a0]">R$ 1,10 / cota</span>
+            </div>
+            <div className="pt-3 border-t border-white/10 flex justify-between items-center">
+              <div>
+                <span className="text-xs font-bold text-white block">
+                  Número Mágico Calculado:
+                </span>
+                <span className="text-[10px] text-[#64748b]">
+                  Ponto de reinvestimento autônomo
+                </span>
               </div>
-              <div className="text-lg font-bold text-[#00d9f5] font-mono mt-1">
-                82%
+              <div className="text-right font-mono">
+                <span className="text-xl font-black text-[#00f5a0]">
+                  148 cotas
+                </span>
+                <span className="text-[10px] text-[#94a3b8] block">
+                  Aporte Total: R$ 24.050,00
+                </span>
               </div>
             </div>
           </div>
 
-          <p className="text-xs text-[#94a3b8] leading-relaxed">
-            Mapeamento dinâmico de galpões logísticos classe A+ e edifícios corporativos prime com dados de contratos de locação típicos vs. atípicos e apuração de taxa interna de retorno (TIR).
-          </p>
+          <Button href="/fiis" variant="primary" className="w-full justify-between">
+            Simular outros FIIs e Ações
+          </Button>
         </Card>
       </div>
     </div>

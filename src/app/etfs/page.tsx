@@ -1,14 +1,31 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import { MOCK_ASSETS } from "@/data/mock/marketData";
+import { getAssets } from "@/lib/api";
+import { AssetSummary } from "@/schemas/financial";
 
 export default function ETFsPage() {
-  const etfs = MOCK_ASSETS.filter((a) => a.type === "ETF");
+  const [etfs, setEtfs] = useState<AssetSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await getAssets("ETF");
+        setEtfs(res);
+      } catch (err) {
+        console.error("Failed to load ETFs:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -30,14 +47,14 @@ export default function ETFsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard
           title="Menor Custo TER (B3)"
-          value="BOVA11 • 0,10% a.a."
+          value="BOVA11 • 0,30% a.a."
           subtitle="Taxa primária sem custos secundários"
           glow="emerald"
         />
         <MetricCard
           title="Top Liquidez Internacional"
           value="IVVB11 • S&P 500"
-          subtitle="Spread NAV médio de apenas 0,02%"
+          subtitle="Spread NAV médio inferior a 0,10%"
           glow="cyan"
         />
         <MetricCard
@@ -58,112 +75,61 @@ export default function ETFsPage() {
                 <th className="pb-3">Índice Subjacente</th>
                 <th className="pb-3 text-right">Cotação</th>
                 <th className="pb-3 text-right">Var. 24h</th>
-                <th className="pb-3 text-right">Taxa TER</th>
-                <th className="pb-3 text-right">Spread NAV</th>
-                <th className="pb-3 text-right">Política</th>
-                <th className="pb-3 text-right pr-2">Patrimônio</th>
+                <th className="pb-3 text-right">Retorno 12M</th>
+                <th className="pb-3 text-right">P/VP</th>
+                <th className="pb-3 text-right pr-2">Ação</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 mono-nums">
-              {etfs.map((etf) => (
-                <tr key={etf.ticker} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="py-3.5 pl-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-bold text-[#00f5a0]">
-                        {etf.ticker.slice(0, 4)}
+              {etfs.map((asset) => {
+                const isPositive = asset.change24h >= 0;
+                return (
+                  <tr key={asset.ticker} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3 pl-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white text-xs">{asset.ticker}</span>
+                        {asset.badge && (
+                          <Badge variant="cyan" className="text-[10px]">
+                            {asset.badge}
+                          </Badge>
+                        )}
                       </div>
-                      <div>
-                        <span className="font-bold text-white block">
-                          {etf.ticker}
-                        </span>
-                        <span className="text-[10px] text-[#64748b] font-sans">
-                          {etf.name}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3.5 font-sans text-[#94a3b8]">
-                    {etf.subsector || etf.sector}
-                  </td>
-                  <td className="py-3.5 text-right font-bold text-white">
-                    {formatCurrency(etf.currentPrice)}
-                  </td>
-                  <td className="py-3.5 text-right">
-                    <span className="text-[#00f5a0] font-bold">
-                      {formatPercent(etf.change24h)}
-                    </span>
-                  </td>
-                  <td className="py-3.5 text-right font-bold text-[#00d9f5]">
-                    {etf.ticker === "BOVA11" ? "0,10%" : "0,23%"}
-                  </td>
-                  <td className="py-3.5 text-right text-[#00f5a0]">
-                    +0,03% (Paridade)
-                  </td>
-                  <td className="py-3.5 text-right font-sans">
-                    <Badge variant="cyan">Reinveste Auto</Badge>
-                  </td>
-                  <td className="py-3.5 text-right pr-2 text-white font-bold">
-                    {etf.marketCap ? formatCurrency(etf.marketCap, true) : "—"}
-                  </td>
-                </tr>
-              ))}
+                      <span className="text-[11px] text-[#64748b] font-sans block mt-0.5">
+                        {asset.name}
+                      </span>
+                    </td>
+                    <td className="py-3 font-sans text-white">{asset.sector}</td>
+                    <td className="py-3 text-right font-bold text-white">
+                      {formatCurrency(asset.currentPrice)}
+                    </td>
+                    <td
+                      className={`py-3 text-right font-bold ${
+                        isPositive ? "text-[#00f5a0]" : "text-[#ff3b5c]"
+                      }`}
+                    >
+                      {formatPercent(asset.change24h)}
+                    </td>
+                    <td className="py-3 text-right text-white">
+                      {formatPercent(asset.change12m)}
+                    </td>
+                    <td className="py-3 text-right text-[#94a3b8]">
+                      {asset.pvp !== undefined ? `${asset.pvp.toFixed(2)}x` : "1.00x"}
+                    </td>
+                    <td className="py-3 text-right pr-2">
+                      <Link
+                        href={`/etfs/${asset.ticker}`}
+                        className="inline-flex items-center justify-center px-3 py-1 rounded-md text-xs font-semibold bg-white/5 hover:bg-white/10 text-white transition-colors"
+                      >
+                        Detalhes ↗
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </Card>
-
-      {/* Concept Breakdown: Primária vs Secundária */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card glow="cyan">
-          <h3 className="text-base font-bold text-white mb-2">
-            Desdobramento de Custos (Total Expense Ratio)
-          </h3>
-          <p className="text-xs text-[#94a3b8] mb-4">
-            Diferença crítica revelada pelo REA do ETFs Brasil entre a taxa cobrada pelo administrador brasileiro e as taxas dos fundos subjacentes no exterior.
-          </p>
-          <div className="flex flex-col gap-2.5 text-xs">
-            <div className="flex justify-between p-2 rounded bg-white/[0.02] border border-white/5">
-              <span className="text-white">Taxa Primária (Emissor B3)</span>
-              <span className="font-mono text-[#00d9f5] font-bold">0,20% a.a.</span>
-            </div>
-            <div className="flex justify-between p-2 rounded bg-white/[0.02] border border-white/5">
-              <span className="text-white">Taxa Secundária (Fundo Subjacente nos EUA)</span>
-              <span className="font-mono text-[#a855f7] font-bold">0,03% a.a.</span>
-            </div>
-            <div className="flex justify-between p-2.5 rounded bg-[rgba(0,245,160,0.08)] border border-[rgba(0,245,160,0.3)]">
-              <span className="text-white font-bold">Custo Total Efetivo (TER)</span>
-              <span className="font-mono text-[#00f5a0] font-black">0,23% a.a.</span>
-            </div>
-          </div>
-        </Card>
-
-        <Card glow="emerald">
-          <h3 className="text-base font-bold text-white mb-2">
-            Dinâmica de Criação e Destruição de Cotas (NAV)
-          </h3>
-          <p className="text-xs text-[#94a3b8] mb-4">
-            O formador de mercado (Authorized Participant) atua arbitrando eventuais distorções entre a cota na B3 e o valor intrínseco (NAV) dos ativos.
-          </p>
-          <div className="grid grid-cols-2 gap-3 text-center">
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-              <span className="text-[10px] text-[#64748b] uppercase font-bold">
-                Spread Médio
-              </span>
-              <div className="text-lg font-black text-[#00f5a0] font-mono mt-1">
-                &lt; 0.05%
-              </div>
-            </div>
-            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-              <span className="text-[10px] text-[#64748b] uppercase font-bold">
-                Fluxo Cotas (30D)
-              </span>
-              <div className="text-lg font-black text-[#00d9f5] font-mono mt-1">
-                +R$ 450M
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
     </div>
   );
 }

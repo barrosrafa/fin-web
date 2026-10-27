@@ -1,29 +1,53 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { formatCurrency, formatPercent, formatNumber } from "@/lib/formatters";
-import {
-  MOCK_OPTIONS_CALLS_PETR4,
-  MOCK_OPTIONS_PUTS_PETR4,
-  MOCK_BTC_PETR4,
-  MOCK_BUYBACKS_PETR4,
-} from "@/data/mock/marketData";
+import { getDerivatives, DerivativesData } from "@/lib/api";
+import { OptionContract, StockBorrowingBTC, BuybackProgram } from "@/schemas/financial";
 
 export function DerivativesClient() {
   const [selectedTicker, setSelectedTicker] = useState("PETR4");
   const [optionType, setOptionType] = useState<"CALL" | "PUT">("CALL");
   const [activeTab, setActiveTab] = useState("OPCOES");
+  const [derivativesData, setDerivativesData] = useState<DerivativesData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const optionsList =
-    optionType === "CALL" ? MOCK_OPTIONS_CALLS_PETR4 : MOCK_OPTIONS_PUTS_PETR4;
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await getDerivatives(selectedTicker);
+        if (res) setDerivativesData(res);
+      } catch (err) {
+        console.error("Failed to load derivatives data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [selectedTicker]);
 
-  const btc = MOCK_BTC_PETR4;
-  const buybacks = MOCK_BUYBACKS_PETR4;
+  const callsList: OptionContract[] = derivativesData?.calls ?? [];
+  const putsList: OptionContract[] = derivativesData?.puts ?? [];
+  const optionsList = optionType === "CALL" ? callsList : putsList;
+
+  const btc: StockBorrowingBTC = derivativesData?.btc_borrowing ?? {
+    ticker: selectedTicker,
+    borrowerRateAvg: 4.85,
+    borrowerRateMin: 4.20,
+    borrowerRateMax: 5.50,
+    lenderRateAvg: 3.90,
+    activeContracts: 12450,
+    sharesBorrowedQty: 48500000,
+    financialVolume: 1864825000,
+    freeFloatBorrowedPct: 2.45,
+  };
+
+  const buybacks: BuybackProgram[] = derivativesData?.buybacks ?? [];
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -58,8 +82,8 @@ export function DerivativesClient() {
               onClick={() => setSelectedTicker(t)}
               className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
                 selectedTicker === t
-                  ? "bg-[#00f5a0] text-black shadow-lg shadow-[#00f5a0]/20"
-                  : "text-[#94a3b8] hover:text-white hover:bg-[#1e293b]"
+                  ? "bg-[#00f5a0] text-[#060709]"
+                  : "text-[#94a3b8] hover:text-white hover:bg-white/5"
               }`}
             >
               {t}
@@ -68,70 +92,73 @@ export function DerivativesClient() {
         </div>
       </div>
 
-      {/* Macro 4-Col Grid for Selected Asset */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Top 3 Metric Cards BTC & Options */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard
-          title="Taxa Média Tomador (BTC)"
+          title="Taxa de Aluguel BTC Média"
           value={`${btc.borrowerRateAvg.toFixed(2)}% a.a.`}
-          subtitle="Taxa para alugar ações"
+          subtitle={`Spread Doador: ${btc.lenderRateAvg.toFixed(2)}% • Contratos: ${btc.activeContracts.toLocaleString("pt-BR")}`}
+          glow="emerald"
         />
         <MetricCard
-          title="% Free Float Alugado"
-          value={`${btc.freeFloatBorrowedPct.toFixed(2)}%`}
-          subtitle="Pressão vendedora aberta"
+          title="Volume Financeiro Alugado"
+          value={formatCurrency(btc.financialVolume, true)}
+          subtitle={`${btc.freeFloatBorrowedPct.toFixed(2)}% do Free Float alugado`}
+          glow="cyan"
         />
         <MetricCard
-          title="Volume Alugado"
-          value={formatCurrency(btc.financialVolume)}
-          subtitle={`${formatNumber(btc.sharesBorrowedQty)} ações`}
-        />
-        <MetricCard
-          title="Contratos Ativos"
-          value={formatNumber(btc.activeContracts)}
-          subtitle="Posições abertas na B3"
+          title="Preço Spot Ativo Objeto"
+          value={formatCurrency(derivativesData?.spot_price ?? 38.45)}
+          subtitle="Cotação de referência para cálculo das gregas"
+          glow="violet"
         />
       </div>
 
       {/* Tabs */}
       <Tabs
         tabs={[
-          { id: "OPCOES", label: "Grade de Opções & Gregas Black-Scholes" },
-          { id: "ALUGUEL_BTC", label: "Monitor de Aluguel de Ações (BTC)" },
-          { id: "RECOMPRAS", label: "Programas de Recompra (Buybacks)" },
+          { id: "OPCOES", label: "Grade de Opções & Gregas Black-Scholes", count: optionsList.length },
+          { id: "ALUGUEL_BTC", label: "Raio-X de Empréstimo de Ações (BTC)" },
+          { id: "RECOMPRAS", label: "Programas de Recompra de Ações", count: buybacks.length },
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
       />
 
-      {/* Tab 1: Grade de Opções */}
+      {/* TAB 1: Opções */}
       {activeTab === "OPCOES" && (
-        <Card
-          title={`Grade de Opções de ${selectedTicker} — Vencimento Nov/2026`}
-          subtitle="Cálculo analítico de Volatilidade Implícita e Gregas (Delta, Gamma, Theta, Vega, Rho)"
-        >
-          {/* Call / Put Toggle */}
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-xs text-[#64748b] font-semibold uppercase">Tipo de Opção:</span>
-            <div className="flex bg-[#0a0f1d] p-1 rounded-lg border border-[#1e293b]">
+        <Card glow="cyan">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+              <h3 className="text-base font-bold text-white tracking-tight">
+                Contratos de Opções Abertos ({selectedTicker})
+              </h3>
+              <p className="text-xs text-[#94a3b8]">
+                Cálculo de Gregas analíticas de primeira e segunda ordem com modelo de Black-Scholes.
+              </p>
+            </div>
+
+            {/* CALL vs PUT Selector */}
+            <div className="flex items-center gap-1 bg-[#0a0f1d] p-1 rounded-lg border border-[#1e293b]">
               <button
                 onClick={() => setOptionType("CALL")}
-                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${
+                className={`px-3 py-1 rounded text-xs font-bold transition-all ${
                   optionType === "CALL"
-                    ? "bg-[#00f5a0] text-black"
+                    ? "bg-[#00f5a0] text-[#060709]"
                     : "text-[#94a3b8] hover:text-white"
                 }`}
               >
-                CALL (Opções de Compra)
+                CALL (Compra)
               </button>
               <button
                 onClick={() => setOptionType("PUT")}
-                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${
+                className={`px-3 py-1 rounded text-xs font-bold transition-all ${
                   optionType === "PUT"
-                    ? "bg-[#00d9f5] text-black"
+                    ? "bg-[#ff3b5c] text-white"
                     : "text-[#94a3b8] hover:text-white"
                 }`}
               >
-                PUT (Opções de Venda)
+                PUT (Venda)
               </button>
             </div>
           </div>
@@ -139,51 +166,56 @@ export function DerivativesClient() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-[#1e293b] text-[#64748b] uppercase">
-                  <th className="py-3 px-4 font-semibold">Código</th>
-                  <th className="py-3 px-4 font-semibold">Modelo</th>
-                  <th className="py-3 px-4 font-semibold text-right">Strike</th>
-                  <th className="py-3 px-4 font-semibold text-center">Moneyness</th>
-                  <th className="py-3 px-4 font-semibold text-right">Último Preço</th>
-                  <th className="py-3 px-4 font-semibold text-right">Vol. Implícita</th>
-                  <th className="py-3 px-4 font-semibold text-right">Delta (Δ)</th>
-                  <th className="py-3 px-4 font-semibold text-right">Gamma (Γ)</th>
-                  <th className="py-3 px-4 font-semibold text-right">Theta (Θ)</th>
-                  <th className="py-3 px-4 font-semibold text-right">Vega (ν)</th>
-                  <th className="py-3 px-4 font-semibold text-right">Volume 24h</th>
+                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                  <th className="pb-3 pl-2">Símbolo</th>
+                  <th className="pb-3">Tipo / Estilo</th>
+                  <th className="pb-3 text-right">Strike</th>
+                  <th className="pb-3 text-right">Último Prêmio</th>
+                  <th className="pb-3 text-right">Vol. Implícita</th>
+                  <th className="pb-3 text-right">Delta</th>
+                  <th className="pb-3 text-right">Gamma</th>
+                  <th className="pb-3 text-right">Theta</th>
+                  <th className="pb-3 text-right">Open Interest</th>
+                  <th className="pb-3 text-right pr-2">Vencimento</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e293b]/60 mono-nums">
-                {optionsList.map((op) => (
-                  <tr key={op.symbol} className="hover:bg-[#1e293b]/30 transition-colors">
-                    <td className="py-3 px-4 font-bold text-white">{op.symbol}</td>
-                    <td className="py-3 px-4 text-[#94a3b8]">{op.style}</td>
-                    <td className="py-3 px-4 text-right font-bold text-white">{formatCurrency(op.strike)}</td>
-                    <td className="py-3 px-4 text-center">
-                      <span
-                        className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          op.moneyness === "ITM"
-                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                            : op.moneyness === "ATM"
-                            ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"
-                            : "bg-[#1e293b] text-[#94a3b8]"
-                        }`}
-                      >
-                        {op.moneyness}
+              <tbody className="divide-y divide-white/5 mono-nums">
+                {optionsList.map((opt) => (
+                  <tr key={opt.symbol} className="hover:bg-white/[0.02]">
+                    <td className="py-3 pl-2 font-bold text-white">
+                      {opt.symbol}
+                      <span className="text-[10px] ml-1.5 text-[#64748b] font-sans">
+                        ({opt.moneyness})
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right font-semibold text-[#00f5a0]">
-                      {formatCurrency(op.lastPrice)}
+                    <td className="py-3 font-sans">
+                      <Badge variant={opt.type === "CALL" ? "emerald" : "crimson"}>
+                        {opt.type} • {opt.style}
+                      </Badge>
                     </td>
-                    <td className="py-3 px-4 text-right text-amber-400">
-                      {op.impliedVolatilityPct.toFixed(1)}%
+                    <td className="py-3 text-right font-bold text-white">
+                      {formatCurrency(opt.strike)}
                     </td>
-                    <td className="py-3 px-4 text-right text-white">{op.delta.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-right text-[#94a3b8]">{op.gamma.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-right text-[#ff4d4d]">{op.theta.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-right text-cyan-300">{op.vega.toFixed(2)}</td>
-                    <td className="py-3 px-4 text-right text-white">
-                      {formatCurrency(op.volume24h)}
+                    <td className="py-3 text-right font-bold text-[#00f5a0]">
+                      {formatCurrency(opt.lastPrice)}
+                    </td>
+                    <td className="py-3 text-right text-[#00d9f5]">
+                      {opt.impliedVolatilityPct.toFixed(1)}%
+                    </td>
+                    <td className="py-3 text-right text-white">
+                      {opt.delta.toFixed(2)}
+                    </td>
+                    <td className="py-3 text-right text-[#94a3b8]">
+                      {opt.gamma.toFixed(2)}
+                    </td>
+                    <td className="py-3 text-right text-[#ff3b5c]">
+                      {opt.theta.toFixed(2)}
+                    </td>
+                    <td className="py-3 text-right text-white">
+                      {opt.openInterest.toLocaleString("pt-BR")}
+                    </td>
+                    <td className="py-3 text-right pr-2 text-[#94a3b8] font-sans">
+                      {opt.expirationDate}
                     </td>
                   </tr>
                 ))}
@@ -193,65 +225,101 @@ export function DerivativesClient() {
         </Card>
       )}
 
-      {/* Tab 2: Monitor de Aluguel BTC */}
+      {/* TAB 2: Aluguel BTC */}
       {activeTab === "ALUGUEL_BTC" && (
-        <Card
-          title={`Panorama do Mercado de Aluguel de Ações (BTC) — ${selectedTicker}`}
-          subtitle="Taxas de empréstimo praticadas pelo custodiante CBLC / B3"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 rounded-xl bg-[#0a0f1d] border border-[#1e293b]">
-              <div className="text-xs text-[#64748b]">Taxa Tomador (Mín / Média / Máx)</div>
-              <div className="text-xl font-black text-white mt-1 mono-nums">
-                {btc.borrowerRateMin}% / {btc.borrowerRateAvg}% / {btc.borrowerRateMax}%
+        <Card glow="emerald">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-bold text-white tracking-tight">
+              Estatísticas de Aluguel de Ações (Banco de Títulos CBLC / B3)
+            </h3>
+            <Badge variant="emerald">Dados Auditados B3</Badge>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-xl bg-[#0a0f1d] border border-white/10 space-y-3 text-xs leading-relaxed text-[#94a3b8]">
+              <div className="text-xs font-bold text-white uppercase tracking-wider">
+                Estrutura de Taxas de Aluguel
               </div>
-              <p className="text-xs text-[#94a3b8] mt-2">Custo para investidores tomadores</p>
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span>Taxa Média Tomador:</span>
+                <span className="font-mono text-white font-bold">{btc.borrowerRateAvg.toFixed(2)}% a.a.</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span>Taxa Mínima Tomador:</span>
+                <span className="font-mono text-[#00f5a0]">{btc.borrowerRateMin.toFixed(2)}% a.a.</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span>Taxa Máxima Tomador:</span>
+                <span className="font-mono text-[#ff3b5c]">{btc.borrowerRateMax.toFixed(2)}% a.a.</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span>Taxa Média Repassada ao Doador:</span>
+                <span className="font-mono text-[#00d9f5] font-bold">{btc.lenderRateAvg.toFixed(2)}% a.a.</span>
+              </div>
             </div>
-            <div className="p-4 rounded-xl bg-[#0a0f1d] border border-[#1e293b]">
-              <div className="text-xs text-[#64748b]">Taxa Média Doador</div>
-              <div className="text-xl font-black text-[#00f5a0] mt-1 mono-nums">
-                {btc.lenderRateAvg}% a.a.
+
+            <div className="p-4 rounded-xl bg-[#0a0f1d] border border-white/10 space-y-3 text-xs leading-relaxed text-[#94a3b8]">
+              <div className="text-xs font-bold text-white uppercase tracking-wider">
+                Volume e Pressão Vendedora
               </div>
-              <p className="text-xs text-[#94a3b8] mt-2">Remuneração líquida para o custodiante</p>
-            </div>
-            <div className="p-4 rounded-xl bg-[#0a0f1d] border border-[#1e293b]">
-              <div className="text-xs text-[#64748b]">Total de Contratos Abertos</div>
-              <div className="text-xl font-black text-cyan-400 mt-1 mono-nums">
-                {formatNumber(btc.activeContracts)}
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span>Quantidade de Contratos Ativos:</span>
+                <span className="font-mono text-white font-bold">{btc.activeContracts.toLocaleString("pt-BR")}</span>
               </div>
-              <p className="text-xs text-[#94a3b8] mt-2">Volume estável em relação aos últimos 30 dias</p>
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span>Total de Ações Alugadas:</span>
+                <span className="font-mono text-white font-bold">{btc.sharesBorrowedQty.toLocaleString("pt-BR")}</span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-white/5">
+                <span>Percentual do Free Float Alugado:</span>
+                <span className="font-mono text-[#00f5a0] font-bold">{btc.freeFloatBorrowedPct.toFixed(2)}%</span>
+              </div>
+              <div className="flex justify-between py-1">
+                <span>Volume Financeiro em Aluguel:</span>
+                <span className="font-mono text-white font-bold">{formatCurrency(btc.financialVolume)}</span>
+              </div>
             </div>
           </div>
         </Card>
       )}
 
-      {/* Tab 3: Recompras */}
+      {/* TAB 3: Recompras */}
       {activeTab === "RECOMPRAS" && (
-        <Card
-          title={`Programas Oficiais de Recompra de Ações (Buybacks) — ${selectedTicker}`}
-          subtitle="Autorizações de compra de ações aprovadas em Conselho de Administração CVM"
-        >
+        <Card glow="violet">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-base font-bold text-white tracking-tight">
+              Programas de Recompra Aprovados pelo Conselho ({selectedTicker})
+            </h3>
+            <Badge variant="violet">Cancelamento em Tesouraria</Badge>
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-[#1e293b] text-[#64748b] uppercase">
-                  <th className="py-3 px-4 font-semibold">Identificação do Programa</th>
-                  <th className="py-3 px-4 font-semibold">Data Aprovação</th>
-                  <th className="py-3 px-4 font-semibold">Data Vencimento</th>
-                  <th className="py-3 px-4 font-semibold text-right">Ações Autorizadas</th>
-                  <th className="py-3 px-4 font-semibold text-right">Ações Já Adquiridas</th>
-                  <th className="py-3 px-4 font-semibold text-right">Execução %</th>
+                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                  <th className="pb-3 pl-2">Identificador</th>
+                  <th className="pb-3">Data Aprovação</th>
+                  <th className="pb-3">Vencimento</th>
+                  <th className="pb-3 text-right">Ações Autorizadas</th>
+                  <th className="pb-3 text-right">Adquiridas</th>
+                  <th className="pb-3 text-right pr-2">Execução</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#1e293b]/60 mono-nums">
+              <tbody className="divide-y divide-white/5 mono-nums">
                 {buybacks.map((bb) => (
-                  <tr key={bb.programId} className="hover:bg-[#1e293b]/30 transition-colors">
-                    <td className="py-3 px-4 font-bold text-white">{bb.programId}</td>
-                    <td className="py-3 px-4 text-[#94a3b8]">{bb.approvalDate}</td>
-                    <td className="py-3 px-4 text-[#94a3b8]">{bb.expirationDate}</td>
-                    <td className="py-3 px-4 text-right text-white">{formatNumber(bb.sharesAuthorized)}</td>
-                    <td className="py-3 px-4 text-right text-[#00f5a0]">{formatNumber(bb.sharesAcquired)}</td>
-                    <td className="py-3 px-4 text-right font-bold text-cyan-400">{bb.executionPct}%</td>
+                  <tr key={bb.programId} className="hover:bg-white/[0.02]">
+                    <td className="py-3 pl-2 font-bold text-white">{bb.programId}</td>
+                    <td className="py-3 font-sans text-[#94a3b8]">{bb.approvalDate}</td>
+                    <td className="py-3 font-sans text-[#94a3b8]">{bb.expirationDate}</td>
+                    <td className="py-3 text-right text-white">
+                      {bb.sharesAuthorized.toLocaleString("pt-BR")}
+                    </td>
+                    <td className="py-3 text-right font-bold text-[#00f5a0]">
+                      {bb.sharesAcquired.toLocaleString("pt-BR")}
+                    </td>
+                    <td className="py-3 text-right pr-2 font-bold text-[#00d9f5]">
+                      {bb.executionPct.toFixed(1)}%
+                    </td>
                   </tr>
                 ))}
               </tbody>
