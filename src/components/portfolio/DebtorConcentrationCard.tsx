@@ -90,7 +90,12 @@ export const DebtorConcentrationCard: React.FC<DebtorConcentrationCardProps> = (
 
       {/* Debtors List */}
       <div className="mt-4 divide-y divide-slate-800/60">
-        {filteredDebtors.map((debtor) => {
+        {filteredDebtors.length === 0 ? (
+          <div className="py-8 text-center text-xs text-slate-500 font-mono">
+            Nenhum ativo de crédito ou FII encontrado na seleção.
+          </div>
+        ) : (
+          filteredDebtors.map((debtor) => {
           const isOverThreshold = debtor.totalExposurePct > userThresholdPct && !debtor.isLevel0;
 
           return (
@@ -150,7 +155,7 @@ export const DebtorConcentrationCard: React.FC<DebtorConcentrationCardProps> = (
               </div>
             </div>
           );
-        })}
+        }))}
       </div>
     </div>
   );

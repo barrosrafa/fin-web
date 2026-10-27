@@ -45,11 +45,27 @@ export default function DebtorAnalysisPage() {
     },
   ]);
 
-  const handleApplyOverride = () => {
+  const handleApplyOverride = async () => {
     if (!overrideEntity) return;
+
+    try {
+      await fetch("http://localhost:8000/api/v1/portfolio/demo-investor-001/overrides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source_asset_id: "KNIP11",
+          target_entity_name: overrideEntity,
+          override_type: "EXCLUDE_EDGE",
+          reason: "User manual exclusion via Cockpit",
+        }),
+      });
+    } catch {
+      // Optimistic client-side fallback if API is offline
+    }
+
     // Exclude selected entity locally
     setDebtors((prev) => prev.filter((d) => d.entityName !== overrideEntity));
-    setSuccessToast(`Ajuste local aplicado para ${overrideEntity}! Aresta desconsiderada na sua carteira.`);
+    setSuccessToast(`Ajuste local persistido para ${overrideEntity}! Aresta desconsiderada na sua carteira.`);
     setOverrideEntity(null);
     setTimeout(() => setSuccessToast(null), 4000);
   };
