@@ -174,3 +174,88 @@ export const AICommitteeVerdictSchema = z.object({
 });
 
 export type AICommitteeVerdict = z.infer<typeof AICommitteeVerdictSchema>;
+
+export const ETFDetailSchema = z.object({
+  ticker: z.string(),
+  name: z.string(),
+  benchmarkIndex: z.string(),
+  provider: z.string(),
+  currentPrice: z.number(),
+  navPerShare: z.number(),
+  navSpreadPct: z.number(),
+  terPct: z.number(),
+  primaryFeePct: z.number(),
+  secondaryFeePct: z.number(),
+  policy: z.enum(["ACUMULATIVO", "DISTRIBUTIVO"]),
+  sharesLendingPct: z.number(),
+  maxLendingLimitPct: z.number(),
+});
+
+export type ETFDetail = z.infer<typeof ETFDetailSchema>;
+
+export const OptionContractSchema = z.object({
+  symbol: z.string(),
+  type: z.enum(["CALL", "PUT"]),
+  style: z.enum(["AMERICANA", "EUROPEIA"]),
+  strike: z.number(),
+  expirationDate: z.string(),
+  moneyness: z.enum(["ITM", "ATM", "OTM"]),
+  lastPrice: z.number(),
+  impliedVolatilityPct: z.number(),
+  delta: z.number(),
+  gamma: z.number(),
+  theta: z.number(),
+  vega: z.number(),
+  rho: z.number(),
+  openInterest: z.number(),
+  volume24h: z.number(),
+});
+
+export type OptionContract = z.infer<typeof OptionContractSchema>;
+
+export const StockBorrowingBTCSchema = z.object({
+  ticker: z.string(),
+  borrowerRateAvg: z.number(),
+  borrowerRateMin: z.number(),
+  borrowerRateMax: z.number(),
+  lenderRateAvg: z.number(),
+  activeContracts: z.number(),
+  sharesBorrowedQty: z.number(),
+  financialVolume: z.number(),
+  freeFloatBorrowedPct: z.number(),
+});
+
+export type StockBorrowingBTC = z.infer<typeof StockBorrowingBTCSchema>;
+
+export const BuybackProgramSchema = z.object({
+  programId: z.string(),
+  approvalDate: z.string(),
+  expirationDate: z.string(),
+  sharesAuthorized: z.number(),
+  sharesAcquired: z.number(),
+  sharesInTreasury: z.number(),
+  executionPct: z.number(),
+});
+
+export type BuybackProgram = z.infer<typeof BuybackProgramSchema>;
+
+export const TreasuryBondSchema = z.object({
+  name: z.string(),
+  type: z.enum(["SELIC", "PREFIXADO", "IPCA"]),
+  maturityDate: z.string(),
+  annualRatePct: z.number(),
+  unitPrice: z.number(),
+  minInvestmentValue: z.number(),
+});
+
+export type TreasuryBond = z.infer<typeof TreasuryBondSchema>;
+
+export const FundHoldingCDASchema = z.object({
+  assetName: z.string(),
+  assetType: z.string(),
+  identifier: z.string(),
+  weightPct: z.number(),
+  financialValue: z.number(),
+});
+
+export type FundHoldingCDA = z.infer<typeof FundHoldingCDASchema>;

@@ -15,6 +15,7 @@ export function Navbar() {
     { href: "/fundos", label: "Fundos 175" },
     { href: "/etfs", label: "ETFs" },
     { href: "/renda-fixa", label: "Renda Fixa" },
+    { href: "/derivativos", label: "Derivativos" },
     { href: "/screener", label: "Screener" },
     { href: "/comparador", label: "Comparador" },
     { href: "/carteira", label: "Carteira" },

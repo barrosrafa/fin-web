@@ -2,6 +2,8 @@ import React from "react";
 
 interface CardProps {
   children: React.ReactNode;
+  title?: string;
+  subtitle?: string;
   className?: string;
   innerClassName?: string;
   glow?: "emerald" | "cyan" | "violet" | "crimson" | "none";
@@ -9,6 +11,8 @@ interface CardProps {
 
 export function Card({
   children,
+  title,
+  subtitle,
   className = "",
   innerClassName = "",
   glow = "none",
@@ -26,6 +30,12 @@ export function Card({
       className={`double-bezel relative transition-all duration-300 ${glowStyles[glow]} ${className}`}
     >
       <div className={`double-bezel-inner ${innerClassName}`}>
+        {title && (
+          <div className="mb-4">
+            <h3 className="text-lg font-bold text-white tracking-tight">{title}</h3>
+            {subtitle && <p className="text-xs text-[#94a3b8] mt-1">{subtitle}</p>}
+          </div>
+        )}
         {children}
       </div>
     </div>

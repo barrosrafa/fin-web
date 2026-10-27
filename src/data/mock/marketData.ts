@@ -9,6 +9,12 @@ import {
   QuantRiskMatrix,
   TechnicalIndicators,
   AICommitteeVerdict,
+  ETFDetail,
+  OptionContract,
+  StockBorrowingBTC,
+  BuybackProgram,
+  TreasuryBond,
+  FundHoldingCDA,
 } from "@/schemas/financial";
 
 export const MOCK_BENCHMARKS = [
@@ -344,3 +350,163 @@ export const MOCK_AI_VERDICT_PETR4: AICommitteeVerdict = {
   lastAnalyzedDoc: "DFP CVM 2024 & Ata da Reunião do CA nº 1.482",
   timestamp: "2026-10-26T21:45:00Z",
 };
+
+export const MOCK_ETF_BOVA11_DETAIL: ETFDetail = {
+  ticker: "BOVA11",
+  name: "iShares Ibovespa Fundo de Índice",
+  benchmarkIndex: "IBOVESPA",
+  provider: "BlackRock Brasil",
+  currentPrice: 128.40,
+  navPerShare: 128.25,
+  navSpreadPct: 0.117,
+  terPct: 0.30,
+  primaryFeePct: 0.30,
+  secondaryFeePct: 0.00,
+  policy: "ACUMULATIVO",
+  sharesLendingPct: 14.5,
+  maxLendingLimitPct: 30.0,
+};
+
+export const MOCK_ETF_UNDERLYING_BOVA11 = [
+  { ticker: "VALE3", name: "Vale S.A.", weight: 13.2, sector: "Materiais Básicos" },
+  { ticker: "PETR4", name: "Petrobras PN", weight: 11.5, sector: "Petróleo e Gás" },
+  { ticker: "ITUB4", name: "Itaú Unibanco PN", weight: 8.4, sector: "Financeiro" },
+  { ticker: "PETR3", name: "Petrobras ON", weight: 6.1, sector: "Petróleo e Gás" },
+  { ticker: "BBDC4", name: "Bradesco PN", weight: 4.5, sector: "Financeiro" },
+  { ticker: "ELET3", name: "Eletrobras ON", weight: 3.8, sector: "Utilidade Pública" },
+  { ticker: "B3SA3", name: "B3 S.A.", weight: 3.5, sector: "Financeiro" },
+  { ticker: "WEGE3", name: "WEG S.A.", weight: 3.2, sector: "Bens Industriais" },
+];
+
+export const MOCK_OPTIONS_CALLS_PETR4: OptionContract[] = [
+  {
+    symbol: "PETRK360",
+    type: "CALL",
+    style: "AMERICANA",
+    strike: 36.00,
+    expirationDate: "2026-11-20",
+    moneyness: "ITM",
+    lastPrice: 3.10,
+    impliedVolatilityPct: 26.4,
+    delta: 0.78,
+    gamma: 0.08,
+    theta: -0.04,
+    vega: 0.09,
+    rho: 0.02,
+    openInterest: 1450000,
+    volume24h: 4850000.0,
+  },
+  {
+    symbol: "PETRK380",
+    type: "CALL",
+    style: "AMERICANA",
+    strike: 38.00,
+    expirationDate: "2026-11-20",
+    moneyness: "ATM",
+    lastPrice: 1.65,
+    impliedVolatilityPct: 28.1,
+    delta: 0.52,
+    gamma: 0.12,
+    theta: -0.06,
+    vega: 0.11,
+    rho: 0.015,
+    openInterest: 3820000,
+    volume24h: 12400000.0,
+  },
+  {
+    symbol: "PETRK400",
+    type: "CALL",
+    style: "AMERICANA",
+    strike: 40.00,
+    expirationDate: "2026-11-20",
+    moneyness: "OTM",
+    lastPrice: 0.68,
+    impliedVolatilityPct: 31.2,
+    delta: 0.28,
+    gamma: 0.09,
+    theta: -0.05,
+    vega: 0.08,
+    rho: 0.01,
+    openInterest: 2150000,
+    volume24h: 3120000.0,
+  },
+];
+
+export const MOCK_OPTIONS_PUTS_PETR4: OptionContract[] = [
+  {
+    symbol: "PETRW380",
+    type: "PUT",
+    style: "EUROPEIA",
+    strike: 38.00,
+    expirationDate: "2026-11-20",
+    moneyness: "ATM",
+    lastPrice: 1.42,
+    impliedVolatilityPct: 27.9,
+    delta: -0.48,
+    gamma: 0.12,
+    theta: -0.05,
+    vega: 0.11,
+    rho: -0.015,
+    openInterest: 1890000,
+    volume24h: 5800000.0,
+  },
+  {
+    symbol: "PETRW360",
+    type: "PUT",
+    style: "EUROPEIA",
+    strike: 36.00,
+    expirationDate: "2026-11-20",
+    moneyness: "OTM",
+    lastPrice: 0.55,
+    impliedVolatilityPct: 29.5,
+    delta: -0.22,
+    gamma: 0.08,
+    theta: -0.03,
+    vega: 0.07,
+    rho: -0.008,
+    openInterest: 940000,
+    volume24h: 1850000.0,
+  },
+];
+
+export const MOCK_BTC_PETR4: StockBorrowingBTC = {
+  ticker: "PETR4",
+  borrowerRateAvg: 2.85,
+  borrowerRateMin: 1.90,
+  borrowerRateMax: 4.20,
+  lenderRateAvg: 2.40,
+  activeContracts: 4520,
+  sharesBorrowedQty: 38500000,
+  financialVolume: 1480325000.0,
+  freeFloatBorrowedPct: 2.94,
+};
+
+export const MOCK_BUYBACKS_PETR4: BuybackProgram[] = [
+  {
+    programId: "RECOMPRA-PETR4-2026",
+    approvalDate: "2026-03-15",
+    expirationDate: "2027-03-15",
+    sharesAuthorized: 50000000,
+    sharesAcquired: 32400000,
+    sharesInTreasury: 32400000,
+    executionPct: 64.8,
+  },
+];
+
+export const MOCK_FUND_CDA_HOLDINGS: FundHoldingCDA[] = [
+  { assetName: "NTN-B 2035 (Tesouro IPCA+)", assetType: "TÍTULO PÚBLICO", identifier: "BRSTNCNTB350", weightPct: 32.5, financialValue: 650000000.0 },
+  { assetName: "LFT 2029 (Tesouro Selic)", assetType: "TÍTULO PÚBLICO", identifier: "BRSTNCLFT290", weightPct: 24.0, financialValue: 480000000.0 },
+  { assetName: "Debênture Vale S.A. 2031", assetType: "CRÉDITO PRIVADO", identifier: "VALE31", weightPct: 12.5, financialValue: 250000000.0 },
+  { assetName: "Itaú Unibanco PN", assetType: "AÇÕES", identifier: "ITUB4", weightPct: 10.0, financialValue: 200000000.0 },
+  { assetName: "Petrobras PN", assetType: "AÇÕES", identifier: "PETR4", weightPct: 8.5, financialValue: 170000000.0 },
+  { assetName: "Operações Compromissadas / Caixa", assetType: "CAIXA", identifier: "CAIXA_BR", weightPct: 12.5, financialValue: 250000000.0 },
+];
+
+export const MOCK_TREASURY_BONDS: TreasuryBond[] = [
+  { name: "Tesouro Selic 2029", type: "SELIC", maturityDate: "2029-03-01", annualRatePct: 11.25, unitPrice: 15240.50, minInvestmentValue: 152.40 },
+  { name: "Tesouro Prefixado 2027", type: "PREFIXADO", maturityDate: "2027-01-01", annualRatePct: 12.15, unitPrice: 820.40, minInvestmentValue: 32.81 },
+  { name: "Tesouro Prefixado 2031", type: "PREFIXADO", maturityDate: "2031-01-01", annualRatePct: 12.60, unitPrice: 530.15, minInvestmentValue: 31.80 },
+  { name: "Tesouro IPCA+ 2029", type: "IPCA", maturityDate: "2029-05-15", annualRatePct: 6.45, unitPrice: 3420.80, minInvestmentValue: 34.20 },
+  { name: "Tesouro IPCA+ 2035", type: "IPCA", maturityDate: "2035-05-15", annualRatePct: 6.55, unitPrice: 2210.30, minInvestmentValue: 44.20 },
+  { name: "Tesouro IPCA+ 2045", type: "IPCA", maturityDate: "2045-05-15", annualRatePct: 6.62, unitPrice: 1310.50, minInvestmentValue: 39.31 },
+];
