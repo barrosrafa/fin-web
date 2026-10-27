@@ -48,6 +48,37 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
       ? ((dynamicBazin - stock.currentPrice) / stock.currentPrice) * 100
       : 0;
 
+  // Dynamic Gordon & DCF Interactive States
+  const [gordonGrowth, setGordonGrowth] = useState(0.04);
+  const [gordonDiscount, setGordonDiscount] = useState(0.12);
+  const dynamicGordon =
+    gordonDiscount > gordonGrowth
+      ? (dpaInput * (1 + gordonGrowth)) / (gordonDiscount - gordonGrowth)
+      : 0;
+  const dynamicGordonUpside =
+    stock.currentPrice > 0
+      ? ((dynamicGordon - stock.currentPrice) / stock.currentPrice) * 100
+      : 0;
+
+  const [dcfGrowth5y, setDcfGrowth5y] = useState(0.06);
+  const [dcfWacc, setDcfWacc] = useState(0.11);
+  const [dcfTerminalGrowth, setDcfTerminalGrowth] = useState(0.035);
+  let pvFcf = 0;
+  let curFcf = 6.2;
+  for (let i = 1; i <= 5; i++) {
+    curFcf *= 1 + dcfGrowth5y;
+    pvFcf += curFcf / Math.pow(1 + dcfWacc, i);
+  }
+  const terminalVal =
+    dcfWacc > dcfTerminalGrowth
+      ? (curFcf * (1 + dcfTerminalGrowth)) / (dcfWacc - dcfTerminalGrowth)
+      : 0;
+  const dynamicDcf = pvFcf + terminalVal / Math.pow(1 + dcfWacc, 5);
+  const dynamicDcfUpside =
+    stock.currentPrice > 0
+      ? ((dynamicDcf - stock.currentPrice) / stock.currentPrice) * 100
+      : 0;
+
   const isPositive = stock.change24h >= 0;
 
   // DRE Chart Data
@@ -352,6 +383,134 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
               <p className="text-[11px] text-[#64748b] mt-5 leading-relaxed">
                 Décio Bazin estabelece como critério de entrada empresas com dividend yield de pelo menos 6% ao ano, endividamento moderado e ausência de notícias negativas contábeis.
               </p>
+            </Card>
+          </div>
+
+          {/* Gordon Growth Model Card */}
+          <div className="lg:col-span-6">
+            <Card glow="violet">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-base font-bold text-white tracking-tight">
+                    Modelo de Gordon (DDM Perpetuidade)
+                  </h3>
+                  <p className="text-xs text-[#64748b] font-mono mt-0.5">
+                    P0 = D1 / (r - g)
+                  </p>
+                </div>
+                <Badge variant={dynamicGordonUpside >= 0 ? "violet" : "crimson"}>
+                  {formatPercent(dynamicGordonUpside)}
+                </Badge>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 mb-6 text-center">
+                <span className="text-xs text-[#64748b] uppercase tracking-wider font-semibold">
+                  Preço Teórico de Gordon
+                </span>
+                <div className="text-3xl font-black text-[#a855f7] font-mono mt-1">
+                  {formatCurrency(dynamicGordon)}
+                </div>
+                <div className="text-xs text-[#94a3b8] mt-1">
+                  Desconto pelo custo de capital próprio líquido de crescimento
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-[#94a3b8]">Crescimento Perpétuo de Dividendos (g):</span>
+                    <span className="font-mono text-white font-bold">{(gordonGrowth * 100).toFixed(1)}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.01"
+                    max="0.08"
+                    step="0.005"
+                    value={gordonGrowth}
+                    onChange={(e) => setGordonGrowth(parseFloat(e.target.value))}
+                    className="w-full accent-[#a855f7]"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-[#94a3b8]">Taxa de Desconto / Custo de Capital (r):</span>
+                    <span className="font-mono text-white font-bold">{(gordonDiscount * 100).toFixed(1)}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.09"
+                    max="0.18"
+                    step="0.005"
+                    value={gordonDiscount}
+                    onChange={(e) => setGordonDiscount(parseFloat(e.target.value))}
+                    className="w-full accent-[#a855f7]"
+                  />
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* DCF 2-Estágios Card */}
+          <div className="lg:col-span-6">
+            <Card glow="cyan">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-base font-bold text-white tracking-tight">
+                    Fluxo de Caixa Descontado (DCF 2-Estágios)
+                  </h3>
+                  <p className="text-xs text-[#64748b] font-mono mt-0.5">
+                    Valor Intrínseco por Ação (WACC + Perpetuidade)
+                  </p>
+                </div>
+                <Badge variant={dynamicDcfUpside >= 0 ? "cyan" : "crimson"}>
+                  {formatPercent(dynamicDcfUpside)}
+                </Badge>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 mb-6 text-center">
+                <span className="text-xs text-[#64748b] uppercase tracking-wider font-semibold">
+                  Valor Intrínseco DCF
+                </span>
+                <div className="text-3xl font-black text-[#00d9f5] font-mono mt-1">
+                  {formatCurrency(dynamicDcf)}
+                </div>
+                <div className="text-xs text-[#94a3b8] mt-1">
+                  Projeção 5 anos de FCF + Valor Residual
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-[#94a3b8]">Crescimento FCF (5 anos):</span>
+                    <span className="font-mono text-white font-bold">{(dcfGrowth5y * 100).toFixed(1)}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.01"
+                    max="0.15"
+                    step="0.005"
+                    value={dcfGrowth5y}
+                    onChange={(e) => setDcfGrowth5y(parseFloat(e.target.value))}
+                    className="w-full accent-[#00d9f5]"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-[#94a3b8]">Taxa WACC (Custo Médio Ponderado):</span>
+                    <span className="font-mono text-white font-bold">{(dcfWacc * 100).toFixed(1)}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0.08"
+                    max="0.16"
+                    step="0.005"
+                    value={dcfWacc}
+                    onChange={(e) => setDcfWacc(parseFloat(e.target.value))}
+                    className="w-full accent-[#00d9f5]"
+                  />
+                </div>
+              </div>
             </Card>
           </div>
         </div>
