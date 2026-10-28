@@ -48,6 +48,7 @@ async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getStoredToken();
   const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
+  const defaultCache = options?.cache ?? (token ? "no-store" : "default");
   const res = await fetch(url, {
     ...options,
     headers: {
@@ -55,7 +56,7 @@ async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
       ...authHeaders,
       ...options?.headers,
     },
-    cache: "no-store",
+    cache: defaultCache,
   });
   if (!res.ok) {
     throw new Error(`API error [${res.status}] on ${path}: ${res.statusText}`);
