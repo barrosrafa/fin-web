@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { formatCurrency, formatPercent, formatDividendUnit } from "@/lib/formatters";
 import { getDividendCalendar, DividendCalendarItem } from "@/lib/api";
 
 export default function AgendaDividendosPage() {
@@ -93,7 +93,7 @@ export default function AgendaDividendosPage() {
                     <td className="py-3 text-white font-bold">{d.dateCom}</td>
                     <td className="py-3 text-[#00f5a0] font-bold">{d.paymentDate}</td>
                     <td className="py-3 text-right text-white font-bold">
-                      {formatCurrency(d.valuePerShare)}
+                      {formatDividendUnit(d.valuePerShare)}
                     </td>
                     <td className="py-3 text-right pr-4 text-[#00d9f5] font-bold">
                       {formatPercent(d.yieldOnCostPct, false)}

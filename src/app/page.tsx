@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
 import { Sparkline } from "@/components/ui/Sparkline";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { formatCurrency, formatPercent, formatDividendUnit, formatMultiple } from "@/lib/formatters";
 import {
   getBenchmarks,
   getAssets,
@@ -218,11 +218,11 @@ export default function HomePage() {
                         </td>
 
                         <td className="py-3.5 text-right font-mono text-[#94a3b8] hidden sm:table-cell">
-                          {asset.pvp !== undefined ? `${asset.pvp.toFixed(2)}x` : "—"}
+                          {formatMultiple(asset.pvp)}
                         </td>
 
                         <td className="py-3.5 text-right font-mono text-[#94a3b8] hidden md:table-cell">
-                          {asset.pl !== undefined && asset.pl !== 0 ? `${asset.pl.toFixed(1)}x` : "—"}
+                          {asset.pl !== undefined && asset.pl !== 0 ? formatMultiple(asset.pl, 1) : "—"}
                         </td>
 
                         <td className="py-3.5 text-right hidden lg:table-cell">
@@ -321,24 +321,42 @@ export default function HomePage() {
                 <div className="text-[10px] text-[#64748b] uppercase font-semibold">
                   Preço Justo Graham
                 </div>
-                <div className="text-base font-bold text-[#00f5a0] font-mono mt-0.5">
-                  {formatCurrency(valuationPetr4?.graham_fair_value ?? 56.80)}
-                </div>
-                <div className="text-[10px] text-[#00f5a0] font-medium">
-                  {formatPercent(valuationPetr4?.graham_upside_pct ?? 47.7)} Margem
-                </div>
+                {valuationPetr4 ? (
+                  <>
+                    <div className="text-base font-bold text-[#00f5a0] font-mono mt-0.5">
+                      {formatCurrency(valuationPetr4.graham_fair_value)}
+                    </div>
+                    <div className="text-[10px] text-[#00f5a0] font-medium">
+                      {formatPercent(valuationPetr4.graham_upside_pct)} Margem
+                    </div>
+                  </>
+                ) : (
+                  <div className="mt-1 space-y-1">
+                    <div className="h-5 w-24 bg-white/10 rounded animate-pulse" />
+                    <div className="h-3 w-16 bg-white/5 rounded animate-pulse" />
+                  </div>
+                )}
               </div>
 
               <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
                 <div className="text-[10px] text-[#64748b] uppercase font-semibold">
                   Preço Teto Bazin
                 </div>
-                <div className="text-base font-bold text-[#00d9f5] font-mono mt-0.5">
-                  {formatCurrency(valuationPetr4?.bazin_ceiling_price ?? 64.10)}
-                </div>
-                <div className="text-[10px] text-[#00d9f5] font-medium">
-                  {formatPercent(valuationPetr4?.bazin_upside_pct ?? 66.7)} Margem
-                </div>
+                {valuationPetr4 ? (
+                  <>
+                    <div className="text-base font-bold text-[#00d9f5] font-mono mt-0.5">
+                      {formatCurrency(valuationPetr4.bazin_ceiling_price)}
+                    </div>
+                    <div className="text-[10px] text-[#00d9f5] font-medium">
+                      {formatPercent(valuationPetr4.bazin_upside_pct)} Margem
+                    </div>
+                  </>
+                ) : (
+                  <div className="mt-1 space-y-1">
+                    <div className="h-5 w-24 bg-white/10 rounded animate-pulse" />
+                    <div className="h-3 w-16 bg-white/5 rounded animate-pulse" />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -366,7 +384,7 @@ export default function HomePage() {
               </p>
             </div>
             <Link
-              href="/carteira"
+              href="/agenda-dividendos"
               className="text-xs text-[#00f5a0] hover:underline font-medium"
             >
               Ver Todos ↗
@@ -400,7 +418,7 @@ export default function HomePage() {
 
                 <div className="text-right font-mono">
                   <div className="text-xs font-bold text-[#00f5a0]">
-                    {formatCurrency(div.valuePerShare, false, 4)} / cota
+                    {formatDividendUnit(div.valuePerShare)} / cota
                   </div>
                   <div className="text-[10px] text-[#64748b]">
                     Yield {formatPercent(div.yieldOnCostPct, false)}

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { formatCurrency, formatPercent, formatMultiple } from "@/lib/formatters";
 import { getAssets } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
 
@@ -113,7 +113,7 @@ export default function ETFsPage() {
                       {formatPercent(asset.change12m)}
                     </td>
                     <td className="py-3 text-right text-[#94a3b8]">
-                      {asset.pvp !== undefined ? `${asset.pvp.toFixed(2)}x` : "1.00x"}
+                      {formatMultiple(asset.pvp ?? 1.0)}
                     </td>
                     <td className="py-3 text-right pr-2">
                       <Link

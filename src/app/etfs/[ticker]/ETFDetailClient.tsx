@@ -2,18 +2,41 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
 import { MetricCard } from "@/components/ui/MetricCard";
-import { formatCurrency } from "@/lib/formatters";
+import { formatCurrency, formatPercent } from "@/lib/formatters";
 import { getETFDetail, ETFDetailData } from "@/lib/api";
 import { UnderwaterDrawdownChart } from "@/components/etfs/UnderwaterDrawdownChart";
 
 export function ETFDetailClient({ ticker }: { ticker: string }) {
-  const [activeTab, setActiveTab] = useState("VISAO_GERAL");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const tabParam = searchParams.get("tab");
+  const validTabs = ["VISAO_GERAL", "NAV_ARBITRAGEM", "ALUGUEL", "DRAWDOWN"];
+  const initialTab = tabParam && validTabs.includes(tabParam) ? tabParam : "VISAO_GERAL";
+
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [etfData, setEtfData] = useState<ETFDetailData | null>(null);
   const [, setLoading] = useState(true);
+
+  // Sync state if URL changes externally
+  useEffect(() => {
+    if (tabParam && validTabs.includes(tabParam) && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", newTab);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   useEffect(() => {
     async function load() {
@@ -29,26 +52,37 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
     load();
   }, [ticker]);
 
+  const isIvvb = ticker.toUpperCase() === "IVVB11";
+
   const etf = etfData ?? {
     ticker: ticker,
-    name: `iShares ${ticker} Fundo de Índice`,
-    benchmark_index: "IBOVESPA",
-    provider: "BlackRock Brasil",
-    current_price: 128.40,
-    nav_per_share: 128.25,
+    name: isIvvb ? "iShares S&P 500 Fundo de Índice" : `iShares ${ticker} Fundo de Índice`,
+    benchmark_index: isIvvb ? "S&P 500" : "IBOVESPA",
+    provider: isIvvb ? "BlackRock Brasil / S&P Dow Jones" : "BlackRock Brasil",
+    current_price: isIvvb ? 432.80 : 128.40,
+    nav_per_share: isIvvb ? 432.10 : 128.25,
     nav_spread_pct: 0.117,
-    ter_pct: 0.30,
-    primary_fee_pct: 0.30,
+    ter_pct: isIvvb ? 0.23 : 0.30,
+    primary_fee_pct: isIvvb ? 0.23 : 0.30,
     secondary_fee_pct: 0.00,
     policy: "ACUMULATIVO" as const,
     shares_lending_pct: 14.5,
     max_lending_limit_pct: 30.0,
-    underlying_holdings: [
-      { ticker: "VALE3", name: "Vale S.A.", weight_pct: 13.2, sector: "Materiais Básicos" },
-      { ticker: "PETR4", name: "Petrobras PN", weight_pct: 11.5, sector: "Petróleo e Gás" },
-      { ticker: "ITUB4", name: "Itaú Unibanco PN", weight_pct: 8.4, sector: "Financeiro" },
-      { ticker: "BBDC4", name: "Banco Bradesco PN", weight_pct: 4.5, sector: "Financeiro" },
-    ],
+    underlying_holdings: isIvvb
+      ? [
+          { ticker: "MSFT", name: "Microsoft Corporation", weight_pct: 6.8, sector: "Tecnologia da Informação" },
+          { ticker: "AAPL", name: "Apple Inc.", weight_pct: 6.5, sector: "Tecnologia da Informação" },
+          { ticker: "NVDA", name: "NVIDIA Corporation", weight_pct: 6.2, sector: "Tecnologia da Informação" },
+          { ticker: "AMZN", name: "Amazon.com Inc.", weight_pct: 3.6, sector: "Consumo Discricionário" },
+          { ticker: "GOOGL", name: "Alphabet Inc. Class A", weight_pct: 2.3, sector: "Serviços de Comunicação" },
+          { ticker: "META", name: "Meta Platforms Inc.", weight_pct: 2.2, sector: "Serviços de Comunicação" },
+        ]
+      : [
+          { ticker: "VALE3", name: "Vale S.A.", weight_pct: 13.2, sector: "Materiais Básicos" },
+          { ticker: "PETR4", name: "Petrobras PN", weight_pct: 11.5, sector: "Petróleo e Gás" },
+          { ticker: "ITUB4", name: "Itaú Unibanco PN", weight_pct: 8.4, sector: "Financeiro" },
+          { ticker: "BBDC4", name: "Banco Bradesco PN", weight_pct: 4.5, sector: "Financeiro" },
+        ],
     flow_history_30d: [],
   };
 
@@ -130,44 +164,51 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
           { id: "DRAWDOWN", label: "Curva Subaquática & Risco" },
         ]}
         activeTab={activeTab}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
       />
 
       {/* TAB 1: Composição */}
       {activeTab === "VISAO_GERAL" && (
-        <Card glow="cyan">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-white tracking-tight">
-              Principais Ações Subjacentes ({etf.benchmark_index})
-            </h3>
-            <span className="text-xs text-[#64748b]">Metodologia de Ponderação por Valor de Mercado</span>
-          </div>
+        <div role="tabpanel" id="panel-VISAO_GERAL" aria-labelledby="tab-VISAO_GERAL">
+          <Card glow="cyan">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-white tracking-tight">
+                Principais Ações Subjacentes ({etf.benchmark_index})
+              </h3>
+              <span className="text-xs text-[#64748b]">Metodologia de Ponderação por Valor de Mercado</span>
+            </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                  <th className="pb-3 pl-2">Ativo</th>
-                  <th className="pb-3">Razão Social</th>
-                  <th className="pb-3">Setor Econômico</th>
-                  <th className="pb-3 text-right pr-2">Peso no ETF</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 mono-nums">
-                {etf.underlying_holdings.map((item) => (
-                  <tr key={item.ticker} className="hover:bg-white/[0.02]">
-                    <td className="py-3 pl-2 font-bold text-[#00f5a0]">{item.ticker}</td>
-                    <td className="py-3 font-sans text-white">{item.name}</td>
-                    <td className="py-3 font-sans text-[#94a3b8]">{item.sector}</td>
-                    <td className="py-3 text-right pr-2 font-bold text-white">
-                      {item.weight_pct.toFixed(1)}%
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                    <th className="pb-3 pl-2">Ativo</th>
+                    <th className="pb-3">Razão Social</th>
+                    <th className="pb-3">Setor Econômico</th>
+                    <th className="pb-3 text-right pr-2">Peso no ETF</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                </thead>
+                <tbody className="divide-y divide-white/5 mono-nums">
+                  {etf.underlying_holdings.map((item) => (
+                    <tr key={item.ticker} className="hover:bg-white/[0.02]">
+                      <td className="py-3 pl-2 font-bold text-[#00f5a0]">{item.ticker}</td>
+                      <td className="py-3 font-sans text-white">{item.name}</td>
+                      <td className="py-3 font-sans text-[#94a3b8]">{item.sector}</td>
+                      <td className="py-3 text-right pr-2 font-bold text-white">
+                        {item.weight_pct.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between text-[11px] text-[#64748b]">
+              <span>Fonte Auditada: {etf.provider} / B3</span>
+              <span>Data-base da Carteira: Outubro/2026</span>
+            </div>
+          </Card>
+        </div>
       )}
 
       {/* TAB 2: NAV Spread */}

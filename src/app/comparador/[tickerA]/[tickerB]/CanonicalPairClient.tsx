@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { MetricCard } from "@/components/ui/MetricCard";
-import { formatCurrency } from "@/lib/formatters";
+import { formatCurrency, formatPercent, formatMultiple, formatNumber } from "@/lib/formatters";
 import { getCanonicalPair } from "@/lib/api";
 import type { AssetComparisonMetrics, ComparatorResult } from "@/schemas/financial";
 import { HoldingsOverlapTable } from "@/components/etfs/HoldingsOverlapTable";
@@ -165,19 +165,19 @@ export function CanonicalPairClient({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard
           title="Menor Custo Efetivo (TER)"
-          value={`${Math.min(assetA.ter_pct ?? 0.3, assetB.ter_pct ?? 0.3).toFixed(2)}% a.a.`}
+          value={`${formatPercent(Math.min(assetA.ter_pct ?? 0.3, assetB.ter_pct ?? 0.3), false)} a.a.`}
           subtitle={`Vencedor: ${(assetA.ter_pct ?? 0.3) <= (assetB.ter_pct ?? 0.3) ? a : b}`}
           glow="emerald"
         />
         <MetricCard
           title="Sobreposição Efetiva"
-          value={`${overlap.total_overlap_pct.toFixed(1)}% em comum`}
+          value={`${formatPercent(overlap.total_overlap_pct, false)} em comum`}
           subtitle={`${overlap.common_holdings_count} ativos subjacentes coincidentes`}
           glow="cyan"
         />
         <MetricCard
           title="Maior Sharpe Ratio"
-          value={`${Math.max(assetA.sharpe, assetB.sharpe).toFixed(2)}x`}
+          value={formatMultiple(Math.max(assetA.sharpe, assetB.sharpe))}
           subtitle={`Vencedor: ${assetA.sharpe >= assetB.sharpe ? a : b}`}
           glow="violet"
         />
@@ -230,10 +230,10 @@ export function CanonicalPairClient({
                   Taxa de Administração Total (TER)
                 </td>
                 <td className="py-3 text-right text-[#00f5a0] font-bold">
-                  {(assetA.ter_pct ?? 0.3).toFixed(2)}% a.a.
+                  {formatPercent(assetA.ter_pct ?? 0.3, false)} a.a.
                 </td>
                 <td className="py-3 text-right text-[#00d9f5] font-bold">
-                  {(assetB.ter_pct ?? 0.3).toFixed(2)}% a.a.
+                  {formatPercent(assetB.ter_pct ?? 0.3, false)} a.a.
                 </td>
                 <td className="py-3 text-center pr-3">
                   <Badge
@@ -254,10 +254,10 @@ export function CanonicalPairClient({
                   Retorno Acumulado 12M
                 </td>
                 <td className="py-3 text-right text-white font-bold">
-                  +{assetA.change_12m.toFixed(2)}%
+                  {formatPercent(assetA.change_12m)}
                 </td>
                 <td className="py-3 text-right text-white font-bold">
-                  +{assetB.change_12m.toFixed(2)}%
+                  {formatPercent(assetB.change_12m)}
                 </td>
                 <td className="py-3 text-center pr-3">
                   <Badge
@@ -274,10 +274,10 @@ export function CanonicalPairClient({
                   Volatilidade Anualizada
                 </td>
                 <td className="py-3 text-right text-white">
-                  {assetA.volatility_pct.toFixed(1)}%
+                  {formatPercent(assetA.volatility_pct, false)}
                 </td>
                 <td className="py-3 text-right text-white">
-                  {assetB.volatility_pct.toFixed(1)}%
+                  {formatPercent(assetB.volatility_pct, false)}
                 </td>
                 <td className="py-3 text-center pr-3">
                   <Badge
@@ -298,10 +298,10 @@ export function CanonicalPairClient({
                   Índice Sharpe (Retorno / Risco)
                 </td>
                 <td className="py-3 text-right text-white font-bold">
-                  {assetA.sharpe.toFixed(2)}
+                  {formatNumber(assetA.sharpe, 2)}
                 </td>
                 <td className="py-3 text-right text-white font-bold">
-                  {assetB.sharpe.toFixed(2)}
+                  {formatNumber(assetB.sharpe, 2)}
                 </td>
                 <td className="py-3 text-center pr-3">
                   <Badge

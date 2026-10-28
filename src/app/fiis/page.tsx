@@ -6,7 +6,7 @@ import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Sparkline } from "@/components/ui/Sparkline";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { formatCurrency, formatPercent, formatMultiple } from "@/lib/formatters";
 import { getAssets } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
 
@@ -74,13 +74,13 @@ export default function FIIsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard
           title="Maior Rendimento Anualizado"
-          value={highestDYFII ? `${highestDYFII.ticker} • ${highestDYFII.dividendYield.toFixed(1)}%` : "KNIP11 • 11,2%"}
+          value={highestDYFII ? `${highestDYFII.ticker} • ${formatPercent(highestDYFII.dividendYield, false)}` : "KNIP11 • 11,2%"}
           subtitle="Rendimentos isentos de IR para pessoa física"
           glow="emerald"
         />
         <MetricCard
           title="Maior Desconto Patrimonial"
-          value={lowestPvpFII ? `${lowestPvpFII.ticker} • ${lowestPvpFII.pvp?.toFixed(2)}x` : "HGLG11 • 0,98x"}
+          value={lowestPvpFII ? `${lowestPvpFII.ticker} • ${formatMultiple(lowestPvpFII.pvp)}` : "HGLG11 • 0,98x"}
           subtitle="Desconto em relação ao valor patrimonial por cota"
           glow="cyan"
         />
@@ -191,7 +191,7 @@ export default function FIIsPage() {
                       P/VP
                     </div>
                     <div className="text-xs font-bold font-mono text-white mt-0.5">
-                      {fii.pvp !== undefined ? `${fii.pvp.toFixed(2)}x` : "—"}
+                      {formatMultiple(fii.pvp)}
                     </div>
                   </div>
                   <div>

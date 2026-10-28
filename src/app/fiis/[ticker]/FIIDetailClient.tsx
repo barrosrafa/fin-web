@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
@@ -9,16 +10,39 @@ import { RadarChart, RadarDataPoint } from "@/components/ui/RadarChart";
 import {
   formatCurrency,
   formatPercent,
+  formatMultiple,
   calculateMagicNumber,
 } from "@/lib/formatters";
 import { getFIIDetail, getAssets, FIIDetailData } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
 
 export function FIIDetailClient({ ticker }: { ticker: string }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const tabParam = searchParams.get("tab");
+  const validTabs = ["IMOVEIS", "BRICK_SCORE", "MAGIC_NUMBER", "DRE"];
+  const initialTab = tabParam && validTabs.includes(tabParam) ? tabParam : "IMOVEIS";
+
   const [fiiDetail, setFiiDetail] = useState<FIIDetailData | null>(null);
   const [fiiAsset, setFiiAsset] = useState<AssetSummary | null>(null);
-  const [activeTab, setActiveTab] = useState("IMOVEIS");
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [, setLoading] = useState(true);
+
+  // Sync state if URL searchParams change
+  useEffect(() => {
+    if (tabParam && validTabs.includes(tabParam) && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", newTab);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   // Magic Number interactive state
   const monthlyYield = 1.1; // R$ 1,10 por cota
@@ -159,7 +183,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
             P/VP (Preço / Valor Patr.)
           </span>
           <div className="text-xl font-black font-mono text-white mt-1">
-            {(fiiAsset?.pvp ?? fiiDetail?.pvp ?? 0.98).toFixed(2)}x
+            {formatMultiple(fiiAsset?.pvp ?? fiiDetail?.pvp ?? 0.98)}
           </div>
         </Card>
         <Card className="text-center p-3">
@@ -175,7 +199,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
             Vacância Física SiiLA
           </span>
           <div className="text-xl font-black font-mono text-[#00f5a0] mt-1">
-            {(fiiDetail?.physical_vacancy_pct ?? 2.4).toFixed(1)}%
+            {formatPercent(fiiDetail?.physical_vacancy_pct ?? (propertiesList.length > 0 ? 2.4 : 0), false)}
           </div>
         </Card>
       </div>
@@ -189,230 +213,266 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
           { id: "DRE", label: "Demonstrativo Trimestral" },
         ]}
         activeTab={activeTab}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
       />
 
       {/* SECTION 1: Imóveis Físicos */}
       {activeTab === "IMOVEIS" && (
-        <Card glow="emerald">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <span className="badge-neon badge-neon-emerald mb-2">
-                Padrão Institucional SiiLA
-              </span>
-              <h3 className="text-xl font-bold text-white tracking-tight">
-                Portfólio de Ativos Imobiliários Físicos
-              </h3>
+        <div role="tabpanel" id="panel-IMOVEIS" aria-labelledby="tab-IMOVEIS">
+          <Card glow="emerald">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <span className="badge-neon badge-neon-emerald mb-2">
+                  Padrão Institucional SiiLA
+                </span>
+                <h3 className="text-xl font-bold text-white tracking-tight">
+                  Portfólio de Ativos Imobiliários Físicos
+                </h3>
+              </div>
+              {propertiesList.length > 0 ? (
+                <Badge variant="emerald">
+                  {propertiesList.length} Empreendimentos Auditados
+                </Badge>
+              ) : (
+                <Badge variant="cyan">Segmento de Papel / CRI</Badge>
+              )}
             </div>
-            <Badge variant="emerald">
-              {propertiesList.length} Empreendimentos Auditados
-            </Badge>
-          </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                  <th className="pb-3 pl-2">Empreendimento</th>
-                  <th className="pb-3">Localização</th>
-                  <th className="pb-3">Padrão SiiLA</th>
-                  <th className="pb-3 text-right">ABL (m²)</th>
-                  <th className="pb-3 text-right">Ocupação</th>
-                  <th className="pb-3 text-right pr-2">Participação</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 mono-nums">
-                {propertiesList.map((prop) => (
-                  <tr key={prop.id} className="hover:bg-white/[0.02]">
-                    <td className="py-3 pl-2">
-                      <span className="font-bold text-white block">
-                        {prop.name}
-                      </span>
-                      <span className="text-[10px] text-[#64748b] font-sans">
-                        {prop.address}
-                      </span>
-                    </td>
-                    <td className="py-3 font-sans text-[#94a3b8]">
-                      {prop.city} / {prop.state}
-                    </td>
-                    <td className="py-3">
-                      <Badge variant="cyan">{prop.siilaStandard}</Badge>
-                    </td>
-                    <td className="py-3 text-right font-bold text-white">
-                      {prop.ablM2.toLocaleString("pt-BR")} m²
-                    </td>
-                    <td className="py-3 text-right font-bold text-[#00f5a0]">
-                      {formatPercent(prop.occupancyPct, false)}
-                    </td>
-                    <td className="py-3 text-right pr-2 font-bold text-white">
-                      {prop.fundSharePct}%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+            {propertiesList.length === 0 ? (
+              <div className="py-12 px-4 text-center bg-white/[0.02] border border-white/5 rounded-2xl flex flex-col items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center text-xl mb-3">
+                  🏢
+                </div>
+                <h4 className="text-sm font-bold text-white mb-1">
+                  Fundo de Recebíveis Imobiliários (CRI / Papel) — Sem Imóveis Físicos Diretos
+                </h4>
+                <p className="text-xs text-[#94a3b8] max-w-lg mx-auto">
+                  O fundo {ticker} aloca seus recursos prioritariamente em Certificados de Recebíveis Imobiliários (CRI), LCI e cotas de outros fundos, não possuindo galpões logísticos ou shoppings físicos diretos sob sua titularidade.
+                </p>
+                <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-[#64748b]">
+                  Fonte Auditada: Relatório Gerencial B3 / CVM • Data-base: Outubro/2026
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                        <th className="pb-3 pl-2">Empreendimento</th>
+                        <th className="pb-3">Localização</th>
+                        <th className="pb-3">Padrão SiiLA</th>
+                        <th className="pb-3 text-right">ABL (m²)</th>
+                        <th className="pb-3 text-right">Ocupação</th>
+                        <th className="pb-3 text-right pr-2">Participação</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5 mono-nums">
+                      {propertiesList.map((prop) => (
+                        <tr key={prop.id} className="hover:bg-white/[0.02]">
+                          <td className="py-3 pl-2">
+                            <span className="font-bold text-white block">
+                              {prop.name}
+                            </span>
+                            <span className="text-[10px] text-[#64748b] font-sans">
+                              {prop.address}
+                            </span>
+                          </td>
+                          <td className="py-3 font-sans text-[#94a3b8]">
+                            {prop.city} / {prop.state}
+                          </td>
+                          <td className="py-3">
+                            <Badge variant="cyan">{prop.siilaStandard}</Badge>
+                          </td>
+                          <td className="py-3 text-right font-bold text-white">
+                            {prop.ablM2.toLocaleString("pt-BR")} m²
+                          </td>
+                          <td className="py-3 text-right font-bold text-[#00f5a0]">
+                            {formatPercent(prop.occupancyPct, false)}
+                          </td>
+                          <td className="py-3 text-right pr-2 font-bold text-white">
+                            {prop.fundSharePct}%
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div className="mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between text-[11px] text-[#64748b]">
+                  <span>Fonte Auditada: SiiLA Brasil / Relatório Gerencial B3</span>
+                  <span>Data-base da Auditoria: Outubro/2026</span>
+                </div>
+              </>
+            )}
+          </Card>
+        </div>
       )}
 
       {/* SECTION 2: Brick Score 6 Eixos with Radar Chart */}
       {activeTab === "BRICK_SCORE" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-up">
-          <div className="lg:col-span-5 flex flex-col items-center justify-center">
-            <Card glow="violet" className="w-full flex flex-col items-center p-4">
-              <div className="flex items-center justify-between w-full mb-2">
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  Radar Poligonal do Score
-                </span>
-                <Badge variant="violet">{overallScore} / 100</Badge>
-              </div>
-              <RadarChart data={radarData} size={300} color="#a855f7" fillOpacity={0.25} />
-            </Card>
-          </div>
-
-          <div className="lg:col-span-7 flex flex-col gap-3">
-            {brickScoreList.map((axis) => (
-              <div
-                key={axis.name}
-                className="p-3.5 rounded-2xl bg-[#0c1017] border border-white/5 flex flex-col gap-1.5"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">
-                    {axis.name}
+        <div role="tabpanel" id="panel-BRICK_SCORE" aria-labelledby="tab-BRICK_SCORE">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-up">
+            <div className="lg:col-span-5 flex flex-col items-center justify-center">
+              <Card glow="violet" className="w-full flex flex-col items-center p-4">
+                <div className="flex items-center justify-between w-full mb-2">
+                  <span className="text-xs font-bold text-white uppercase tracking-wider">
+                    Radar Poligonal do Score
                   </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono font-bold text-[#00f5a0]">
-                      {axis.score} pts
-                    </span>
-                    <Badge variant={axis.status === "EXCELENTE" ? "emerald" : "cyan"}>
-                      {axis.status}
-                    </Badge>
-                  </div>
+                  <Badge variant="violet">{overallScore} / 100</Badge>
                 </div>
-                <p className="text-xs text-[#94a3b8] leading-relaxed">
-                  {axis.comment}
-                </p>
-              </div>
-            ))}
+                <RadarChart data={radarData} size={300} color="#a855f7" fillOpacity={0.25} />
+              </Card>
+            </div>
+
+            <div className="lg:col-span-7 flex flex-col gap-3">
+              {brickScoreList.map((axis) => (
+                <div
+                  key={axis.name}
+                  className="p-3.5 rounded-2xl bg-[#0c1017] border border-white/5 flex flex-col gap-1.5"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-white">
+                      {axis.name}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono font-bold text-[#00f5a0]">
+                        {axis.score} pts
+                      </span>
+                      <Badge variant={axis.status === "EXCELENTE" ? "emerald" : "cyan"}>
+                        {axis.status}
+                      </Badge>
+                    </div>
+                  </div>
+                  <p className="text-xs text-[#94a3b8] leading-relaxed">
+                    {axis.comment}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
 
       {/* SECTION 3: Magic Number & Retirement Simulator */}
       {activeTab === "MAGIC_NUMBER" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-up">
-          {/* Magic Number Card */}
-          <div className="lg:col-span-6">
-            <Card glow="emerald">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-white tracking-tight">
-                  Efeito Bola de Neve (Magic Number)
-                </h3>
-                <Badge variant="emerald">Auto-Sustentável</Badge>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 mb-6 text-center">
-                <span className="text-xs text-[#64748b] uppercase font-semibold">
-                  Cotas para Autocompra Mensal
-                </span>
-                <div className="text-4xl font-black font-mono text-[#00f5a0] my-2">
-                  {magicCotas} Cotas
+        <div role="tabpanel" id="panel-MAGIC_NUMBER" aria-labelledby="tab-MAGIC_NUMBER">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-up">
+            {/* Magic Number Card */}
+            <div className="lg:col-span-6">
+              <Card glow="emerald">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-base font-bold text-white tracking-tight">
+                    Efeito Bola de Neve (Magic Number)
+                  </h3>
+                  <Badge variant="emerald">Auto-Sustentável</Badge>
                 </div>
-                <span className="text-xs text-[#94a3b8]">
-                  Investimento Necessário: {formatCurrency(capitalForMagic)}
-                </span>
-              </div>
 
-              <div className="text-xs text-[#64748b] leading-relaxed">
-                Ao atingir {magicCotas} cotas, o provento mensal distribuído pelo fundo ({formatCurrency(magicCotas * monthlyYield)}) é suficiente para adquirir 1 nova cota todos os meses sem novos aportes do investidor.
-              </div>
-            </Card>
-          </div>
-
-          {/* Retirement Goal Simulator */}
-          <div className="lg:col-span-6">
-            <Card glow="cyan">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-white tracking-tight">
-                  Meta de Renda Passiva
-                </h3>
-                <Badge variant="cyan">Simulador Mensal</Badge>
-              </div>
-
-              <div className="mb-4">
-                <div className="flex justify-between text-xs mb-1.5">
-                  <span className="text-[#94a3b8]">Renda Mensal Desejada:</span>
-                  <span className="font-mono text-white font-bold">
-                    {formatCurrency(targetIncome)} / mês
+                <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 mb-6 text-center">
+                  <span className="text-xs text-[#64748b] uppercase font-semibold">
+                    Cotas para Autocompra Mensal
+                  </span>
+                  <div className="text-4xl font-black font-mono text-[#00f5a0] my-2">
+                    {magicCotas} Cotas
+                  </div>
+                  <span className="text-xs text-[#94a3b8]">
+                    Investimento Necessário: {formatCurrency(capitalForMagic)}
                   </span>
                 </div>
-                <input
-                  type="range"
-                  min="1000"
-                  max="30000"
-                  step="500"
-                  value={targetIncome}
-                  onChange={(e) => setTargetIncome(parseFloat(e.target.value))}
-                  className="w-full accent-[#00d9f5] bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                />
-              </div>
 
-              <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-[#131926] border border-white/5 text-center">
-                <div>
-                  <div className="text-[10px] text-[#64748b] uppercase font-semibold">
-                    Cotas Necessárias
+                <div className="text-xs text-[#64748b] leading-relaxed">
+                  Ao atingir {magicCotas} cotas, o provento mensal distribuído pelo fundo ({formatCurrency(magicCotas * monthlyYield)}) é suficiente para adquirir 1 nova cota todos os meses sem novos aportes do investidor.
+                </div>
+              </Card>
+            </div>
+
+            {/* Retirement Goal Simulator */}
+            <div className="lg:col-span-6">
+              <Card glow="cyan">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-base font-bold text-white tracking-tight">
+                    Meta de Renda Passiva
+                  </h3>
+                  <Badge variant="cyan">Simulador Mensal</Badge>
+                </div>
+
+                <div className="mb-4">
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="text-[#94a3b8]">Renda Mensal Desejada:</span>
+                    <span className="font-mono text-white font-bold">
+                      {formatCurrency(targetIncome)} / mês
+                    </span>
                   </div>
-                  <div className="text-xl font-bold font-mono text-white mt-1">
-                    {cotasForTargetIncome.toLocaleString("pt-BR")}
+                  <input
+                    type="range"
+                    min="1000"
+                    max="30000"
+                    step="500"
+                    value={targetIncome}
+                    onChange={(e) => setTargetIncome(parseFloat(e.target.value))}
+                    className="w-full accent-[#00d9f5] bg-white/10 rounded-lg h-1.5 cursor-pointer"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-[#131926] border border-white/5 text-center">
+                  <div>
+                    <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                      Cotas Necessárias
+                    </div>
+                    <div className="text-xl font-bold font-mono text-white mt-1">
+                      {cotasForTargetIncome.toLocaleString("pt-BR")}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                      Patrimônio Alocado
+                    </div>
+                    <div className="text-xl font-bold font-mono text-[#00d9f5] mt-1">
+                      {formatCurrency(capitalForTarget, true)}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="text-[10px] text-[#64748b] uppercase font-semibold">
-                    Patrimônio Alocado
-                  </div>
-                  <div className="text-xl font-bold font-mono text-[#00d9f5] mt-1">
-                    {formatCurrency(capitalForTarget, true)}
-                  </div>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </div>
           </div>
         </div>
       )}
 
       {/* SECTION 4: DRE Trimestral */}
       {activeTab === "DRE" && (
-        <Card glow="cyan">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-white tracking-tight">
-              DRE Gerencial do Último Trimestre
-            </h3>
-            <Badge variant="cyan">Competência CVM</Badge>
-          </div>
+        <div role="tabpanel" id="panel-DRE" aria-labelledby="tab-DRE">
+          <Card glow="cyan">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-white tracking-tight">
+                DRE Gerencial do Último Trimestre
+              </h3>
+              <Badge variant="cyan">Competência CVM</Badge>
+            </div>
 
-          <div className="flex flex-col divide-y divide-white/5 mono-nums text-xs">
-            <div className="flex justify-between py-2 text-white">
-              <span>(+) Receitas de Locação de Galpões</span>
-              <span className="font-bold">{formatCurrency(84500000, true)}</span>
+            <div className="flex flex-col divide-y divide-white/5 mono-nums text-xs">
+              <div className="flex justify-between py-2 text-white">
+                <span>(+) Receitas de Locação de Imóveis</span>
+                <span className="font-bold">{formatCurrency(84500000, true)}</span>
+              </div>
+              <div className="flex justify-between py-2 text-[#94a3b8]">
+                <span>(+) Rendimentos Financeiros de Caixa</span>
+                <span>{formatCurrency(6200000, true)}</span>
+              </div>
+              <div className="flex justify-between py-2 text-[#ff3b69]">
+                <span>(-) Taxa de Administração e Gestão</span>
+                <span>{formatCurrency(-4200000, true)}</span>
+              </div>
+              <div className="flex justify-between py-2 text-[#ff3b69]">
+                <span>(-) Despesas Operacionais com Imóveis</span>
+                <span>{formatCurrency(-1800000, true)}</span>
+              </div>
+              <div className="flex justify-between py-3 text-[#00f5a0] font-bold text-sm bg-white/[0.02]">
+                <span>(=) Resultado Líquido Distribuível</span>
+                <span>{formatCurrency(84700000, true)}</span>
+              </div>
             </div>
-            <div className="flex justify-between py-2 text-[#94a3b8]">
-              <span>(+) Rendimentos Financeiros de Caixa</span>
-              <span>{formatCurrency(6200000, true)}</span>
-            </div>
-            <div className="flex justify-between py-2 text-[#ff3b69]">
-              <span>(-) Taxa de Administração e Gestão</span>
-              <span>{formatCurrency(-4200000, true)}</span>
-            </div>
-            <div className="flex justify-between py-2 text-[#ff3b69]">
-              <span>(-) Despesas Operacionais com Imóveis</span>
-              <span>{formatCurrency(-1800000, true)}</span>
-            </div>
-            <div className="flex justify-between py-3 text-[#00f5a0] font-bold text-sm bg-white/[0.02]">
-              <span>(=) Resultado Líquido Distribuível</span>
-              <span>{formatCurrency(84700000, true)}</span>
-            </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       )}
     </div>
   );

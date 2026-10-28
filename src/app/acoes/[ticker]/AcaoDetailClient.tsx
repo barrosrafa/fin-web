@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
@@ -26,14 +27,46 @@ import { FinancialMatrixData, DividendMatrixData } from "@/schemas/oceans14";
 import { StockFundamentalsGrid } from "@/components/stocks/StockFundamentalsGrid";
 
 export function AcaoDetailClient({ ticker }: { ticker: string }) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const VALID_TABS = [
+    "VALUATION",
+    "MATRIZ_10A",
+    "GRADE_PROVENTOS",
+    "FUNDAMENTOS",
+    "CHECKLIST",
+    "DRE",
+    "PROVENTOS",
+    "TECNICA",
+    "IA",
+  ];
+  const tabParam = searchParams.get("tab");
+  const initialTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : "VALUATION";
+
   const [valuationData, setValuationData] = useState<StockValuationDetail | null>(null);
   const [completeDetails, setCompleteDetails] = useState<StockCompleteDetails | null>(null);
   const [financialMatrix, setFinancialMatrix] = useState<FinancialMatrixData | null>(null);
   const [dividendMatrix, setDividendMatrix] = useState<DividendMatrixData | null>(null);
   const [matrixPeriod, setMatrixPeriod] = useState<"ANUAL" | "TRIMESTRAL">("ANUAL");
   const [stockInfo, setStockInfo] = useState<AssetSummary | null>(null);
-  const [activeTab, setActiveTab] = useState("VALUATION");
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [, setLoading] = useState(true);
+
+  // Sync state if URL changes externally (back/forward navigation)
+  useEffect(() => {
+    if (tabParam && VALID_TABS.includes(tabParam) && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", newTab);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   // Dynamic Graham & Bazin interactive sliders
   const [lpaInput, setLpaInput] = useState(8.12);
@@ -215,12 +248,17 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
           { id: "IA", label: "Comitê de IA & Fatos Relevantes" },
         ]}
         activeTab={activeTab}
-        onChange={setActiveTab}
+        onChange={handleTabChange}
       />
 
       {/* SECTION 1: Valuation Models */}
       {activeTab === "VALUATION" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div
+          role="tabpanel"
+          id="panel-VALUATION"
+          aria-labelledby="tab-VALUATION"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-6"
+        >
           {/* Benjamin Graham Model */}
           <div className="lg:col-span-6 flex flex-col gap-4">
             <Card glow="emerald">
@@ -511,7 +549,12 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
 
       {/* SECTION: Oceans14 10-Year Statement Matrix */}
       {activeTab === "MATRIZ_10A" && (
-        <div className="flex flex-col gap-6 animate-fade-up">
+        <div
+          role="tabpanel"
+          id="panel-MATRIZ_10A"
+          aria-labelledby="tab-MATRIZ_10A"
+          className="flex flex-col gap-6 animate-fade-up"
+        >
           <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#131926]/40 border border-white/5">
             <div>
               <span className="text-xs font-bold text-white uppercase tracking-wider">
@@ -668,7 +711,12 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
 
       {/* SECTION: Monthly Dividend Matrix (Jan-Dez) */}
       {activeTab === "GRADE_PROVENTOS" && (
-        <Card glow="emerald" className="p-0 overflow-hidden animate-fade-up">
+        <div
+          role="tabpanel"
+          id="panel-GRADE_PROVENTOS"
+          aria-labelledby="tab-GRADE_PROVENTOS"
+        >
+          <Card glow="emerald" className="p-0 overflow-hidden animate-fade-up">
           <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#131926]/40">
             <div>
               <span className="text-xs font-bold text-white uppercase tracking-wider">
@@ -727,103 +775,121 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </table>
           </div>
         </Card>
+      </div>
       )}
 
       {/* SECTION: Fundamentus Fundamentals */}
       {activeTab === "FUNDAMENTOS" && (
-        <StockFundamentalsGrid
-          data={
-            completeDetails ?? {
-              details: {
-                ticker,
-                name: stockInfo?.name ?? valuationData?.name ?? ticker,
-                current_price: stockPrice,
-                sector: stockInfo?.sector ?? "Geral",
-                subsector: stockInfo?.subsector ?? "Geral",
-                is_financial_institution: ["ITUB4", "ITUB3", "BBDC4", "BBDC3", "BBAS3", "SANB11", "BPAC11"].includes(ticker.toUpperCase()),
-                min_52_semanas: stockPrice * 0.78,
-                max_52_semanas: stockPrice * 1.32,
-                volume_medio_2m: 450000000,
-                valor_mercado: 280000000000,
-                valor_firma: 310000000000,
-              },
-              multiples: {
-                ticker,
-                pl: stockInfo?.pl ?? 5.5,
-                pvp: stockInfo?.pvp ?? 1.25,
-                dividend_yield: stockInfo?.dividendYield ?? 8.5,
-                roe: 18.4,
-                roic: 16.2,
-                margem_liquida: 15.8,
-              },
-              financials: {
-                ticker,
-                is_financial_institution: ["ITUB4", "ITUB3", "BBDC4", "BBDC3", "BBAS3", "SANB11", "BPAC11"].includes(ticker.toUpperCase()),
-                ativo_total: 350000000000,
-                patrimonio_liquido: 180000000000,
-                lucro_liquido_12m: 35000000000,
-                lucro_liquido_3m: 9200000000,
-              },
+        <div
+          role="tabpanel"
+          id="panel-FUNDAMENTOS"
+          aria-labelledby="tab-FUNDAMENTOS"
+        >
+          <StockFundamentalsGrid
+            data={
+              completeDetails ?? {
+                details: {
+                  ticker,
+                  name: stockInfo?.name ?? valuationData?.name ?? ticker,
+                  current_price: stockPrice,
+                  sector: stockInfo?.sector ?? "Geral",
+                  subsector: stockInfo?.subsector ?? "Geral",
+                  is_financial_institution: ["ITUB4", "ITUB3", "BBDC4", "BBDC3", "BBAS3", "SANB11", "BPAC11"].includes(ticker.toUpperCase()),
+                  min_52_semanas: stockPrice * 0.78,
+                  max_52_semanas: stockPrice * 1.32,
+                  volume_medio_2m: 450000000,
+                  valor_mercado: 280000000000,
+                  valor_firma: 310000000000,
+                },
+                multiples: {
+                  ticker,
+                  pl: stockInfo?.pl ?? 5.5,
+                  pvp: stockInfo?.pvp ?? 1.25,
+                  dividend_yield: stockInfo?.dividendYield ?? 8.5,
+                  roe: 18.4,
+                  roic: 16.2,
+                  margem_liquida: 15.8,
+                },
+                financials: {
+                  ticker,
+                  is_financial_institution: ["ITUB4", "ITUB3", "BBDC4", "BBDC3", "BBAS3", "SANB11", "BPAC11"].includes(ticker.toUpperCase()),
+                  ativo_total: 350000000000,
+                  patrimonio_liquido: 180000000000,
+                  lucro_liquido_12m: 35000000000,
+                  lucro_liquido_3m: 9200000000,
+                },
+              }
             }
-          }
-        />
+          />
+        </div>
       )}
 
       {/* SECTION 2: Checklist */}
       {activeTab === "CHECKLIST" && (
-        <Card glow="emerald">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <span className="badge-neon badge-neon-emerald mb-2">
-                Buy & Hold CVM Audit
-              </span>
-              <h3 className="text-xl font-bold text-white tracking-tight">
-                Critérios Rigorosos de Elegibilidade Patrimonial
-              </h3>
-            </div>
-            <Badge variant="emerald">
-              {checklistItems.filter((c) => c.passed).length} de {checklistItems.length} Aprovados
-            </Badge>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {checklistItems.map((item) => (
-              <div
-                key={item.id}
-                className="p-4 rounded-2xl bg-[#131926] border border-white/5 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-xs font-bold text-white">
-                      {item.title}
-                    </span>
-                    <Badge variant={item.passed ? "emerald" : "crimson"} dot>
-                      {item.passed ? "Aprovado" : "Reprovado"}
-                    </Badge>
-                  </div>
-                  <p className="text-xs text-[#94a3b8] mb-3 leading-relaxed">
-                    {item.explanation}
-                  </p>
-                </div>
-
-                <div className="flex justify-between items-center pt-3 border-t border-white/5 text-xs font-mono">
-                  <span className="text-[#64748b]">
-                    Meta: <span className="text-white">{item.targetValue}</span>
-                  </span>
-                  <span className="text-[#00f5a0] font-bold">
-                    Apurado: {item.metricValue}
-                  </span>
-                </div>
+        <div
+          role="tabpanel"
+          id="panel-CHECKLIST"
+          aria-labelledby="tab-CHECKLIST"
+        >
+          <Card glow="emerald">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <span className="badge-neon badge-neon-emerald mb-2">
+                  Buy & Hold CVM Audit
+                </span>
+                <h3 className="text-xl font-bold text-white tracking-tight">
+                  Critérios Rigorosos de Elegibilidade Patrimonial
+                </h3>
               </div>
-            ))}
-          </div>
-        </Card>
+              <Badge variant="emerald">
+                {checklistItems.filter((c) => c.passed).length} de {checklistItems.length} Aprovados
+              </Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {checklistItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-4 rounded-2xl bg-[#131926] border border-white/5 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-2">
+                      <span className="text-xs font-bold text-white">
+                        {item.title}
+                      </span>
+                      <Badge variant={item.passed ? "emerald" : "crimson"} dot>
+                        {item.passed ? "Aprovado" : "Reprovado"}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-[#94a3b8] mb-3 leading-relaxed">
+                      {item.explanation}
+                    </p>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-3 border-t border-white/5 text-xs font-mono">
+                    <span className="text-[#64748b]">
+                      Meta: <span className="text-white">{item.targetValue}</span>
+                    </span>
+                    <span className="text-[#00f5a0] font-bold">
+                      Apurado: {item.metricValue}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
       )}
 
       {/* SECTION 3: DRE */}
       {activeTab === "DRE" && (
-        <Card glow="cyan">
-          <div className="flex items-center justify-between mb-6">
+        <div
+          role="tabpanel"
+          id="panel-DRE"
+          aria-labelledby="tab-DRE"
+        >
+          <Card glow="cyan">
+            <div className="flex items-center justify-between mb-6">
             <div>
               <span className="badge-neon badge-neon-cyan mb-2">
                 Demonstração do Resultado do Exercício
@@ -924,12 +990,18 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </table>
           </div>
         </Card>
+      </div>
       )}
 
       {/* SECTION 4: Proventos */}
       {activeTab === "PROVENTOS" && (
-        <Card glow="emerald">
-          <div className="flex items-center justify-between mb-4">
+        <div
+          role="tabpanel"
+          id="panel-PROVENTOS"
+          aria-labelledby="tab-PROVENTOS"
+        >
+          <Card glow="emerald">
+            <div className="flex items-center justify-between mb-4">
             <div>
               <span className="badge-neon badge-neon-emerald mb-2">
                 Remuneração aos Acionistas
@@ -975,11 +1047,17 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </table>
           </div>
         </Card>
+      </div>
       )}
 
       {/* SECTION 5: Technical Analysis */}
       {activeTab === "TECNICA" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-up">
+        <div
+          role="tabpanel"
+          id="panel-TECNICA"
+          aria-labelledby="tab-TECNICA"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-up"
+        >
           <div className="lg:col-span-6">
             <Card glow="cyan">
               <div className="flex items-center justify-between mb-4">
@@ -1064,230 +1142,14 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
           </div>
         </div>
       )}
-
-      {/* SECTION: Oceans14 10-Year Statement Matrix */}
-      {activeTab === "MATRIZ_10A" && (
-        <div className="flex flex-col gap-6 animate-fade-up">
-          <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#131926]/40 border border-white/5">
-            <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Matriz Contábil Padronizada Oceans14 (10 Anos)
-              </span>
-              <p className="text-[11px] text-[#64748b] mt-0.5">
-                Demonstrações contábeis auditadas CVM normalizadas com ajuste retroativo de desdobramentos/grupamentos.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setMatrixPeriod("ANUAL")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  matrixPeriod === "ANUAL"
-                    ? "bg-[#00f5a0] text-black shadow-[0_0_15px_rgba(0,245,160,0.4)]"
-                    : "bg-white/5 text-[#94a3b8] hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                Anual Consolidado
-              </button>
-              <button
-                onClick={() => setMatrixPeriod("TRIMESTRAL")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                  matrixPeriod === "TRIMESTRAL"
-                    ? "bg-[#00f5a0] text-black shadow-[0_0_15px_rgba(0,245,160,0.4)]"
-                    : "bg-white/5 text-[#94a3b8] hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                Trimestral
-              </button>
-            </div>
-          </div>
-
-          {/* DRE Matrix */}
-          <Card glow="none" className="p-0 overflow-hidden">
-            <div className="p-3.5 bg-[#131926]/70 border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                DRE — Demonstração do Resultado do Exercício (R$ Milhões)
-              </span>
-              <Badge variant="cyan">Regime de Competência</Badge>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[11px] font-mono">
-                <thead>
-                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/90 font-sans">
-                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10">Conta Contábil</th>
-                    {(financialMatrix?.years ?? ["2021", "2022", "2023", "2024", "2025"]).map((y) => (
-                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]">{y}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {(financialMatrix?.dre ?? []).map((row, idx) => (
-                    <tr key={idx} className={`hover:bg-white/[0.02] ${row.is_total ? "font-bold text-white bg-white/[0.01]" : "text-[#94a3b8]"}`}>
-                      <td className={`py-2 pl-4 sticky left-0 bg-[#0a0e17] z-10 font-sans ${row.indentation_level ? "pl-8 text-[#64748b]" : ""}`}>
-                        {row.account_name}
-                      </td>
-                      {(financialMatrix?.years ?? []).map((y) => {
-                        const val = row.values_by_year[y];
-                        const isNeg = val !== null && val !== undefined && val < 0;
-                        return (
-                          <td key={y} className={`py-2 px-3 text-right ${isNeg ? "text-[#ff3b69]" : ""}`}>
-                            {val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-
-          {/* Balanço Patrimonial Matrix */}
-          <Card glow="none" className="p-0 overflow-hidden">
-            <div className="p-3.5 bg-[#131926]/70 border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Balanço Patrimonial — Ativo, Passivo & Patrimônio Líquido (R$ Milhões)
-              </span>
-              <Badge variant="violet">Estrutura de Capital</Badge>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[11px] font-mono">
-                <thead>
-                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/90 font-sans">
-                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10">Conta Patrimonial</th>
-                    {(financialMatrix?.years ?? ["2021", "2022", "2023", "2024", "2025"]).map((y) => (
-                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]">{y}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {(financialMatrix?.balance_sheet ?? []).map((row, idx) => (
-                    <tr key={idx} className={`hover:bg-white/[0.02] ${row.is_total ? "font-bold text-white bg-white/[0.01]" : "text-[#94a3b8]"}`}>
-                      <td className={`py-2 pl-4 sticky left-0 bg-[#0a0e17] z-10 font-sans ${row.indentation_level ? "pl-8 text-[#64748b]" : ""}`}>
-                        {row.account_name}
-                      </td>
-                      {(financialMatrix?.years ?? []).map((y) => {
-                        const val = row.values_by_year[y];
-                        return (
-                          <td key={y} className="py-2 px-3 text-right">
-                            {val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-
-          {/* DFC Matrix */}
-          <Card glow="none" className="p-0 overflow-hidden">
-            <div className="p-3.5 bg-[#131926]/70 border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                DFC — Demonstração do Fluxo de Caixa & Caixa Livre (R$ Milhões)
-              </span>
-              <Badge variant="emerald">Geração de Caixa</Badge>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[11px] font-mono">
-                <thead>
-                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/90 font-sans">
-                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10">Fluxo de Caixa</th>
-                    {(financialMatrix?.years ?? ["2021", "2022", "2023", "2024", "2025"]).map((y) => (
-                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]">{y}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/5">
-                  {(financialMatrix?.cash_flow ?? []).map((row, idx) => (
-                    <tr key={idx} className={`hover:bg-white/[0.02] ${row.is_total ? "font-bold text-[#00f5a0]" : "text-[#94a3b8]"}`}>
-                      <td className="py-2 pl-4 sticky left-0 bg-[#0a0e17] z-10 font-sans">
-                        {row.account_name}
-                      </td>
-                      {(financialMatrix?.years ?? []).map((y) => {
-                        const val = row.values_by_year[y];
-                        const isNeg = val !== null && val !== undefined && val < 0;
-                        return (
-                          <td key={y} className={`py-2 px-3 text-right ${isNeg ? "text-[#ff3b69]" : ""}`}>
-                            {val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* SECTION: Monthly Dividend Matrix (Jan-Dez) */}
-      {activeTab === "GRADE_PROVENTOS" && (
-        <Card glow="emerald" className="p-0 overflow-hidden animate-fade-up">
-          <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#131926]/40">
-            <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Grade Histórica de Proventos por Mês de Pagamento (Jan a Dez)
-              </span>
-              <p className="text-[11px] text-[#64748b] mt-0.5">
-                Valores nominais por ação distribuídos por competência de desembolso financeiro efetivo.
-              </p>
-            </div>
-            <Badge variant="emerald">Sazonalidade Oceans14</Badge>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead>
-                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
-                  <th className="py-3 pl-4">Ano</th>
-                  <th className="py-3 text-right">Jan</th>
-                  <th className="py-3 text-right">Fev</th>
-                  <th className="py-3 text-right">Mar</th>
-                  <th className="py-3 text-right">Abr</th>
-                  <th className="py-3 text-right">Mai</th>
-                  <th className="py-3 text-right">Jun</th>
-                  <th className="py-3 text-right">Jul</th>
-                  <th className="py-3 text-right">Ago</th>
-                  <th className="py-3 text-right">Set</th>
-                  <th className="py-3 text-right">Out</th>
-                  <th className="py-3 text-right">Nov</th>
-                  <th className="py-3 text-right">Dez</th>
-                  <th className="py-3 text-right font-bold text-white">Total Anual</th>
-                  <th className="py-3 text-right pr-4 text-[#00d9f5]">Yield / Custo</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {(dividendMatrix?.matrix ?? []).map((row) => (
-                  <tr key={row.year} className="hover:bg-white/[0.02]">
-                    <td className="py-2.5 pl-4 font-bold text-white font-sans">{row.year}</td>
-                    {row.months.map((m, mIdx) => (
-                      <td key={mIdx} className="py-2.5 text-right text-white">
-                        {m !== null && m !== undefined ? (
-                          <span className="text-[#00f5a0] font-bold">R$ {m.toFixed(2)}</span>
-                        ) : (
-                          <span className="text-[#64748b]">—</span>
-                        )}
-                      </td>
-                    ))}
-                    <td className="py-2.5 text-right font-bold text-white">
-                      {formatCurrency(row.annual_total)}
-                    </td>
-                    <td className="py-2.5 text-right pr-4 font-bold text-[#00d9f5]">
-                      {row.yield_on_cost_pct > 0 ? `${row.yield_on_cost_pct.toFixed(2)}%` : "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
-
       {/* SECTION 6: AI Committee */}
       {activeTab === "IA" && (
-        <Card glow="violet" className="animate-fade-up">
+        <div
+          role="tabpanel"
+          id="panel-IA"
+          aria-labelledby="tab-IA"
+        >
+          <Card glow="violet" className="animate-fade-up">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
               <span className="w-3 h-3 rounded-full bg-[#a855f7] animate-pulse" />
@@ -1342,6 +1204,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </div>
           </div>
         </Card>
+      </div>
       )}
     </div>
   );

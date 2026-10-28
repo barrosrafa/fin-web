@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { formatCurrency, formatPercent, formatDividendUnit } from "@/lib/formatters";
 import { getDetailedDividendCalendar, DividendCalendarDetailItem } from "@/lib/api";
 
 export default function AgendaDividendosPage() {
@@ -140,13 +140,13 @@ export default function AgendaDividendosPage() {
                       {item.data_pagamento || "A definir"}
                     </td>
                     <td className="py-4 px-4 text-right font-mono">
-                      {formatCurrency(item.valor_bruto)}
+                      {formatDividendUnit(item.valor_bruto)}
                     </td>
                     <td className="py-4 px-4 text-right font-mono text-xs text-[#94a3b8]">
                       {item.aliquota_ir_pct > 0 ? `${item.aliquota_ir_pct}%` : "Isento"}
                     </td>
                     <td className="py-4 px-4 text-right font-mono font-bold text-white">
-                      {formatCurrency(item.valor_liquido)}
+                      {formatDividendUnit(item.valor_liquido)}
                     </td>
                     <td className="py-4 px-6 text-right font-mono text-cyan-400 font-semibold">
                       {formatPercent(item.yield_evento_pct)}

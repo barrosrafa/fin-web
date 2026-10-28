@@ -74,6 +74,51 @@ export function formatNumber(
 }
 
 /**
+ * Multiple formatter (e.g. 1,32x, 5,90x) using pt-BR comma convention
+ */
+export function formatMultiple(
+  value?: number | null,
+  decimals: number = 2,
+  fallback: string = "—"
+): string {
+  if (value === undefined || value === null || isNaN(value)) return fallback;
+  return `${formatNumber(value, decimals)}x`;
+}
+
+/**
+ * Preserves 4 decimal places for unit share dividends (e.g. R$ 0,4460) as required by D1.
+ */
+export function formatDividendUnit(value?: number | null): string {
+  if (value === undefined || value === null || isNaN(value)) return "R$ 0,0000";
+  // If the value has fractions beyond 2 decimals, format with 4 decimals
+  const hasSubCents = Math.abs(value * 100 - Math.round(value * 100)) > 0.001;
+  const decimals = hasSubCents ? 4 : 2;
+  return value.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: 4,
+  });
+}
+
+/**
+ * Percent with pt-BR comma and configurable sign
+ */
+export function formatPercentPtBr(
+  value?: number | null,
+  includeSign: boolean = false,
+  decimals: number = 2,
+  fallback: string = "—"
+): string {
+  if (value === undefined || value === null || isNaN(value)) return fallback;
+  const sign = includeSign && value > 0 ? "+" : "";
+  return `${sign}${value.toLocaleString("pt-BR", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  })}%`;
+}
+
+/**
  * Graham Fair Value Formula
  * V = sqrt(22.5 * LPA * VPA)
  */

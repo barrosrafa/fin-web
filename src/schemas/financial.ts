@@ -352,6 +352,8 @@ export interface AssetComparisonMetrics {
   pl: number;
   volatility_pct: number;
   sharpe: number;
+  roe_pct?: number;
+  divida_liquida_pl?: number;
   ter_pct?: number;
   gestora?: string;
 }

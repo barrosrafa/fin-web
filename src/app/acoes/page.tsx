@@ -6,7 +6,7 @@ import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Sparkline } from "@/components/ui/Sparkline";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { formatCurrency, formatPercent, formatMultiple } from "@/lib/formatters";
 import { getAssets } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
 
@@ -71,7 +71,7 @@ export default function AcoesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard
           title="Maior Dividend Yield"
-          value={highestDYStock ? `${highestDYStock.ticker} • ${highestDYStock.dividendYield.toFixed(1)}%` : "PETR4 • 14,8%"}
+          value={highestDYStock ? `${highestDYStock.ticker} • ${formatPercent(highestDYStock.dividendYield, false)}` : "PETR4 • 14,8%"}
           subtitle="Política de distribuição sustentada por caixa"
           glow="emerald"
         />
@@ -83,7 +83,7 @@ export default function AcoesPage() {
         />
         <MetricCard
           title="Maior Desconto P/VP"
-          value={lowestPvpStock ? `${lowestPvpStock.ticker} • ${lowestPvpStock.pvp?.toFixed(2)}x` : "BBAS3 • 0,78x"}
+          value={lowestPvpStock ? `${lowestPvpStock.ticker} • ${formatMultiple(lowestPvpStock.pvp)}` : "BBAS3 • 0,78x"}
           subtitle="Desconto em relação ao valor patrimonial contábil"
           glow="violet"
         />
@@ -199,7 +199,7 @@ export default function AcoesPage() {
                       P/VP
                     </div>
                     <div className="text-xs font-bold font-mono text-white mt-0.5">
-                      {stock.pvp !== undefined ? `${stock.pvp.toFixed(2)}x` : "—"}
+                      {formatMultiple(stock.pvp)}
                     </div>
                   </div>
                   <div>
@@ -207,7 +207,7 @@ export default function AcoesPage() {
                       P/L
                     </div>
                     <div className="text-xs font-bold font-mono text-white mt-0.5">
-                      {stock.pl !== undefined && stock.pl !== 0 ? `${stock.pl.toFixed(1)}x` : "—"}
+                      {stock.pl !== undefined && stock.pl !== 0 ? formatMultiple(stock.pl, 1) : "—"}
                     </div>
                   </div>
                 </div>
