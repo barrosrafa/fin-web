@@ -33,6 +33,24 @@ import {
   CreditSystemRow,
 } from "@/schemas/oceans14";
 
+import {
+  CDN_BASE,
+  fetchCdnSnapshot,
+  getStockSnapshot,
+  getFIISnapshot,
+  getMarketOverviewSnapshot,
+  getRankingsSnapshot,
+} from "./snapshots";
+
+export {
+  CDN_BASE,
+  fetchCdnSnapshot,
+  getStockSnapshot,
+  getFIISnapshot,
+  getMarketOverviewSnapshot,
+  getRankingsSnapshot,
+};
+
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
 export const API_BASE = rawApiUrl
   ? (rawApiUrl.endsWith("/api/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, "")}/api/v1`)
@@ -308,6 +326,20 @@ export interface FundRiskMatrixData {
 
 export async function getBenchmarks(): Promise<BenchmarkItem[]> {
   try {
+    if (CDN_BASE) {
+      const snap = await fetchCdnSnapshot<{
+        indices: Array<{ codigo: string; nome: string; valor: number; variacao_pct: number }>;
+      }>("market", "overview.json");
+      if (snap?.indices && snap.indices.length > 0) {
+        return snap.indices.map((idx) => ({
+          name: idx.nome,
+          ticker: idx.codigo,
+          value: idx.valor,
+          change: idx.variacao_pct,
+          sparkline: [idx.valor, idx.valor, idx.valor, idx.valor, idx.valor],
+        }));
+      }
+    }
     return await fetchJson<BenchmarkItem[]>("/market/benchmarks");
   } catch (err) {
     console.error("Failed to fetch benchmarks:", err);
