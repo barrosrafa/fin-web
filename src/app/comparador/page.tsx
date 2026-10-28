@@ -12,8 +12,8 @@ export default function ComparadorPage() {
   const [ticker1, setTicker1] = useState("PETR4");
   const [ticker2, setTicker2] = useState("VALE3");
   const [assets, setAssets] = useState<AssetSummary[]>([]);
-  const [comparison, setComparison] = useState<ComparatorResult | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setComparison] = useState<ComparatorResult | null>(null);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadAssets() {

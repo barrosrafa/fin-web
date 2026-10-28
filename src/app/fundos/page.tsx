@@ -10,7 +10,7 @@ import { QuantRiskMatrix } from "@/schemas/financial";
 
 export default function FundosPage() {
   const [fundData, setFundData] = useState<FundRiskMatrixData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {

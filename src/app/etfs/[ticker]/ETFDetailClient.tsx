@@ -6,13 +6,13 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
 import { MetricCard } from "@/components/ui/MetricCard";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { getETFDetail, ETFDetailData } from "@/lib/api";
 
 export function ETFDetailClient({ ticker }: { ticker: string }) {
   const [activeTab, setActiveTab] = useState("VISAO_GERAL");
   const [etfData, setEtfData] = useState<ETFDetailData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {

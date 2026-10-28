@@ -29,7 +29,7 @@ export default function HomePage() {
   const [dividends, setDividends] = useState<DividendCalendarItem[]>([]);
   const [aiVerdict, setAiVerdict] = useState<AISentimentData | null>(null);
   const [valuationPetr4, setValuationPetr4] = useState<StockValuationDetail | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {

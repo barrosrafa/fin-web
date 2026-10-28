@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { formatPercent } from "@/lib/formatters";
-import { getBenchmarks, BenchmarkItem } from "@/lib/api";
+import { getBenchmarks } from "@/lib/api";
 
 export interface TickerItem {
   ticker: string;

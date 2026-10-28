@@ -11,7 +11,7 @@ import { AssetSummary } from "@/schemas/financial";
 
 export default function ETFsPage() {
   const [etfs, setEtfs] = useState<AssetSummary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {

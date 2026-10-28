@@ -9,7 +9,6 @@ import { RadarChart, RadarDataPoint } from "@/components/ui/RadarChart";
 import {
   formatCurrency,
   formatPercent,
-  formatNumber,
   calculateMagicNumber,
 } from "@/lib/formatters";
 import { getFIIDetail, getAssets, FIIDetailData } from "@/lib/api";
@@ -19,7 +18,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
   const [fiiDetail, setFiiDetail] = useState<FIIDetailData | null>(null);
   const [fiiAsset, setFiiAsset] = useState<AssetSummary | null>(null);
   const [activeTab, setActiveTab] = useState("IMOVEIS");
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   // Magic Number interactive state
   const monthlyYield = 1.1; // R$ 1,10 por cota

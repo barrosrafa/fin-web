@@ -10,7 +10,7 @@ import { getDemoPortfolioPositions, DemoPosition } from "@/lib/api";
 export default function CarteiraPage() {
   const [targetMonthlyYield, setTargetMonthlyYield] = useState(3000);
   const [portfolioItems, setPortfolioItems] = useState<DemoPosition[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {

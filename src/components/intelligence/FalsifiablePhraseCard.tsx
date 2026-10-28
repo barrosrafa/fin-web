@@ -3,10 +3,10 @@ import React, { useState } from "react";
 export interface InteractivePill {
   pill_id: string;
   label: string;
-  value: any;
+  value: string | number | boolean | null;
   pill_type: string;
   modal_target: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface FalsifiablePhraseCardProps {

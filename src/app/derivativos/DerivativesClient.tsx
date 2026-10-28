@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
 import { MetricCard } from "@/components/ui/MetricCard";
-import { formatCurrency, formatPercent, formatNumber } from "@/lib/formatters";
+import { formatCurrency } from "@/lib/formatters";
 import { getDerivatives, DerivativesData } from "@/lib/api";
 import { OptionContract, StockBorrowingBTC, BuybackProgram } from "@/schemas/financial";
 
@@ -15,7 +15,7 @@ export function DerivativesClient() {
   const [optionType, setOptionType] = useState<"CALL" | "PUT">("CALL");
   const [activeTab, setActiveTab] = useState("OPCOES");
   const [derivativesData, setDerivativesData] = useState<DerivativesData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {

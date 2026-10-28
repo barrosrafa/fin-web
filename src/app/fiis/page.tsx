@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
@@ -15,7 +14,7 @@ export default function FIIsPage() {
   const [search, setSearch] = useState("");
   const [selectedSubsector, setSelectedSubsector] = useState("TODOS");
   const [fiis, setFiis] = useState<AssetSummary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {

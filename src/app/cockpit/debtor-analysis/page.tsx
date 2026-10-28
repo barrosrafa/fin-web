@@ -5,6 +5,7 @@ import { TripleCoverageBar } from "@/components/portfolio/TripleCoverageBar";
 import { DebtorConcentrationCard, DebtorItem } from "@/components/portfolio/DebtorConcentrationCard";
 import { FalsifiablePhraseCard } from "@/components/intelligence/FalsifiablePhraseCard";
 import { DivergenceExplainerModal } from "@/components/reconciliation/DivergenceExplainerModal";
+import { API_BASE } from "@/lib/api";
 
 export default function DebtorAnalysisPage() {
   const [isDivergenceModalOpen, setIsDivergenceModalOpen] = useState(false);
@@ -49,7 +50,7 @@ export default function DebtorAnalysisPage() {
     if (!overrideEntity) return;
 
     try {
-      await fetch("http://localhost:8000/api/v1/portfolio/demo-investor-001/overrides", {
+      await fetch(`${API_BASE}/portfolio/demo-investor-001/overrides`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

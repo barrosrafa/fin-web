@@ -6,14 +6,45 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Tabs } from "@/components/ui/Tabs";
 import { MetricCard } from "@/components/ui/MetricCard";
-import { formatCurrency, formatPercent, formatNumber } from "@/lib/formatters";
+import { formatCurrency, formatPercent } from "@/lib/formatters";
 import { getFundRiskMatrix, FundRiskMatrixData } from "@/lib/api";
-import { QuantRiskMatrix, FundHoldingCDA } from "@/schemas/financial";
+import { QuantRiskMatrix } from "@/schemas/financial";
+
+interface FundRiskRow {
+  timeframe: string;
+  sharpe?: number;
+  sharpe_ratio?: number;
+  sortino?: number;
+  treynor?: number;
+  jensenAlpha?: number;
+  jensen_alpha?: number;
+  beta?: number;
+  volatility?: number;
+  volatility_pct?: number;
+  maxDrawdown?: number;
+  max_drawdown_pct?: number;
+  recoveryDays?: number;
+  recovery_days?: number;
+  positiveMonthsPct?: number;
+  positive_months_pct?: number;
+}
+
+interface FundCDARow {
+  assetName?: string;
+  asset_name?: string;
+  assetType?: string;
+  asset_type?: string;
+  identifier: string;
+  weightPct?: number;
+  weight_pct?: number;
+  financialValue?: number;
+  financial_value?: number;
+}
 
 export function FundDetailClient({ fundId }: { fundId: string }) {
   const [activeTab, setActiveTab] = useState("RISCO_QUANT");
   const [fundData, setFundData] = useState<FundRiskMatrixData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
@@ -162,7 +193,7 @@ export function FundDetailClient({ fundId }: { fundId: string }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 mono-nums">
-                {matrixList.map((row: any) => (
+                {matrixList.map((row: FundRiskRow) => (
                   <tr key={row.timeframe} className="hover:bg-white/[0.02]">
                     <td className="py-3 pl-2 font-bold text-white font-sans">{row.timeframe}</td>
                     <td className="py-3 text-right font-bold text-[#00f5a0]">{(row.sharpe ?? row.sharpe_ratio ?? 1.5).toFixed(2)}</td>
@@ -211,7 +242,7 @@ export function FundDetailClient({ fundId }: { fundId: string }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 mono-nums">
-                {cdaList.map((item: any) => (
+                {cdaList.map((item: FundCDARow) => (
                   <tr key={item.identifier} className="hover:bg-white/[0.02]">
                     <td className="py-3 pl-2 font-bold text-white">{item.assetName ?? item.asset_name}</td>
                     <td className="py-3">

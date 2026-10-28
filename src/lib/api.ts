@@ -1,6 +1,5 @@
 import {
   AssetSummary,
-  ValuationModel,
   ChecklistItem,
   DREEntry,
   DividendEntry,
@@ -9,15 +8,26 @@ import {
   QuantRiskMatrix,
   TechnicalIndicators,
   AICommitteeVerdict,
-  ETFDetail,
   OptionContract,
   StockBorrowingBTC,
   BuybackProgram,
-  TreasuryBond,
   FundHoldingCDA,
 } from "@/schemas/financial";
+import {
+  FinancialMatrixData,
+  ConsistencyScreenerAsset,
+  StockRankingRow,
+  FIIRankingRow,
+  FIIVacancyHistoryData,
+  IbovPEHistoryItem,
+  InvestorFlowItem,
+  EarningsCalendarRow,
+  DividendMatrixData,
+  GovernmentAccountsRow,
+  CreditSystemRow,
+} from "@/schemas/oceans14";
 
-const API_BASE =
+export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
 
 async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
@@ -33,7 +43,30 @@ async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   if (!res.ok) {
     throw new Error(`API error [${res.status}] on ${path}: ${res.statusText}`);
   }
-  return res.json();
+  // The backend serializes missing values as JSON `null`, while the frontend
+  // schemas model them as optional (`undefined`). Normalize object properties so
+  // checks like `x !== undefined` followed by `x.toFixed()` don't crash on null.
+  const text = await res.text();
+  return JSON.parse(text, function (this: unknown, _key: string, value: unknown) {
+    return value === null && !Array.isArray(this) ? undefined : value;
+  }) as T;
+}
+
+/**
+ * The API serializes nested structures (properties, risk matrix, options, BTC,
+ * buybacks, CDA holdings) in snake_case, while the shared Zod schemas used by the
+ * UI expect camelCase. Convert keys recursively for those nested payloads.
+ */
+function camelizeKeys<T>(value: unknown): T {
+  if (Array.isArray(value)) return value.map((v) => camelizeKeys(v)) as T;
+  if (value && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+      out[k.replace(/_([a-z0-9])/g, (_, c: string) => c.toUpperCase())] = camelizeKeys(v);
+    }
+    return out as T;
+  }
+  return value as T;
 }
 
 export interface BenchmarkItem {
@@ -304,6 +337,8 @@ export async function getDividends(limit: number = 15): Promise<DividendCalendar
   }
 }
 
+export const getDividendCalendar = getDividends;
+
 export async function queryScreener(
   params: ScreenerFilterParams
 ): Promise<ScreenerQueryResult> {
@@ -329,7 +364,8 @@ export async function getStockValuation(ticker: string): Promise<StockValuationD
 
 export async function getFIIDetail(ticker: string): Promise<FIIDetailData | null> {
   try {
-    return await fetchJson<FIIDetailData>(`/fiis/${ticker}`);
+    const data = await fetchJson<FIIDetailData>(`/fiis/${ticker}`);
+    return { ...data, properties: camelizeKeys<FIIProperty[]>(data.properties ?? []) };
   } catch (err) {
     console.error(`Failed to fetch FII detail for ${ticker}:`, err);
     return null;
@@ -356,7 +392,14 @@ export async function getFixedIncome(): Promise<FixedIncomeData> {
 
 export async function getDerivatives(ticker: string): Promise<DerivativesData | null> {
   try {
-    return await fetchJson<DerivativesData>(`/derivatives/${ticker}/options-chain`);
+    const data = await fetchJson<DerivativesData>(`/derivatives/${ticker}/options-chain`);
+    return {
+      ...data,
+      calls: camelizeKeys<OptionContract[]>(data.calls ?? []),
+      puts: camelizeKeys<OptionContract[]>(data.puts ?? []),
+      btc_borrowing: camelizeKeys<StockBorrowingBTC>(data.btc_borrowing),
+      buybacks: camelizeKeys<BuybackProgram[]>(data.buybacks ?? []),
+    };
   } catch (err) {
     console.error(`Failed to fetch derivatives for ${ticker}:`, err);
     return null;
@@ -405,11 +448,255 @@ export async function getDemoPortfolioPositions(): Promise<DemoPosition[]> {
   }
 }
 
+export interface StockDetails {
+  ticker: string;
+  name: string;
+  tipo?: string;
+  classe_acao?: string;
+  sector?: string;
+  subsector?: string;
+  segmento?: string;
+  current_price: number;
+  data_cotacao?: string;
+  min_52_semanas?: number;
+  max_52_semanas?: number;
+  volume_medio_2m?: number;
+  valor_mercado?: number;
+  valor_firma?: number;
+  numero_acoes?: number;
+  is_financial_institution: boolean;
+}
+
+export interface StockMultiples {
+  ticker: string;
+  pl?: number;
+  pvp?: number;
+  pebit?: number;
+  psr?: number;
+  p_ativos?: number;
+  p_cap_giro?: number;
+  p_ativo_circ_liq?: number;
+  dividend_yield?: number;
+  ev_ebitda?: number;
+  ev_ebit?: number;
+  margem_bruta?: number;
+  margem_ebit?: number;
+  margem_liquida?: number;
+  roic?: number;
+  roe?: number;
+  liquidez_corrente?: number;
+  div_bruta_patrimonio?: number;
+  giro_ativos?: number;
+  lpa?: number;
+  vpa?: number;
+}
+
+export interface StockFinancials {
+  ticker: string;
+  is_financial_institution: boolean;
+  data_balanco?: string;
+  ativo_total?: number;
+  disponibilidades?: number;
+  ativo_circulante?: number;
+  divida_bruta?: number;
+  divida_liquida?: number;
+  patrimonio_liquido?: number;
+  receita_liquida_12m?: number;
+  receita_liquida_3m?: number;
+  ebit_12m?: number;
+  ebit_3m?: number;
+  lucro_liquido_12m?: number;
+  lucro_liquido_3m?: number;
+  carteira_credito?: number;
+  depositos?: number;
+  resultado_intermediacao_12m?: number;
+  resultado_intermediacao_3m?: number;
+  receita_servicos_12m?: number;
+  receita_servicos_3m?: number;
+}
+
+export interface StockCompleteDetails {
+  details: StockDetails;
+  multiples: StockMultiples;
+  financials: StockFinancials;
+}
+
+export async function getStockCompleteDetails(ticker: string): Promise<StockCompleteDetails | null> {
+  try {
+    return await fetchJson<StockCompleteDetails>(`/stocks/${ticker}`);
+  } catch (err) {
+    console.error(`Failed to fetch complete stock details for ${ticker}:`, err);
+    return null;
+  }
+}
+
 export async function getFundRiskMatrix(fundId: string = "cvm175-macro"): Promise<FundRiskMatrixData | null> {
   try {
-    return await fetchJson<FundRiskMatrixData>(`/funds/${fundId}/risk-matrix`);
+    const data = await fetchJson<FundRiskMatrixData>(`/funds/${fundId}/risk-matrix`);
+    const matrix = camelizeKeys<Array<QuantRiskMatrix & { volatilityPct?: number; maxDrawdownPct?: number }>>(
+      data.matrix ?? []
+    ).map((row) => ({
+      ...row,
+      volatility: row.volatility ?? row.volatilityPct ?? 0,
+      maxDrawdown: row.maxDrawdown ?? row.maxDrawdownPct ?? 0,
+    }));
+    return {
+      ...data,
+      matrix,
+      cda_holdings: camelizeKeys<FundHoldingCDA[]>(data.cda_holdings ?? []),
+    };
   } catch (err) {
     console.error(`Failed to fetch fund risk matrix for ${fundId}:`, err);
     return null;
   }
 }
+
+// ==========================================
+// OCEANS14 FINANCIAL & QUANTITATIVE HELPERS
+// ==========================================
+
+export async function getStocksRanking(
+  sortBy: string = "dy",
+  limit: number = 50
+): Promise<StockRankingRow[]> {
+  try {
+    return await fetchJson<StockRankingRow[]>(`/stocks/ranking?sort_by=${sortBy}&limit=${limit}`);
+  } catch (err) {
+    console.error("Failed to fetch stocks ranking:", err);
+    return [];
+  }
+}
+
+export async function getConsistencyScreener(
+  minYears: number = 5,
+  minCagr?: number
+): Promise<ConsistencyScreenerAsset[]> {
+  try {
+    const cagrParam = minCagr !== undefined ? `&min_cagr=${minCagr}` : "";
+    return await fetchJson<ConsistencyScreenerAsset[]>(
+      `/stocks/screener/consistency?min_years=${minYears}${cagrParam}`
+    );
+  } catch (err) {
+    console.error("Failed to fetch consistency screener:", err);
+    return [];
+  }
+}
+
+export async function getStockFinancialMatrix(
+  ticker: string,
+  periodType: "ANUAL" | "TRIMESTRAL" = "ANUAL"
+): Promise<FinancialMatrixData | null> {
+  try {
+    return await fetchJson<FinancialMatrixData>(
+      `/stocks/${ticker}/financials/matrix?period_type=${periodType}`
+    );
+  } catch (err) {
+    console.error(`Failed to fetch financial matrix for ${ticker}:`, err);
+    return null;
+  }
+}
+
+export async function getStockDividendMatrix(
+  ticker: string
+): Promise<DividendMatrixData | null> {
+  try {
+    return await fetchJson<DividendMatrixData>(`/stocks/${ticker}/dividends/matrix`);
+  } catch (err) {
+    console.error(`Failed to fetch dividend matrix for ${ticker}:`, err);
+    return null;
+  }
+}
+
+export async function getFIIRanking(
+  sortBy: string = "dy",
+  limit: number = 50
+): Promise<FIIRankingRow[]> {
+  try {
+    return await fetchJson<FIIRankingRow[]>(`/fiis/ranking?sort_by=${sortBy}&limit=${limit}`);
+  } catch (err) {
+    console.error("Failed to fetch FII ranking:", err);
+    return [];
+  }
+}
+
+export async function getFIIVacancyHistory(
+  ticker: string
+): Promise<FIIVacancyHistoryData | null> {
+  try {
+    return await fetchJson<FIIVacancyHistoryData>(`/fiis/${ticker}/vacancy-history`);
+  } catch (err) {
+    console.error(`Failed to fetch FII vacancy history for ${ticker}:`, err);
+    return null;
+  }
+}
+
+export async function getIbovPEHistory(
+  limit: number = 60
+): Promise<IbovPEHistoryItem[]> {
+  try {
+    const res = await fetchJson<{ total_records: number; items: IbovPEHistoryItem[] }>(
+      `/market/ibov-pe-history?limit=${limit}`
+    );
+    return res.items ?? [];
+  } catch (err) {
+    console.error("Failed to fetch IBOV PE history:", err);
+    return [];
+  }
+}
+
+export async function getInvestorFlows(
+  limit: number = 60
+): Promise<InvestorFlowItem[]> {
+  try {
+    const res = await fetchJson<{ total_records: number; items: InvestorFlowItem[] }>(
+      `/market/investor-flows?limit=${limit}`
+    );
+    return res.items ?? [];
+  } catch (err) {
+    console.error("Failed to fetch investor flows:", err);
+    return [];
+  }
+}
+
+export async function getEarningsCalendar(
+  limit: number = 50
+): Promise<EarningsCalendarRow[]> {
+  try {
+    const res = await fetchJson<{ total: number; items: EarningsCalendarRow[] }>(
+      `/market/earnings-calendar?limit=${limit}`
+    );
+    return res.items ?? [];
+  } catch (err) {
+    console.error("Failed to fetch earnings calendar:", err);
+    return [];
+  }
+}
+
+export async function getGovernmentAccounts(
+  limit: number = 36
+): Promise<GovernmentAccountsRow[]> {
+  try {
+    const res = await fetchJson<{ total_records: number; items: GovernmentAccountsRow[] }>(
+      `/macro/government-accounts?limit=${limit}`
+    );
+    return res.items ?? [];
+  } catch (err) {
+    console.error("Failed to fetch government accounts:", err);
+    return [];
+  }
+}
+
+export async function getCreditSystem(
+  limit: number = 36
+): Promise<CreditSystemRow[]> {
+  try {
+    const res = await fetchJson<{ total_records: number; items: CreditSystemRow[] }>(
+      `/macro/credit-system?limit=${limit}`
+    );
+    return res.items ?? [];
+  } catch (err) {
+    console.error("Failed to fetch credit system indicators:", err);
+    return [];
+  }
+}
+

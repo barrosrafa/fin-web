@@ -9,7 +9,7 @@ import { getFixedIncome, FixedIncomeData } from "@/lib/api";
 
 export default function RendaFixaPage() {
   const [fixedIncomeData, setFixedIncomeData] = useState<FixedIncomeData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
