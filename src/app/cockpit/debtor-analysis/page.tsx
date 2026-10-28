@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TripleCoverageBar } from "@/components/portfolio/TripleCoverageBar";
 import { DebtorConcentrationCard, DebtorItem } from "@/components/portfolio/DebtorConcentrationCard";
 import { FalsifiablePhraseCard } from "@/components/intelligence/FalsifiablePhraseCard";
@@ -12,39 +12,40 @@ export default function DebtorAnalysisPage() {
   const [overrideEntity, setOverrideEntity] = useState<string | null>(null);
   const [successToast, setSuccessToast] = useState<string | null>(null);
 
-  // Mock initial portfolio data
-  const [debtors, setDebtors] = useState<DebtorItem[]>([
-    {
-      entityName: "Grupo JHSF",
-      totalExposurePct: 34.0,
-      isLevel0: false,
-      rating: "A",
-      ratingAgency: "Brick360",
-      contributingAssets: [
-        { ticker: "KNIP11", assetClass: "FII", allocationPct: 22.0, effectiveExposurePct: 22.0 },
-        { ticker: "Fundo CVM 175 Y", assetClass: "FUND_CVM_175", allocationPct: 9.0, effectiveExposurePct: 9.0 },
-        { ticker: "CRI JHSF 129S", assetClass: "DIRECT_CRI", allocationPct: 3.0, effectiveExposurePct: 3.0 },
-      ],
-    },
-    {
-      entityName: "MRV Engenharia",
-      totalExposurePct: 9.25,
-      isLevel0: false,
-      rating: "AA-",
-      ratingAgency: "S&P",
-      contributingAssets: [
-        { ticker: "KNIP11", assetClass: "FII", allocationPct: 22.0, effectiveExposurePct: 9.25 },
-      ],
-    },
-    {
-      entityName: "PETR4",
-      totalExposurePct: 56.75,
-      isLevel0: true,
-      contributingAssets: [
-        { ticker: "PETR4", assetClass: "EQUITY", allocationPct: 56.75, effectiveExposurePct: 56.75 },
-      ],
-    },
-  ]);
+  const [debtors, setDebtors] = useState<DebtorItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchDebtors() {
+      try {
+        setIsLoading(true);
+        const res = await fetch(`${API_BASE}/portfolio/demo-investor-001/debtor-concentration`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.debtors && data.debtors.length > 0) {
+            setDebtors(data.debtors.map((d: any) => ({
+              entityName: d.debtor_name || d.entityName,
+              totalExposurePct: d.total_exposure_pct || d.totalExposurePct,
+              isLevel0: d.is_level_0 ?? false,
+              rating: d.rating,
+              ratingAgency: d.rating_agency,
+              contributingAssets: (d.contributing_assets || []).map((a: any) => ({
+                ticker: a.ticker,
+                assetClass: a.asset_class,
+                allocationPct: a.allocation_pct,
+                effectiveExposurePct: a.effective_exposure_pct,
+              }))
+            })));
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load real debtor concentration:', e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchDebtors();
+  }, []);
 
   const handleApplyOverride = async () => {
     if (!overrideEntity) return;

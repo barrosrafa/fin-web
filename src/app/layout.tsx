@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   title: "FIN·WEB — Terminal Avançado de Análise & Valuation",
   description:
     "Plataforma institucional de alta performance para Ações, FIIs, Fundos CVM 175, ETFs e Renda Fixa com modelos de Graham, Bazin, Brick Score e Comitê de IA.",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

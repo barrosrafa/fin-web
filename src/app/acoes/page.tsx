@@ -94,6 +94,9 @@ export default function AcoesPage() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="relative flex-1">
             <input
+              id="acoes-search"
+              name="search"
+              aria-label="Buscar ações por ticker ou nome"
               type="text"
               placeholder="Buscar por ticker ou nome (ex: PETR4, Vale, WEG)..."
               value={search}

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { API_BASE } from "@/lib/api";
 
 interface NewsFeedItem {
   id: string;
@@ -17,156 +18,193 @@ interface NewsFeedItem {
   cvm_protocolo?: string;
 }
 
+
 export default function NoticiasPage() {
   const [filterType, setFilterType] = useState<string>("ALL");
   const [search, setSearch] = useState("");
+  const [news, setNews] = useState<NewsFeedItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const mockNews: NewsFeedItem[] = [
-    {
-      id: "1",
-      ticker: "PETR4",
-      empresa: "Petróleo Brasileiro S.A.",
-      titulo: "Petrobras aprova pagamento de dividendos e JCP complementares no valor de R$ 13,4 bilhões",
-      tipo: "DIVIDENDO",
-      sentimento: "POSITIVO",
-      data_hora: "Hoje às 18:42",
-      resumo: "Conselho de Administração deliberou favoravelmente à distribuição de remuneração aos acionistas com data de corte prevista para o encerramento do pregão da próxima semana.",
-      cvm_protocolo: "FNET-098231/2026",
-    },
-    {
-      id: "2",
-      ticker: "VALE3",
-      empresa: "Vale S.A.",
-      titulo: "Relatório de Produção e Vendas do 3T26: Produção de minério de ferro atinge 87 milhões de toneladas",
-      tipo: "RESULTADO",
-      sentimento: "NEUTRO",
-      data_hora: "Hoje às 17:15",
-      resumo: "Desempenho operacional em linha com o guidance anual com incremento de prêmio de qualidade no complexo de Carajás.",
-      cvm_protocolo: "CVM-RAD-44120/2026",
-    },
-    {
-      id: "3",
-      ticker: "HGLG11",
-      empresa: "CSHG Logística FII",
-      titulo: "Fato Relevante: Aquisição de novo galpão logístico Triple A em Cajamar/SP com cap rate de 9,2%",
-      tipo: "FATO_RELEVANTE",
-      sentimento: "POSITIVO",
-      data_hora: "Ontem às 19:30",
-      resumo: "Gestão comunica a assinatura de escritura definitiva para aquisição de imóvel totalmente locado com contratos atípicos de longo prazo.",
-      cvm_protocolo: "FNET-097541/2026",
-    },
-    {
-      id: "4",
-      ticker: "ITUB4",
-      empresa: "Itaú Unibanco Holding S.A.",
-      titulo: "Itaú anuncia cronograma de pagamentos de proventos para o primeiro semestre de 2027",
-      tipo: "DIVIDENDO",
-      sentimento: "POSITIVO",
-      data_hora: "Ontem às 14:10",
-      resumo: "Fixação das datas habituais de corte e pagamento mensal de JCP aos detentores de ações ordinárias e preferenciais.",
-      cvm_protocolo: "CVM-RAD-43990/2026",
-    },
-  ];
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API_BASE}/market/news?limit=30`);
+        if (res.ok) {
+          const data = await res.json();
+          setNews(data.items || []);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar notícias oficiais:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchNews();
+  }, []);
 
-  const filtered = mockNews.filter((n) => {
+  const filtered = news.filter((n) => {
+    const matchesType = filterType === "ALL" || n.tipo === filterType;
     const matchesSearch =
       n.ticker.toLowerCase().includes(search.toLowerCase()) ||
+      n.empresa.toLowerCase().includes(search.toLowerCase()) ||
       n.titulo.toLowerCase().includes(search.toLowerCase());
-    const matchesType = filterType === "ALL" || n.tipo === filterType;
-    return matchesSearch && matchesType;
+    return matchesType && matchesSearch;
   });
 
+  const getBadgeVariant = (tipo: NewsFeedItem["tipo"]) => {
+    switch (tipo) {
+      case "FATO_RELEVANTE":
+        return "crimson";
+      case "DIVIDENDO":
+        return "emerald";
+      case "RESULTADO":
+        return "cyan";
+      default:
+        return "neutral";
+    }
+  };
+
+  const getSentimentColor = (sentimento: NewsFeedItem["sentimento"]) => {
+    switch (sentimento) {
+      case "POSITIVO":
+        return "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+      case "NEGATIVO":
+        return "text-rose-400 bg-rose-500/10 border-rose-500/20";
+      default:
+        return "text-slate-400 bg-slate-800/40 border-slate-700/30";
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-8 animate-fade-up">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="min-h-screen bg-slate-950 text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header */}
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="badge-neon badge-neon-emerald">Tempo Real</span>
-            <span className="text-xs text-[#64748b]">CVM, FNET & B3</span>
+          <div className="flex items-center space-x-3 mb-2">
+            <span className="flex h-3 w-3 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+            </span>
+            <span className="text-xs font-semibold tracking-wider text-emerald-400 uppercase">
+              Feed Oficial CVM / B3 em Tempo Real
+            </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-            Notícias & Fatos Relevantes
+          <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            Fatos Relevantes & Comunicados
           </h1>
-          <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-            Acompanhe comunicados ao mercado oficiais protocolados na CVM com análise de sentimento
-            automatizada por Inteligência Artificial e impacto nos proventos.
+          <p className="mt-2 text-base text-slate-400">
+            Acompanhe comunicados, distribuições de proventos e demonstrações financeiras sincronizados diretamente com os órgãos reguladores.
           </p>
         </div>
 
-        <input
-          type="text"
-          placeholder="Buscar notícias por Ticker ou termo..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="bg-[#0f172a] border border-white/10 rounded-xl px-4 py-2 text-sm text-white placeholder-[#64748b] focus:outline-none focus:border-cyan-500 w-full sm:w-64"
-        />
-      </div>
+        {/* Filter Controls */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={filterType === "ALL" ? "primary" : "outline"}
+              
+              onClick={() => setFilterType("ALL")}
+            >
+              Todos ({news.length})
+            </Button>
+            <Button
+              variant={filterType === "DIVIDENDO" ? "primary" : "outline"}
+              
+              onClick={() => setFilterType("DIVIDENDO")}
+            >
+              Dividendos & JCP
+            </Button>
+            <Button
+              variant={filterType === "RESULTADO" ? "primary" : "outline"}
+              
+              onClick={() => setFilterType("RESULTADO")}
+            >
+              Resultados DRE
+            </Button>
+            <Button
+              variant={filterType === "FATO_RELEVANTE" ? "primary" : "outline"}
+              
+              onClick={() => setFilterType("FATO_RELEVANTE")}
+            >
+              Fatos Relevantes
+            </Button>
+          </div>
 
-      {/* Filter Tabs */}
-      <Card className="flex items-center gap-2 p-3 overflow-x-auto">
-        {(["ALL", "DIVIDENDO", "RESULTADO", "FATO_RELEVANTE"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setFilterType(tab)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
-              filterType === tab
-                ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
-                : "bg-white/5 text-[#94a3b8] hover:text-white"
-            }`}
-          >
-            {tab === "ALL"
-              ? "Todas as Notícias"
-              : tab === "FATO_RELEVANTE"
-              ? "Fatos Relevantes"
-              : tab === "DIVIDENDO"
-              ? "Proventos"
-              : "Resultados"}
-          </button>
-        ))}
-      </Card>
+          <div className="w-full sm:w-64">
+            <input
+              id="noticias-search"
+              name="search"
+              aria-label="Buscar comunicados por ticker ou termo"
+              type="text"
+              placeholder="Buscar por ticker ou termo..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+            />
+          </div>
+        </div>
 
-      {/* News Feed Timeline */}
-      <div className="flex flex-col gap-4">
-        {filtered.map((news) => (
-          <Card key={news.id} className="p-6 border border-white/10 hover:border-cyan-500/30 transition-all flex flex-col gap-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-cyan-400 font-bold text-sm bg-cyan-500/10 px-2 py-0.5 rounded">
-                  {news.ticker}
-                </span>
-                <span className="text-xs text-[#94a3b8] font-medium">{news.empresa}</span>
-                <Badge
-                  variant={
-                    news.sentimento === "POSITIVO"
-                      ? "emerald"
-                      : news.sentimento === "NEGATIVO"
-                      ? "amber"
-                      : "cyan"
-                  }
-                >
-                  {news.sentimento}
-                </Badge>
-              </div>
+        {/* News Feed List */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center p-12 text-slate-400">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-400 mb-4"></div>
+            <p>Carregando comunicados oficiais da B3 e CVM...</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-12 bg-slate-900/20 rounded-xl border border-slate-800 text-slate-400">
+            Nenhum comunicado encontrado para os filtros selecionados.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filtered.map((item) => (
+              <Card
+                key={item.id}
+                className="bg-slate-900/40 hover:bg-slate-900/70 border-slate-800 transition-colors p-5 rounded-xl flex flex-col md:flex-row gap-5 items-start justify-between"
+              >
+                <div className="space-y-2 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-mono text-sm font-bold text-white bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+                      {item.ticker}
+                    </span>
+                    <span className="text-xs text-slate-400 font-medium">
+                      {item.empresa}
+                    </span>
+                    <span className="text-slate-600">•</span>
+                    <span className="text-xs text-slate-500">{item.data_hora}</span>
+                    <Badge variant={getBadgeVariant(item.tipo)} className="text-[10px] tracking-wide uppercase">
+                      {item.tipo.replace("_", " ")}
+                    </Badge>
+                  </div>
 
-              <div className="flex items-center gap-2 text-xs text-[#64748b] font-mono">
-                {news.cvm_protocolo && <span>Protocolo: {news.cvm_protocolo}</span>}
-                <span>•</span>
-                <span>{news.data_hora}</span>
-              </div>
-            </div>
+                  <h2 className="text-base font-semibold text-slate-100 hover:text-emerald-400 cursor-pointer transition-colors">
+                    {item.titulo}
+                  </h2>
 
-            <h3 className="text-base font-bold text-white hover:text-cyan-400 cursor-pointer transition-colors">
-              {news.titulo}
-            </h3>
+                  <p className="text-sm text-slate-400 leading-relaxed">
+                    {item.resumo}
+                  </p>
 
-            <p className="text-xs text-[#cbd5e1] leading-relaxed">{news.resumo}</p>
+                  {item.cvm_protocolo && (
+                    <div className="pt-1 flex items-center gap-2 text-xs text-slate-500 font-mono">
+                      <span>Protocolo: {item.cvm_protocolo}</span>
+                    </div>
+                  )}
+                </div>
 
-            <div className="pt-2 flex justify-end">
-              <Button variant="outline">Ver Documento Oficial CVM</Button>
-            </div>
-          </Card>
-        ))}
+                <div className="flex flex-row md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-3 self-stretch md:self-auto border-t md:border-t-0 border-slate-800/80 pt-3 md:pt-0">
+                  <div
+                    className={`text-xs px-2.5 py-1 rounded-full border font-medium ${getSentimentColor(
+                      item.sentimento
+                    )}`}
+                  >
+                    Impacto {item.sentimento}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -80,7 +80,7 @@ export const FalsifiablePhraseCard: React.FC<FalsifiablePhraseCardProps> = ({
         <div className="mt-4 flex items-center justify-between text-[10px] text-slate-500 font-mono">
           <span>Hash Carteira: {inferenceLog.portfolio_version_hash.slice(0, 12)}...</span>
           <span>Template: {inferenceLog.template_id}</span>
-          <span>{new Date(inferenceLog.created_at).toLocaleTimeString()}</span>
+          <span suppressHydrationWarning>{new Date(inferenceLog.created_at).toLocaleTimeString()}</span>
         </div>
       )}
 

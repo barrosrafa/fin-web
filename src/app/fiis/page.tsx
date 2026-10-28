@@ -97,6 +97,9 @@ export default function FIIsPage() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="relative flex-1">
             <input
+              id="fiis-search"
+              name="search"
+              aria-label="Buscar FIIs por ticker ou nome"
               type="text"
               placeholder="Buscar por ticker ou nome (ex: HGLG11, KNIP11, MXRF11)..."
               value={search}

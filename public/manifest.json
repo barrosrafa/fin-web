@@ -1,0 +1,16 @@
+{
+  "name": "Fin·Web — Terminal Financeiro",
+  "short_name": "Fin·Web",
+  "description": "Terminal unificado de análise fundamentalista, valuation algorítmico e monitoramento contínuo de Ações, FIIs e Renda Fixa.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#00f5a0",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
