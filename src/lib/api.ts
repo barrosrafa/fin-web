@@ -54,7 +54,7 @@ export {
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
 export const API_BASE = rawApiUrl
   ? (rawApiUrl.endsWith("/api/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, "")}/api/v1`)
-  : "https://fin-api-jbrz.onrender.com/api/v1";
+  : (typeof window !== "undefined" ? "/api/v1" : "https://fin-api-jbrz.onrender.com/api/v1");
 
 function getStoredToken(): string | null {
   if (typeof window === "undefined") return null;

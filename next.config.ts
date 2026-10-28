@@ -12,10 +12,15 @@ const nextConfig: NextConfig = {
     },
   },
   async rewrites() {
+    const backendUrl =
+      process.env.API_BACKEND_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      "https://fin-api-jbrz.onrender.com";
+    const cleanedBackend = backendUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
     return [
       {
         source: "/api/v1/:path*",
-        destination: "http://127.0.0.1:8000/api/v1/:path*",
+        destination: `${cleanedBackend}/api/v1/:path*`,
       },
     ];
   },
