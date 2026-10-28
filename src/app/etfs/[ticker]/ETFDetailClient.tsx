@@ -8,6 +8,7 @@ import { Tabs } from "@/components/ui/Tabs";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { formatCurrency } from "@/lib/formatters";
 import { getETFDetail, ETFDetailData } from "@/lib/api";
+import { UnderwaterDrawdownChart } from "@/components/etfs/UnderwaterDrawdownChart";
 
 export function ETFDetailClient({ ticker }: { ticker: string }) {
   const [activeTab, setActiveTab] = useState("VISAO_GERAL");
@@ -126,6 +127,7 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
           { id: "VISAO_GERAL", label: "Composição da Carteira Teórica", count: etf.underlying_holdings.length },
           { id: "NAV_ARBITRAGEM", label: "Monitor de Spread NAV & Criação" },
           { id: "ALUGUEL", label: "Programa de Empréstimo de Ativos" },
+          { id: "DRAWDOWN", label: "Curva Subaquática & Risco" },
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
@@ -205,6 +207,31 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
               Toda a receita gerada com o empréstimo das ações é repassada integralmente ao patrimônio líquido do fundo, reduzindo efetivamente o custo de carregamento (TER) para o investidor final.
             </p>
           </div>
+        </Card>
+      )}
+
+      {/* TAB 4: Drawdown Subaquático */}
+      {activeTab === "DRAWDOWN" && (
+        <Card glow="crimson">
+          <UnderwaterDrawdownChart
+            data={[
+              [1704153600000, 0.0],
+              [1706745600000, -2.5],
+              [1709251200000, -6.8],
+              [1711929600000, -14.5],
+              [1714521600000, -11.2],
+              [1717200000000, -4.1],
+              [1719792000000, -1.2],
+              [1722470400000, 0.0],
+              [1725148800000, -3.4],
+              [1727740800000, -1.8],
+              [1729814400000, 0.0],
+            ]}
+            maxDrawdownPct={-14.5}
+            valleyDate="2024-04-01"
+            recoveryDays={122}
+            height={220}
+          />
         </Card>
       )}
     </div>

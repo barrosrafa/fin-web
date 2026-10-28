@@ -8,6 +8,10 @@ export const AssetTypeSchema = z.enum([
   "RENDA_FIXA",
   "CRIPTO",
   "INDICE",
+  "BDR",
+  "FI_INFRA",
+  "ETF_EUA",
+  "STOCK_EUA",
 ]);
 
 export type AssetType = z.infer<typeof AssetTypeSchema>;
@@ -259,3 +263,132 @@ export const FundHoldingCDASchema = z.object({
 });
 
 export type FundHoldingCDA = z.infer<typeof FundHoldingCDASchema>;
+
+// =============================================================================
+// ETFS BRASIL: SIMULADOR, COMPARADOR & RANKINGS SCHEMAS
+// =============================================================================
+
+export interface PortfolioAssetAllocation {
+  ticker: string;
+  assetsType?: string;
+  percentage: number; // 0.0 a 1.0
+}
+
+export interface PortfolioDraft {
+  name: string;
+  assets: PortfolioAssetAllocation[];
+}
+
+export interface SimulatePortfolioRequest {
+  startDate: string;
+  endDate: string;
+  startingAmount: number;
+  monthlyContributions: number;
+  rebalancingFrequency: "NENHUM" | "MENSAL" | "TRIMESTRAL" | "SEMESTRAL" | "ANUAL";
+  advisoryFee: number;
+  portfolioList: PortfolioDraft[];
+}
+
+export interface PeriodReturnData {
+  YearToDate?: number;
+  months12?: number;
+  months24?: number;
+  months36?: number;
+  allTime: number;
+}
+
+export interface PortfolioSimulationMetrics {
+  finalAmount: number;
+  totalReturnPct: number;
+  cagrPct: number;
+  standardDeviation: PeriodReturnData;
+  sharpeRatio: PeriodReturnData;
+  sortinoRatio: PeriodReturnData;
+  maxDrawdown: {
+    pct: number;
+    valleyDate?: string;
+    recoveryDays: number;
+  };
+  weightedAdminFee: number;
+}
+
+export interface PortfolioSimulationResultItem {
+  name: string;
+  metrics: PortfolioSimulationMetrics;
+  equityCurve: [timestamp: number, value: number][];
+  drawdownCurve: [timestamp: number, pct: number][];
+}
+
+export interface SimulatePortfolioResponse {
+  simulationId?: string;
+  benchmark: {
+    name: string;
+    metrics: PortfolioSimulationMetrics;
+    equityCurve: [timestamp: number, value: number][];
+  };
+  portfolios: PortfolioSimulationResultItem[];
+}
+
+export interface HoldingOverlapItem {
+  codigo: string;
+  nome: string;
+  peso_a: number;
+  peso_b: number;
+  overlap_min: number;
+}
+
+export interface HoldingsOverlapAnalysis {
+  total_overlap_pct: number;
+  common_holdings_count: number;
+  top_shared_holdings: HoldingOverlapItem[];
+}
+
+export interface AssetComparisonMetrics {
+  ticker: string;
+  price: number;
+  change_12m: number;
+  dy_pct: number;
+  pvp: number;
+  pl: number;
+  volatility_pct: number;
+  sharpe: number;
+  ter_pct?: number;
+  gestora?: string;
+}
+
+export interface NormalizedSeriesPoint {
+  date: string;
+  values: Record<string, number>;
+}
+
+export interface ComparatorResult {
+  tickers: string[];
+  metrics: AssetComparisonMetrics[];
+  series: NormalizedSeriesPoint[];
+  overlap_analysis?: HoldingsOverlapAnalysis;
+}
+
+export interface RankingAssetItem {
+  pos: number;
+  ticker: string;
+  nome: string;
+  patrimonio_liquido_mm: number;
+  retorno_30d: number;
+  retorno_ano: number;
+  retorno_12m: number;
+  retorno_24m?: number;
+  sharpe_12m?: number;
+  taxa_adm_total: number;
+  categoria: string;
+  cotistas: number;
+  negociacao_diaria_mm: number;
+}
+
+export interface RankingsResponse {
+  tipo_ativo: string;
+  ordem: string;
+  categoria: string;
+  total_assets: number;
+  items: RankingAssetItem[];
+}
+

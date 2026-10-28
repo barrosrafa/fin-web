@@ -37,77 +37,107 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 text-xs">
           <div className="flex flex-col gap-2.5">
             <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
-              Mercados B3
+              Mercados B3 & Globais
             </span>
             <Link href="/acoes" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
-              Ações & Blue Chips
+              Ações & Companhias B3
             </Link>
             <Link href="/fiis" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
-              Fundos Imobiliários & Fiagros
+              Fundos Imobiliários (FIIs)
             </Link>
-            <Link href="/fundos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
-              Fundos CVM 175 (Multimercado & Renda Fixa)
+            <Link href="/stocks" className="text-[#94a3b8] hover:text-[#00d9f5] transition-colors">
+              Stocks EUA (NYSE / NASDAQ)
             </Link>
-            <Link href="/etfs" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
-              ETFs Locais & Internacionais
+            <Link href="/reits" className="text-[#94a3b8] hover:text-[#00d9f5] transition-colors">
+              REITs Imobiliários Globais
             </Link>
           </div>
 
           <div className="flex flex-col gap-2.5">
             <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
-              Ferramentas Quant
+              Proventos & Renda
             </span>
-            <Link href="/screener" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
-              Super Screener Multiativo
+            <Link href="/agenda-dividendos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Agenda de Dividendos & JCP
+            </Link>
+            <Link href="/mapa-de-dividendos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Mapa de Sazonalidade 12M
+            </Link>
+            <Link href="/simulador-de-dividendos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Simulador de Renda Passiva
+            </Link>
+            <Link href="/perfil-de-investidor" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Suitability & Perfil CVM
+            </Link>
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
+              Educação & Conteúdo
+            </span>
+            <Link href="/dicionario" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Dicionário do Investidor (A-Z)
+            </Link>
+            <Link href="/livros-investimentos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Biblioteca de Livros Recomendados
+            </Link>
+            <Link href="/artigos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Artigos & Análises Setoriais
+            </Link>
+            <Link href="/noticias" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Notícias & Fatos Relevantes CVM
+            </Link>
+          </div>
+
+          <div className="flex flex-col gap-2.5">
+            <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
+              Ferramentas & Plataformas
+            </span>
+            <Link href="/simulador-de-portfolios" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Simulador de Portfólios
+            </Link>
+            <Link href="/rankings" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Rankings dos Melhores Ativos
             </Link>
             <Link href="/comparador" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
               Comparador Head-to-Head
             </Link>
+            <Link href="/corretoras" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Comparador de Corretoras
+            </Link>
+            <Link href="/screener" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+              Super Screener Multiativo
+            </Link>
             <Link href="/carteira" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
-              Simulador Magic Number & Proventos
-            </Link>
-            <Link href="/radar-ia" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
-              Comitê de IA & Fatos Relevantes
+              Minha Carteira Consolidada
             </Link>
           </div>
 
           <div className="flex flex-col gap-2.5">
             <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
-              Fontes & Reguladores
+              Institucional & Legal
             </span>
-            <a href="https://www.b3.com.br" target="_blank" rel="noreferrer" className="text-[#94a3b8] hover:text-[#00d9f5] transition-colors">
-              B3 Brasil Bolsa Balcão ↗
-            </a>
-            <a href="https://dados.cvm.gov.br" target="_blank" rel="noreferrer" className="text-[#94a3b8] hover:text-[#00d9f5] transition-colors">
-              Comissão de Valores Mobiliários (CVM) ↗
-            </a>
-            <a href="https://www.bcb.gov.br" target="_blank" rel="noreferrer" className="text-[#94a3b8] hover:text-[#00d9f5] transition-colors">
-              Banco Central do Brasil (SGS) ↗
-            </a>
-            <a href="https://www.anbima.com.br" target="_blank" rel="noreferrer" className="text-[#94a3b8] hover:text-[#00d9f5] transition-colors">
-              ANBIMA (Curvas & TPF) ↗
-            </a>
-          </div>
-
-          <div className="flex flex-col gap-2.5">
-            <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
-              Engenharia & Repositórios
-            </span>
-            <a href="https://github.com/barrosrafa/fin-web" target="_blank" rel="noreferrer" className="text-[#94a3b8] hover:text-[#a855f7] transition-colors">
-              GitHub: barrosrafa/fin-web ↗
-            </a>
-            <a href="https://github.com/barrosrafa/fin-db" target="_blank" rel="noreferrer" className="text-[#94a3b8] hover:text-[#a855f7] transition-colors">
-              GitHub: barrosrafa/fin-db ↗
-            </a>
-            <a href="https://github.com/barrosrafa/fin-api" target="_blank" rel="noreferrer" className="text-[#94a3b8] hover:text-[#a855f7] transition-colors">
-              GitHub: barrosrafa/fin-api ↗
-            </a>
-            <a href="https://github.com/barrosrafa/fin-ingestion" target="_blank" rel="noreferrer" className="text-[#94a3b8] hover:text-[#a855f7] transition-colors">
-              GitHub: barrosrafa/fin-ingestion ↗
-            </a>
+            <Link href="/premium" className="text-[#00f5a0] font-bold hover:underline transition-colors">
+              Planos Premium Pro
+            </Link>
+            <Link href="/quem-somos" className="text-[#94a3b8] hover:text-white transition-colors">
+              Quem Somos & Metodologia
+            </Link>
+            <Link href="/mapa-do-site" className="text-[#94a3b8] hover:text-white transition-colors">
+              Mapa do Site
+            </Link>
+            <Link href="/contato" className="text-[#94a3b8] hover:text-white transition-colors">
+              Fale Conosco / Suporte
+            </Link>
+            <Link href="/termos-de-uso" className="text-[#94a3b8] hover:text-white transition-colors">
+              Termos de Uso
+            </Link>
+            <Link href="/politica-de-privacidade" className="text-[#94a3b8] hover:text-white transition-colors">
+              Privacidade & LGPD
+            </Link>
           </div>
         </div>
 

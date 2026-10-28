@@ -12,6 +12,12 @@ import {
   StockBorrowingBTC,
   BuybackProgram,
   FundHoldingCDA,
+  SimulatePortfolioRequest,
+  SimulatePortfolioResponse,
+  RankingsResponse,
+  ComparatorResult,
+  AssetComparisonMetrics,
+  HoldingsOverlapAnalysis,
 } from "@/schemas/financial";
 import {
   FinancialMatrixData,
@@ -233,23 +239,7 @@ export interface DerivativesData {
   buybacks: BuybackProgram[];
 }
 
-export interface ComparatorResult {
-  tickers: string[];
-  metrics: Array<{
-    ticker: string;
-    price: number;
-    change_12m: number;
-    dy_pct: number;
-    pvp: number;
-    pl: number;
-    volatility_pct: number;
-    sharpe: number;
-  }>;
-  series: Array<{
-    date: string;
-    values: Record<string, number>;
-  }>;
-}
+export type { ComparatorResult, AssetComparisonMetrics, HoldingsOverlapAnalysis };
 
 export interface AIAlert {
   id: string;
@@ -815,13 +805,13 @@ export async function getDetailedDividendCalendar(
 
 export interface GlossaryItem {
   id: number;
-  slug: str;
-  termo: str;
-  letra_inicial: str;
-  categoria: str;
-  definicao_curta: str;
-  formula_latex?: str;
-  conteudo_markdown?: str;
+  slug: string;
+  termo: string;
+  letra_inicial: string;
+  categoria: string;
+  definicao_curta: string;
+  formula_latex?: string;
+  conteudo_markdown?: string;
 }
 
 export async function getGlossary(
@@ -1054,5 +1044,56 @@ export async function getBillingPlans(): Promise<PlanItem[]> {
     return [];
   }
 }
+
+// =============================================================================
+// ETFS BRASIL: SIMULADOR, COMPARADOR & RANKINGS API METHODS
+// =============================================================================
+
+export async function simulatePortfolio(
+  request: SimulatePortfolioRequest
+): Promise<SimulatePortfolioResponse | null> {
+  try {
+    return await fetchJson<SimulatePortfolioResponse>("/simulate-portfolio", {
+      method: "POST",
+      body: JSON.stringify(request),
+    });
+  } catch (err) {
+    console.error("Failed to run portfolio simulation:", err);
+    return null;
+  }
+}
+
+export async function getRankings(
+  tipoAtivo: string = "ETF",
+  ordem: string = "retorno_30d",
+  categoria: string = "Todos"
+): Promise<RankingsResponse | null> {
+  try {
+    const params = new URLSearchParams({
+      tipo_ativo: tipoAtivo,
+      ordem: ordem,
+      categoria: categoria,
+    });
+    return await fetchJson<RankingsResponse>(`/rankings?${params.toString()}`);
+  } catch (err) {
+    console.error("Failed to fetch rankings:", err);
+    return null;
+  }
+}
+
+export async function getCanonicalPair(
+  tickerA: string,
+  tickerB: string
+): Promise<ComparatorResult | null> {
+  try {
+    return await fetchJson<ComparatorResult>(
+      `/comparator/pair/${tickerA.toUpperCase()}/${tickerB.toUpperCase()}`
+    );
+  } catch (err) {
+    console.error(`Failed to fetch canonical pair ${tickerA} vs ${tickerB}:`, err);
+    return null;
+  }
+}
+
 
 

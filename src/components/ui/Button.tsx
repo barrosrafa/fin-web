@@ -5,10 +5,11 @@ interface ButtonProps {
   children: React.ReactNode;
   href?: string;
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "ghost" | "cyan" | "violet";
+  variant?: "primary" | "secondary" | "ghost" | "cyan" | "violet" | "outline";
   icon?: React.ReactNode;
   className?: string;
   type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }
 
 export function Button({
@@ -19,12 +20,15 @@ export function Button({
   icon,
   className = "",
   type = "button",
+  disabled = false,
 }: ButtonProps) {
   const variantStyles = {
     primary:
       "bg-white/[0.04] hover:bg-white/[0.08] border-white/10 hover:border-[rgba(0,245,160,0.4)] text-[#f0f4f8]",
     secondary:
       "bg-[#131926] hover:bg-[#1a2234] border-white/5 hover:border-white/20 text-[#f0f4f8]",
+    outline:
+      "bg-transparent hover:bg-white/5 border border-white/10 hover:border-white/20 text-[#f0f4f8]",
     ghost:
       "bg-transparent hover:bg-white/5 border-transparent text-[#94a3b8] hover:text-[#f0f4f8]",
     cyan:
@@ -67,7 +71,8 @@ export function Button({
     <button
       type={type}
       onClick={onClick}
-      className={`btn-nested ${variantStyles[variant]} ${className}`}
+      disabled={disabled}
+      className={`btn-nested ${variantStyles[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
     >
       {content}
     </button>

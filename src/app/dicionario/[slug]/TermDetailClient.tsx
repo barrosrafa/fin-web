@@ -1,0 +1,83 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { getGlossaryTerm, GlossaryItem } from "@/lib/api";
+
+export function TermDetailClient({ slug }: { slug: string }) {
+  const [term, setTerm] = useState<GlossaryItem | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await getGlossaryTerm(slug);
+        setTerm(data);
+      } catch (err) {
+        console.error("Failed to load term:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="py-24 text-center text-[#94a3b8] font-mono">
+        Carregando termo {slug}...
+      </div>
+    );
+  }
+
+  if (!term) {
+    return (
+      <div className="py-24 text-center">
+        <h2 className="text-xl font-bold text-white mb-2">Termo não encontrado</h2>
+        <Link href="/dicionario" className="text-cyan-400 hover:underline text-sm">
+          ← Voltar ao Dicionário
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-8 max-w-4xl mx-auto animate-fade-up">
+      <div>
+        <Link href="/dicionario" className="text-xs text-cyan-400 hover:underline mb-2 inline-block">
+          ← Voltar para o Dicionário
+        </Link>
+        <div className="flex items-center gap-2 mb-2">
+          <Badge variant="cyan">{term.categoria}</Badge>
+          <span className="text-xs text-[#64748b]">Letra {term.letra_inicial}</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+          {term.termo}
+        </h1>
+        <p className="text-base text-[#94a3b8] mt-2">{term.definicao_curta}</p>
+      </div>
+
+      {term.formula_latex && (
+        <Card className="p-6 border border-emerald-500/20 bg-emerald-950/10">
+          <span className="text-xs font-semibold text-emerald-400 uppercase tracking-wider block mb-2">
+            Fórmula Matemática & Algoritmo
+          </span>
+          <div className="font-mono text-base text-white bg-black/40 p-4 rounded-xl border border-white/10 overflow-x-auto">
+            {term.formula_latex}
+          </div>
+        </Card>
+      )}
+
+      <Card className="p-8 border border-white/10 bg-[#0f172a]/60">
+        <h2 className="text-lg font-bold text-white mb-4 border-b border-white/10 pb-3">
+          Explicação Detalhada & Aplicação Prática
+        </h2>
+        <div className="prose prose-invert max-w-none text-sm text-[#cbd5e1] leading-relaxed whitespace-pre-line">
+          {term.conteudo_markdown || term.definicao_curta}
+        </div>
+      </Card>
+    </div>
+  );
+}

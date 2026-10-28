@@ -9,19 +9,16 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
-    { href: "/", label: "Cockpit" },
+    { href: "/", label: "Home" },
     { href: "/acoes", label: "Ações" },
-    { href: "/acoes/ranking", label: "Rankings" },
-    { href: "/acoes/sem-prejuizo", label: "Consistência" },
     { href: "/fiis", label: "FIIs" },
-    { href: "/indicadores-economicos", label: "Macro & Crédito" },
-    { href: "/fundos", label: "Fundos 175" },
-    { href: "/etfs", label: "ETFs" },
-    { href: "/renda-fixa", label: "Renda Fixa" },
-    { href: "/screener", label: "Screener" },
+    { href: "/etfs", label: "ETFs B3" },
     { href: "/comparador", label: "Comparador" },
-    { href: "/carteira", label: "Carteira" },
-    { href: "/radar-ia", label: "Radar IA" },
+    { href: "/simulador-de-portfolios", label: "Simulador" },
+    { href: "/rankings", label: "Rankings" },
+    { href: "/stocks", label: "Stocks EUA" },
+    { href: "/reits", label: "REITs" },
+    { href: "/premium", label: "Premium Pro" },
   ];
 
   return (
@@ -72,6 +69,18 @@ export function Navbar() {
 
         {/* Right CTA / Search trigger */}
         <div className="flex items-center gap-3">
+          <Link
+            href="/login"
+            className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold text-white hover:text-cyan-400 transition-colors"
+          >
+            Entrar
+          </Link>
+          <Link
+            href="/cadastro"
+            className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-cyan-500 hover:bg-cyan-400 text-black transition-all"
+          >
+            Cadastrar
+          </Link>
           <Link
             href="/screener"
             className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/10 text-[#94a3b8] hover:text-white transition-all"
