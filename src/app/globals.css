@@ -102,6 +102,14 @@
   animation-play-state: paused;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker,
+  .animate-fade-up {
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 /* Double-Bezel Hardware Architecture */
 .double-bezel {
   background: rgba(255, 255, 255, 0.02);

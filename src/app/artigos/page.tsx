@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -120,7 +121,9 @@ export default function ArtigosPage() {
 
             <div className="pt-4 border-t border-white/5 flex items-center justify-between">
               <span className="text-xs text-[#64748b]">{art.publicado_em || "Recente"}</span>
-              <Button variant="outline">Ler Artigo</Button>
+              <Link href={`/artigos/${art.slug}`}>
+                <Button variant="outline">Ler Artigo</Button>
+              </Link>
             </div>
           </Card>
         ))}

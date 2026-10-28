@@ -6,18 +6,29 @@ interface PaywallGateProps {
   isSubscriber?: boolean;
   children: React.ReactNode;
   featureName: string;
+  previewFallback?: React.ReactNode;
 }
 
-export function PaywallGate({ isSubscriber = false, children, featureName }: PaywallGateProps) {
+export function PaywallGate({ 
+  isSubscriber = false, 
+  children, 
+  featureName,
+  previewFallback 
+}: PaywallGateProps) {
   if (isSubscriber) {
     return <>{children}</>;
   }
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-white/10 p-6 bg-[#0a0f1d]/50">
-      {/* Blurred background preview to preserve semantic SEO and layout */}
-      <div className="select-none filter blur-sm pointer-events-none opacity-40 aria-hidden">
-        {children}
+      {/* Blurred background preview skeleton */}
+      <div 
+        aria-hidden="true" 
+        // @ts-expect-error - React supports inert attribute in modern versions
+        inert=""
+        className="select-none filter blur-sm pointer-events-none opacity-30"
+      >
+        {previewFallback ?? children}
       </div>
 
       {/* Paywall CTA Card Overlay */}

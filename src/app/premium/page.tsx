@@ -1,14 +1,57 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { formatCurrency } from "@/lib/formatters";
+import { createSubscription, PixSubscriptionResponse, CardSubscriptionResponse } from "@/lib/api";
 
 export default function PremiumPage() {
   const [billingCycle, setBillingCycle] = useState<"annual" | "monthly">("annual");
   const [checkoutModal, setCheckoutModal] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [pixData, setPixData] = useState<PixSubscriptionResponse | null>(null);
+  const [copiedPix, setCopiedPix] = useState(false);
+
+  const handleCheckout = async (method: "PIX" | "CREDIT_CARD") => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const res = await createSubscription({
+        plan_tier: "PRO",
+        payment_method: method,
+      });
+
+      if (method === "PIX") {
+        setPixData(res as PixSubscriptionResponse);
+      } else {
+        const cardRes = res as CardSubscriptionResponse;
+        if (cardRes.checkout_url) {
+          window.location.href = cardRes.checkout_url;
+        }
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro ao processar assinatura";
+      if (msg.includes("401") || msg.includes("Unauthorized")) {
+        setErrorMessage("Você precisa estar autenticado para assinar. Por favor, faça login ou cadastre-se.");
+      } else {
+        setErrorMessage(msg);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCopyPix = () => {
+    if (pixData?.copy_paste_code) {
+      navigator.clipboard.writeText(pixData.copy_paste_code);
+      setCopiedPix(true);
+      setTimeout(() => setCopiedPix(false), 3000);
+    }
+  };
 
   const plans = [
     {
@@ -158,60 +201,114 @@ export default function PremiumPage() {
         ))}
       </div>
 
-      {/* Checkout Modal Simulation */}
+      {/* Checkout Modal */}
       {checkoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
           <Card className="w-full max-w-md p-6 border border-cyan-500/40 bg-[#0f172a] flex flex-col gap-4 animate-fade-up">
             <div className="flex justify-between items-center border-b border-white/10 pb-3">
               <h3 className="text-lg font-bold text-white">Checkout Seguro Asaas</h3>
               <button
-                onClick={() => setCheckoutModal(null)}
+                onClick={() => {
+                  setCheckoutModal(null);
+                  setPixData(null);
+                  setErrorMessage(null);
+                }}
                 className="text-[#94a3b8] hover:text-white text-lg font-bold"
               >
                 ✕
               </button>
             </div>
-            <p className="text-xs text-[#cbd5e1]">
-              Ambiente de pagamento criptografado PCI-DSS com suporte a PIX instantâneo e Cartão de Crédito.
-            </p>
-            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-2 font-mono text-xs">
-              <div className="flex justify-between">
-                <span>Plano Selecionado:</span>
-                <span className="text-cyan-400 font-bold">{checkoutModal === "pro" ? "Premium Pro" : "Free"}</span>
+
+            {errorMessage && (
+              <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs flex flex-col gap-2">
+                <span>{errorMessage}</span>
+                {errorMessage.includes("autenticado") && (
+                  <Link href="/login" className="text-cyan-400 underline font-semibold">
+                    Ir para tela de Login →
+                  </Link>
+                )}
               </div>
-              <div className="flex justify-between">
-                <span>Ciclo:</span>
-                <span>{billingCycle === "annual" ? "Anual (30% desconto)" : "Mensal"}</span>
+            )}
+
+            {checkoutModal === "free" ? (
+              <div className="flex flex-col gap-4 text-center py-4">
+                <p className="text-sm text-[#cbd5e1]">
+                  O plano Gratuito oferece acesso aos dados e simuladores básicos da plataforma sem custo.
+                </p>
+                <Link href="/cadastro">
+                  <Button variant="primary" className="w-full">
+                    Criar Conta Gratuita
+                  </Button>
+                </Link>
               </div>
-              <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/5">
-                <span>Total a Cobrar:</span>
-                <span className="text-emerald-400">
-                  {checkoutModal === "pro"
-                    ? formatCurrency(billingCycle === "annual" ? 358.80 : 42.90)
-                    : "R$ 0,00"}
-                </span>
+            ) : pixData ? (
+              <div className="flex flex-col items-center gap-4 py-2 text-center">
+                <span className="badge-neon badge-neon-emerald">Cobrança PIX Gerada</span>
+                <p className="text-xs text-[#94a3b8]">
+                  Escaneie o QR Code abaixo no app do seu banco ou use a chave Copia e Cola.
+                </p>
+                {pixData.qr_code_base64 && (
+                  <div className="bg-white p-3 rounded-xl shadow-lg">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`data:image/png;base64,${pixData.qr_code_base64}`}
+                      alt="QR Code Pix"
+                      className="w-48 h-48 object-contain"
+                    />
+                  </div>
+                )}
+                <div className="w-full flex flex-col gap-2">
+                  <Button
+                    variant="primary"
+                    onClick={handleCopyPix}
+                    className="w-full"
+                  >
+                    {copiedPix ? "Código Copiado!" : "Copiar Código Pix"}
+                  </Button>
+                  <p className="text-[10px] text-[#64748b]">
+                    A ativação da sua conta Pro ocorrerá automaticamente assim que o pagamento for liquidado.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col gap-2 pt-2">
-              <Button
-                variant="primary"
-                onClick={() => {
-                  alert("Assinatura confirmada com sucesso! Bem-vindo ao plano Pro.");
-                  setCheckoutModal(null);
-                }}
-              >
-                Pagar com PIX com QR Code
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  alert("Assinatura confirmada com cartão de crédito!");
-                  setCheckoutModal(null);
-                }}
-              >
-                Pagar com Cartão de Crédito
-              </Button>
-            </div>
+            ) : (
+              <>
+                <p className="text-xs text-[#cbd5e1]">
+                  Ambiente de pagamento criptografado PCI-DSS com suporte a PIX instantâneo e Cartão de Crédito.
+                </p>
+                <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-2 font-mono text-xs">
+                  <div className="flex justify-between">
+                    <span>Plano Selecionado:</span>
+                    <span className="text-cyan-400 font-bold">Premium Pro</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Ciclo:</span>
+                    <span>{billingCycle === "annual" ? "Anual (30% desconto)" : "Mensal"}</span>
+                  </div>
+                  <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/5">
+                    <span>Total a Cobrar:</span>
+                    <span className="text-emerald-400">
+                      {formatCurrency(billingCycle === "annual" ? 358.80 : 42.90)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 pt-2">
+                  <Button
+                    variant="primary"
+                    disabled={isLoading}
+                    onClick={() => handleCheckout("PIX")}
+                  >
+                    {isLoading ? "Processando..." : "Gerar Cobrança PIX com QR Code"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={isLoading}
+                    onClick={() => handleCheckout("CREDIT_CARD")}
+                  >
+                    {isLoading ? "Processando..." : "Pagar com Cartão de Crédito"}
+                  </Button>
+                </div>
+              </>
+            )}
           </Card>
         </div>
       )}

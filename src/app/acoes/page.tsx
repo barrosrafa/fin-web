@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
@@ -10,16 +11,44 @@ import { formatCurrency, formatPercent, formatMultiple } from "@/lib/formatters"
 import { getAssets } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
 
-export default function AcoesPage() {
-  const [search, setSearch] = useState("");
-  const [selectedSector, setSelectedSector] = useState("TODOS");
+function AcoesContent() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [search, setSearchState] = useState(searchParams.get("q") ?? "");
+  const selectedSector = searchParams.get("setor") ?? "TODOS";
   const [stocks, setStocks] = useState<AssetSummary[]>([]);
   const [, setLoading] = useState(true);
 
   useEffect(() => {
+    setSearchState(searchParams.get("q") ?? "");
+  }, [searchParams]);
+
+  const updateParam = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (!value || value === "TODOS") {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+      const queryStr = params.toString();
+      router.replace(queryStr ? `${pathname}?${queryStr}` : pathname, { scroll: false });
+    },
+    [searchParams, pathname, router]
+  );
+
+  const setSearch = (val: string) => {
+    setSearchState(val);
+    updateParam("q", val);
+  };
+  const setSelectedSector = (val: string) => updateParam("setor", val);
+
+  useEffect(() => {
     async function load() {
       try {
-        const res = await getAssets("ACAO");
+        const res = await getAssets("ACAO", 250);
         setStocks(res);
       } catch (err) {
         console.error("Failed to load stocks:", err);
@@ -241,5 +270,19 @@ export default function AcoesPage() {
         })}
       </div>
     </div>
+  );
+}
+
+export default function AcoesPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="container mx-auto px-4 py-12 text-center text-zinc-400">
+          Carregando mercado de ações...
+        </div>
+      }
+    >
+      <AcoesContent />
+    </React.Suspense>
   );
 }

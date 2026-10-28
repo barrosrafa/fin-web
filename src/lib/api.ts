@@ -38,12 +38,21 @@ export const API_BASE = rawApiUrl
   ? (rawApiUrl.endsWith("/api/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, "")}/api/v1`)
   : "https://fin-api-jbrz.onrender.com/api/v1";
 
+function getStoredToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("fin_token");
+}
+
 async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE}${path}`;
+  const token = getStoredToken();
+  const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+
   const res = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...authHeaders,
       ...options?.headers,
     },
     cache: "no-store",
@@ -889,6 +898,19 @@ export async function getArticles(limit: number = 10): Promise<ArticleItem[]> {
   }
 }
 
+export interface ArticleDetail extends ArticleItem {
+  conteudo_markdown: string;
+}
+
+export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
+  try {
+    return await fetchJson<ArticleDetail>(`/cms/articles/${slug}`);
+  } catch (err) {
+    console.error(`Failed to fetch article ${slug}:`, err);
+    return null;
+  }
+}
+
 export async function submitSupportTicket(ticket: {
   nome_contato: string;
   email_contato: string;
@@ -1096,6 +1118,91 @@ export async function getCanonicalPair(
     return null;
   }
 }
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  name?: string;
+  role: string;
+  tier: string;
+  is_active: boolean;
+}
+
+export interface AuthResponse {
+  token: string;
+  token_type: string;
+  expires_in: number;
+  user: AuthUser;
+}
+
+export async function loginUser(credentials: { email: string; password: string }): Promise<AuthResponse> {
+  const res = await fetchJson<AuthResponse>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify(credentials),
+  });
+  if (typeof window !== "undefined" && res?.token) {
+    localStorage.setItem("fin_token", res.token);
+  }
+  return res;
+}
+
+export async function registerUser(data: { name: string; email: string; password: string }): Promise<AuthResponse> {
+  const res = await fetchJson<AuthResponse>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  if (typeof window !== "undefined" && res?.token) {
+    localStorage.setItem("fin_token", res.token);
+  }
+  return res;
+}
+
+export async function getCurrentUser(): Promise<AuthUser | null> {
+  try {
+    return await fetchJson<AuthUser>("/auth/me");
+  } catch {
+    return null;
+  }
+}
+
+export async function logoutUser(): Promise<void> {
+  try {
+    await fetchJson("/auth/logout", { method: "POST" });
+  } finally {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("fin_token");
+      document.cookie = "auth_token=; path=/; max-age=0;";
+    }
+  }
+}
+
+export interface SubscriptionRequest {
+  plan_tier: "PRO" | "ENTERPRISE";
+  payment_method: "PIX" | "BOLETO" | "CREDIT_CARD";
+}
+
+export interface PixSubscriptionResponse {
+  subscription_id: string;
+  qr_code_base64: string;
+  copy_paste_code: string;
+  expiration_date?: string;
+  value: number;
+}
+
+export interface CardSubscriptionResponse {
+  subscription_id: string;
+  checkout_url: string;
+}
+
+export async function createSubscription(
+  req: SubscriptionRequest
+): Promise<PixSubscriptionResponse | CardSubscriptionResponse> {
+  return fetchJson("/billing/subscribe", {
+    method: "POST",
+    body: JSON.stringify(req),
+  });
+}
+
 
 
 

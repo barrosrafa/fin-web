@@ -103,16 +103,16 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             ticker: vRes.ticker,
             name: vRes.name,
             type: "ACAO",
-            sector: "Geral",
-            subsector: "Bolsa B3",
+            sector: "B3",
+            subsector: "Renda Variável",
             currentPrice: vRes.current_price,
-            change24h: 1.48,
-            change12m: 24.3,
-            dividendYield: vRes.current_price > 0 ? (vRes.dpa_medio / vRes.current_price) * 100 : 8.5,
-            pvp: vRes.vpa > 0 ? vRes.current_price / vRes.vpa : 1.15,
-            pl: vRes.lpa > 0 ? vRes.current_price / vRes.lpa : 4.8,
-            sparkline: [vRes.current_price * 0.96, vRes.current_price * 0.98, vRes.current_price],
-            badge: "Auditoria CVM",
+            change24h: 0.0,
+            change12m: 0.0,
+            dividendYield: vRes.current_price > 0 ? (vRes.dpa_medio / vRes.current_price) * 100 : 0.0,
+            pvp: vRes.vpa > 0 ? vRes.current_price / vRes.vpa : 1.0,
+            pl: vRes.lpa > 0 ? vRes.current_price / vRes.lpa : 10.0,
+            sparkline: [vRes.current_price],
+            badge: "CVM Oficial",
           });
         }
       } catch (err) {
@@ -124,17 +124,22 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
     load();
   }, [ticker, matrixPeriod]);
 
-  const stockPrice = stockInfo?.currentPrice ?? valuationData?.current_price ?? 38.45;
+  const stockPrice = stockInfo?.currentPrice ?? valuationData?.current_price ?? 0.0;
   const isPositive = (stockInfo?.change24h ?? 0) >= 0;
 
-  // Calculated values
+  // Calculated values: Graham
   const dynamicGraham = calculateGrahamValue(lpaInput, vpaInput);
   const dynamicGrahamUpside =
     stockPrice > 0 ? ((dynamicGraham - stockPrice) / stockPrice) * 100 : 0;
+  const dynamicGrahamMargin =
+    dynamicGraham > stockPrice ? ((dynamicGraham - stockPrice) / dynamicGraham) * 100 : 0;
 
+  // Calculated values: Décio Bazin
   const dynamicBazin = calculateBazinPrice(dpaInput, bazinYieldTarget);
   const dynamicBazinUpside =
     stockPrice > 0 ? ((dynamicBazin - stockPrice) / stockPrice) * 100 : 0;
+  const dynamicBazinMargin =
+    dynamicBazin > stockPrice ? ((dynamicBazin - stockPrice) / dynamicBazin) * 100 : 0;
 
   // Dynamic Gordon & DCF Interactive States
   const [gordonGrowth, setGordonGrowth] = useState(0.04);
@@ -150,7 +155,8 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
   const [dcfWacc, setDcfWacc] = useState(0.11);
   const [dcfTerminalGrowth, setDcfTerminalGrowth] = useState(0.035);
   let pvFcf = 0;
-  let curFcf = 6.2;
+  const baseFcf = valuationData?.lpa && valuationData.lpa > 0 ? valuationData.lpa * 0.8 : (lpaInput > 0 ? lpaInput * 0.8 : 3.0);
+  let curFcf = baseFcf;
   for (let i = 1; i <= 5; i++) {
     curFcf *= 1 + dcfGrowth5y;
     pvFcf += curFcf / Math.pow(1 + dcfWacc, i);
@@ -162,6 +168,8 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
   const dynamicDcf = pvFcf + terminalVal / Math.pow(1 + dcfWacc, 5);
   const dynamicDcfUpside =
     stockPrice > 0 ? ((dynamicDcf - stockPrice) / stockPrice) * 100 : 0;
+  const dynamicDcfMargin =
+    dynamicDcf > stockPrice ? ((dynamicDcf - stockPrice) / dynamicDcf) * 100 : 0;
 
   // DRE Chart Data from DB
   const dreEntries = valuationData?.dre_history ?? [];
@@ -283,8 +291,13 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
                       dynamicGrahamUpside >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"
                     }`}
                   >
-                    Margem: {formatPercent(dynamicGrahamUpside)}
+                    Upside: {formatPercent(dynamicGrahamUpside)}
                   </div>
+                  {dynamicGrahamMargin > 0 && (
+                    <div className="text-[10px] font-mono text-[#94a3b8]">
+                      Margem Segurança: {formatPercent(dynamicGrahamMargin)}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -357,8 +370,13 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
                       dynamicBazinUpside >= 0 ? "text-[#00d9f5]" : "text-[#ff3b69]"
                     }`}
                   >
-                    Margem: {formatPercent(dynamicBazinUpside)}
+                    Upside: {formatPercent(dynamicBazinUpside)}
                   </div>
+                  {dynamicBazinMargin > 0 && (
+                    <div className="text-[10px] font-mono text-[#94a3b8]">
+                      Desconto s/ Teto: {formatPercent(dynamicBazinMargin)}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -483,9 +501,14 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
                   <div className="text-2xl font-black font-mono text-[#00d9f5]">
                     {formatCurrency(dynamicDcf)}
                   </div>
-                  <div className="text-xs font-mono font-bold text-[#00d9f5]">
-                    Margem: {formatPercent(dynamicDcfUpside)}
+                  <div className={`text-xs font-mono font-bold ${dynamicDcfUpside >= 0 ? "text-[#00d9f5]" : "text-[#ff3b69]"}`}>
+                    Upside: {formatPercent(dynamicDcfUpside)}
                   </div>
+                  {dynamicDcfMargin > 0 && (
+                    <div className="text-[10px] font-mono text-[#94a3b8]">
+                      Margem Segurança: {formatPercent(dynamicDcfMargin)}
+                    </div>
+                  )}
                 </div>
               </div>
 

@@ -5,22 +5,32 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { loginUser } from "@/lib/api";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate auth token cookie
-    document.cookie = "auth_session=simulated_jwt_token; path=/; max-age=86400;";
-    setTimeout(() => {
+    setError(null);
+
+    try {
+      const res = await loginUser({ email, password: senha });
+      if (res.token) {
+        document.cookie = `auth_token=${res.token}; path=/; max-age=604800; SameSite=Lax;`;
+        router.push("/carteira");
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Falha na autenticação. Verifique seu e-mail e senha.";
+      setError(msg);
+    } finally {
       setLoading(false);
-      router.push("/carteira");
-    }, 600);
+    }
   };
 
   return (
@@ -33,6 +43,12 @@ export default function LoginPage() {
             Entre com suas credenciais para gerenciar sua carteira e recursos exclusivos.
           </p>
         </div>
+
+        {error && (
+          <div className="p-3 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">

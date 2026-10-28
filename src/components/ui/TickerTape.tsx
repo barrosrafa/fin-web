@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { resolveAssetHref } from "@/lib/routes";
 import { formatPercent } from "@/lib/formatters";
 import { getBenchmarks } from "@/lib/api";
 
@@ -57,7 +58,7 @@ export function TickerTape({ items: initialItems }: TickerTapeProps) {
           return (
             <Link
               key={`tape-${item.ticker}-${idx}`}
-              href={item.ticker.includes("11") ? `/fiis/${item.ticker}` : `/acoes/${item.ticker}`}
+              href={resolveAssetHref(item.ticker)}
               className="inline-flex items-center gap-2.5 px-4 text-xs hover:bg-white/[0.04] py-0.5 rounded transition-colors group"
             >
               <span className="font-bold text-[#f0f4f8] group-hover:text-[#00d9f5] transition-colors">

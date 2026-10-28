@@ -4,22 +4,38 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { registerUser } from "@/lib/api";
 
 export default function CadastroPage() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [termosAceitos, setTermosAceitos] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [sucesso, setSucesso] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!termosAceitos) {
       alert("É necessário aceitar os Termos de Uso e a Política de Privacidade.");
       return;
     }
-    // Simulate signup success
-    setSucesso(true);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await registerUser({ name: nome, email, password: senha });
+      if (res.token) {
+        document.cookie = `auth_token=${res.token}; path=/; max-age=604800; SameSite=Lax;`;
+        setSucesso(true);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erro ao criar conta. Verifique os dados informados.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,6 +48,12 @@ export default function CadastroPage() {
             Cadastre-se gratuitamente para acessar simuladores, mapa de dividendos e valuations.
           </p>
         </div>
+
+        {error && (
+          <div className="p-3 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl">
+            {error}
+          </div>
+        )}
 
         {sucesso ? (
           <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-center flex flex-col gap-3">
