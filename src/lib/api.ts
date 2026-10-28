@@ -700,3 +700,359 @@ export async function getCreditSystem(
   }
 }
 
+// ==========================================
+// ANÁLISE DE AÇÕES REA CLIENT METHODS & TYPES
+// ==========================================
+
+export interface DividendSimulationRequest {
+  ticker?: string;
+  initial_capital: number;
+  monthly_contribution: number;
+  time_horizon_months: number;
+  initial_stock_price: number;
+  monthly_dividend_per_unit: number;
+  annual_inflation_rate?: number;
+  annual_dividend_growth_rate?: number;
+  tax_rate?: number;
+  reinvest_dividends?: boolean;
+}
+
+export interface MonthlyMilestone {
+  mes: number;
+  cotas: number;
+  patrimonio: number;
+  aporte_realizado: number;
+  provento_recebido: number;
+  total_investido_bolso: number;
+  yield_on_cost_pct: number;
+}
+
+export interface DividendSimulationResponse {
+  patrimonio_final: number;
+  total_aportado_bolso: number;
+  total_proventos_gerados: number;
+  cotas_finais: number;
+  renda_mensal_final: number;
+  magic_number: {
+    atingido: boolean;
+    mes?: number;
+    cotas_necessarias?: number;
+  };
+  evolucao: MonthlyMilestone[];
+}
+
+export async function simulateDividends(
+  req: DividendSimulationRequest
+): Promise<DividendSimulationResponse> {
+  return await fetchJson<DividendSimulationResponse>(
+    "/analytics/simulate-dividends",
+    {
+      method: "POST",
+      body: JSON.stringify(req),
+    }
+  );
+}
+
+export interface MonthlyHeatmapItem {
+  month: number;
+  record_date_probability_pct: number;
+  payment_probability_pct: number;
+  average_payout_per_unit: number;
+  last_payment_year?: number;
+}
+
+export interface DividendMapEntry {
+  ticker: string;
+  asset_name: string;
+  asset_type: string;
+  monthly_heatmap: MonthlyHeatmapItem[];
+}
+
+export async function getDividendMap(
+  month?: number,
+  minProbability: number = 0.0
+): Promise<DividendMapEntry[]> {
+  try {
+    const params = new URLSearchParams();
+    if (month) params.set("month", month.toString());
+    if (minProbability > 0) params.set("min_probability", minProbability.toString());
+    const res = await fetchJson<{ total: number; items: DividendMapEntry[] }>(
+      `/analytics/dividend-map?${params.toString()}`
+    );
+    return res.items ?? [];
+  } catch (err) {
+    console.error("Failed to fetch dividend map:", err);
+    return [];
+  }
+}
+
+export interface DividendCalendarDetailItem {
+  id_provento: number;
+  ticker: string;
+  tipo: string;
+  data_com?: string;
+  data_pagamento?: string;
+  valor_bruto: number;
+  aliquota_ir_pct: number;
+  valor_liquido: number;
+  moeda: string;
+  cotacao_atual: number;
+  yield_evento_pct: number;
+}
+
+export async function getDetailedDividendCalendar(
+  limit: number = 50
+): Promise<DividendCalendarDetailItem[]> {
+  try {
+    return await fetchJson<DividendCalendarDetailItem[]>(
+      `/analytics/dividend-calendar?limit=${limit}`
+    );
+  } catch (err) {
+    console.error("Failed to fetch detailed dividend calendar:", err);
+    return [];
+  }
+}
+
+export interface GlossaryItem {
+  id: number;
+  slug: str;
+  termo: str;
+  letra_inicial: str;
+  categoria: str;
+  definicao_curta: str;
+  formula_latex?: str;
+  conteudo_markdown?: str;
+}
+
+export async function getGlossary(
+  letter?: string,
+  q?: string
+): Promise<GlossaryItem[]> {
+  try {
+    const params = new URLSearchParams();
+    if (letter) params.set("letter", letter);
+    if (q) params.set("q", q);
+    const res = await fetchJson<{ total: number; items: GlossaryItem[] }>(
+      `/cms/glossary?${params.toString()}`
+    );
+    return res.items ?? [];
+  } catch (err) {
+    console.error("Failed to fetch glossary:", err);
+    return [];
+  }
+}
+
+export async function getGlossaryTerm(slug: string): Promise<GlossaryItem | null> {
+  try {
+    return await fetchJson<GlossaryItem>(`/cms/glossary/${slug}`);
+  } catch (err) {
+    console.error(`Failed to fetch glossary term ${slug}:`, err);
+    return null;
+  }
+}
+
+export interface BookItem {
+  id: number;
+  slug: string;
+  titulo: string;
+  subtitulo?: string;
+  autor: string;
+  ano_publicacao?: number;
+  nivel_dificuldade: string;
+  categoria: string;
+  resenha_markdown: string;
+  principais_licoes: string[];
+  avaliacao_media: number;
+}
+
+export async function getBooks(category?: string): Promise<BookItem[]> {
+  try {
+    const params = category ? `?category=${encodeURIComponent(category)}` : "";
+    return await fetchJson<BookItem[]>(`/cms/books${params}`);
+  } catch (err) {
+    console.error("Failed to fetch books:", err);
+    return [];
+  }
+}
+
+export interface ArticleItem {
+  id: number;
+  slug: string;
+  titulo: string;
+  subtitulo?: string;
+  autor_nome: string;
+  categoria: string;
+  tags: string[];
+  tempo_leitura_min: number;
+  is_premium: boolean;
+  publicado_em?: string;
+}
+
+export async function getArticles(limit: number = 10): Promise<ArticleItem[]> {
+  try {
+    return await fetchJson<ArticleItem[]>(`/cms/articles?limit=${limit}`);
+  } catch (err) {
+    console.error("Failed to fetch articles:", err);
+    return [];
+  }
+}
+
+export async function submitSupportTicket(ticket: {
+  nome_contato: string;
+  email_contato: string;
+  assunto: string;
+  mensagem: string;
+}): Promise<{ id_ticket: number; status: string; mensagem_retorno: string }> {
+  return await fetchJson("/cms/support/ticket", {
+    method: "POST",
+    body: JSON.stringify(ticket),
+  });
+}
+
+export interface SuitabilityOption {
+  id_opcao: number;
+  ordem: number;
+  texto: string;
+  pontos: number;
+}
+
+export interface SuitabilityQuestion {
+  id_pergunta: number;
+  ordem: number;
+  titulo: string;
+  descricao?: string;
+  eixo: string;
+  opcoes: SuitabilityOption[];
+}
+
+export interface SuitabilityEvaluateResponse {
+  score_total: number;
+  codigo_categoria: string;
+  nome_categoria: string;
+  descricao: string;
+  alocacao_alvo: {
+    renda_fixa: number;
+    fiis: number;
+    acoes: number;
+    internacional: number;
+    cripto?: number;
+  };
+  recomendacoes_principais: string[];
+}
+
+export async function getSuitabilityQuestions(): Promise<SuitabilityQuestion[]> {
+  try {
+    return await fetchJson<SuitabilityQuestion[]>("/suitability/questions");
+  } catch (err) {
+    console.error("Failed to fetch suitability questions:", err);
+    return [];
+  }
+}
+
+export async function evaluateSuitability(
+  respostas: Array<{ id_pergunta: number; id_opcao_selecionada: number }>
+): Promise<SuitabilityEvaluateResponse> {
+  return await fetchJson<SuitabilityEvaluateResponse>("/suitability/evaluate", {
+    method: "POST",
+    body: JSON.stringify({ respostas }),
+  });
+}
+
+export interface BrokerItem {
+  id: number;
+  nome: string;
+  cnpj: string;
+  is_internacional: boolean;
+  costs: {
+    taxa_acoes: number;
+    taxa_fiis: number;
+    taxa_opcoes: number;
+    custodia_mensal: number;
+    spread_cambial_ptax_pct: number;
+  };
+  ratings: {
+    nota_geral: number;
+    total_avaliacoes: number;
+  };
+  plataformas_suportadas: string[];
+}
+
+export async function getBrokers(): Promise<BrokerItem[]> {
+  try {
+    const res = await fetchJson<{ total: number; items: BrokerItem[] }>("/brokers");
+    return res.items ?? [];
+  } catch (err) {
+    console.error("Failed to fetch brokers:", err);
+    return [];
+  }
+}
+
+export interface USEquityItem {
+  ticker: string;
+  name: string;
+  price_usd: number;
+  price_brl: number;
+  ptax_rate: number;
+  pe_ratio?: number;
+  dividend_yield_pct: number;
+  market_cap_usd?: number;
+  sector: string;
+}
+
+export async function getUSEquities(): Promise<USEquityItem[]> {
+  try {
+    return await fetchJson<USEquityItem[]>("/stocks/us");
+  } catch (err) {
+    console.error("Failed to fetch US equities:", err);
+    return [];
+  }
+}
+
+export interface REITItem {
+  ticker: string;
+  name: string;
+  subtipo_reit: string;
+  price_usd: number;
+  price_brl: number;
+  ptax_rate: number;
+  ffo_per_share: number;
+  affo_per_share: number;
+  p_ffo: number;
+  p_affo: number;
+  ffo_payout_pct: number;
+  occupancy_rate_pct: number;
+  gross_dy_pct: number;
+  net_dy_brl_pct: number;
+  properties_count: number;
+}
+
+export async function getREITs(): Promise<REITItem[]> {
+  try {
+    return await fetchJson<REITItem[]>("/stocks/reits");
+  } catch (err) {
+    console.error("Failed to fetch REITs:", err);
+    return [];
+  }
+}
+
+export interface PlanItem {
+  id: string;
+  name: string;
+  price_monthly: number;
+  price_annual: number;
+  badge: string;
+  features: string[];
+  restricted_features: string[];
+}
+
+export async function getBillingPlans(): Promise<PlanItem[]> {
+  try {
+    const res = await fetchJson<{ plans: PlanItem[] }>("/billing/plans");
+    return res.plans ?? [];
+  } catch (err) {
+    console.error("Failed to fetch billing plans:", err);
+    return [];
+  }
+}
+
+
