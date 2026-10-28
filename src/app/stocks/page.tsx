@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { InfiniteScrollFooter } from "@/components/ui/InfiniteScrollFooter";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
 import { getUSEquities, USEquityItem } from "@/lib/api";
 
@@ -27,7 +28,8 @@ export default function StocksPage() {
 
   const filtered = stocks.filter((s) =>
     s.ticker.toLowerCase().includes(search.toLowerCase()) ||
-    s.name.toLowerCase().includes(search.toLowerCase())
+    s.name.toLowerCase().includes(search.toLowerCase()) ||
+    s.sector.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -38,6 +40,9 @@ export default function StocksPage() {
           <div className="flex items-center gap-2 mb-2">
             <span className="badge-neon badge-neon-indigo">Mercado Americano (EUA)</span>
             <span className="text-xs text-[#64748b]">NYSE & NASDAQ</span>
+            <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+              {stocks.length} Stocks Globais
+            </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
             Stocks & Ações Internacionais
@@ -115,6 +120,17 @@ export default function StocksPage() {
             </tbody>
           </table>
         </div>
+
+        <InfiniteScrollFooter
+          loading={loading}
+          loadingMore={false}
+          hasMore={false}
+          count={filtered.length}
+          total={filtered.length}
+          sentinelRef={() => {}}
+          entityName="ações internacionais"
+          emptyMessage="Nenhuma ação internacional encontrada."
+        />
       </Card>
     </div>
   );

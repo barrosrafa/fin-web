@@ -48,6 +48,8 @@ const DEFAULT_PORTFOLIOS: PortfolioDraft[] = [
 ];
 
 export default function SimuladorPortfoliosPage() {
+  const [startDate, setStartDate] = useState<string>("2024-01-02");
+  const [endDate, setEndDate] = useState<string>("2024-10-25");
   const [startingAmount, setStartingAmount] = useState<number>(50000);
   const [monthlyContribution, setMonthlyContribution] = useState<number>(1000);
   const [rebalancing, setRebalancing] = useState<"NENHUM" | "MENSAL" | "TRIMESTRAL" | "SEMESTRAL" | "ANUAL">("TRIMESTRAL");
@@ -61,8 +63,8 @@ export default function SimuladorPortfoliosPage() {
     setLoading(true);
     try {
       const res = await simulatePortfolio({
-        startDate: "2024-01-02",
-        endDate: "2026-10-26",
+        startDate,
+        endDate,
         startingAmount,
         monthlyContributions: monthlyContribution,
         rebalancingFrequency: rebalancing,
@@ -79,7 +81,7 @@ export default function SimuladorPortfoliosPage() {
 
   useEffect(() => {
     runSimulation();
-  }, []);
+  }, [startDate, endDate]);
 
   // Convert portfolio equity curves to normalized Base 100 for RelativePerformanceBase100Chart
   const base100Series: NormalizedSeriesPoint[] = [];
@@ -124,6 +126,66 @@ export default function SimuladorPortfoliosPage() {
 
       {/* Inputs de Configuração */}
       <Card glow="cyan">
+        {/* Date Range & Presets */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 mb-4 border-b border-white/10">
+          <div className="flex items-center gap-3">
+            <div>
+              <label className="text-[10px] uppercase font-bold text-[#64748b] block mb-1">
+                Data Inicial (Backtest Real)
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="bg-[#131926] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#00f5a0]"
+              />
+            </div>
+            <span className="text-[#64748b] mt-4">até</span>
+            <div>
+              <label className="text-[10px] uppercase font-bold text-[#64748b] block mb-1">
+                Data Final
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="bg-[#131926] border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-[#00f5a0]"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] uppercase font-bold text-[#64748b] mr-1">Atalhos:</span>
+            <button
+              onClick={() => {
+                setStartDate("2024-01-02");
+                setEndDate("2024-10-25");
+              }}
+              className="px-2.5 py-1 text-[11px] rounded bg-white/5 hover:bg-white/10 text-cyan-400 font-semibold transition-colors"
+            >
+              2024 Completo
+            </button>
+            <button
+              onClick={() => {
+                setStartDate("2023-10-25");
+                setEndDate("2024-10-25");
+              }}
+              className="px-2.5 py-1 text-[11px] rounded bg-white/5 hover:bg-white/10 text-cyan-400 font-semibold transition-colors"
+            >
+              12 Meses
+            </button>
+            <button
+              onClick={() => {
+                setStartDate("2023-01-02");
+                setEndDate("2026-10-25");
+              }}
+              className="px-2.5 py-1 text-[11px] rounded bg-white/5 hover:bg-white/10 text-cyan-400 font-semibold transition-colors"
+            >
+              Histórico Integral
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="text-[11px] uppercase font-bold text-[#64748b] block mb-1">

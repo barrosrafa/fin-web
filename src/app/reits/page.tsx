@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { InfiniteScrollFooter } from "@/components/ui/InfiniteScrollFooter";
 import { formatPercent } from "@/lib/formatters";
 import { getREITs, REITItem } from "@/lib/api";
 
@@ -39,6 +40,9 @@ export default function REITsPage() {
           <div className="flex items-center gap-2 mb-2">
             <span className="badge-neon badge-neon-indigo">Real Estate dos EUA</span>
             <span className="text-xs text-[#64748b]">Nareit Accounting & IRS 30%</span>
+            <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+              {reits.length} REITs Listados
+            </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
             REITs (Real Estate Investment Trusts)
@@ -124,6 +128,17 @@ export default function REITsPage() {
             </tbody>
           </table>
         </div>
+
+        <InfiniteScrollFooter
+          loading={loading}
+          loadingMore={false}
+          hasMore={false}
+          count={filtered.length}
+          total={filtered.length}
+          sentinelRef={() => {}}
+          entityName="REITs"
+          emptyMessage="Nenhum REIT encontrado para a busca."
+        />
       </Card>
     </div>
   );

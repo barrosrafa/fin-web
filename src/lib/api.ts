@@ -88,6 +88,40 @@ async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   }) as T;
 }
 
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+  hasMore: boolean;
+}
+
+async function fetchWithHeaders<T>(
+  path: string,
+  options?: RequestInit
+): Promise<{ data: T; headers: Headers }> {
+  const url = `${API_BASE}${path}`;
+  const token = getStoredToken();
+  const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const defaultCache = options?.cache ?? (token ? "no-store" : "default");
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders,
+      ...options?.headers,
+    },
+    cache: defaultCache,
+  });
+  if (!res.ok) {
+    throw new Error(`API error [${res.status}] on ${path}: ${res.statusText}`);
+  }
+  const text = await res.text();
+  const data = JSON.parse(text, function (this: unknown, _key: string, value: unknown) {
+    return value === null && !Array.isArray(this) ? undefined : value;
+  }) as T;
+  return { data, headers: res.headers };
+}
+
 /**
  * The API serializes nested structures (properties, risk matrix, options, BTC,
  * buybacks, CDA holdings) in snake_case, while the shared Zod schemas used by the
@@ -116,12 +150,15 @@ export interface BenchmarkItem {
 export interface DividendCalendarItem {
   id: string;
   assetTicker: string;
-  type: "DIVIDENDO" | "JCP" | "RENDIMENTO";
+  type: "DIVIDENDO" | "JCP" | "RENDIMENTO" | string;
   referenceMonth: string;
   dateCom: string;
+  dateEx?: string;
   paymentDate: string;
   valuePerShare: number;
   yieldOnCostPct: number;
+  status?: "FUTURO" | "PAGO" | string;
+  sourceUrl?: string;
 }
 
 export interface ScreenerFilterParams {
@@ -186,6 +223,120 @@ export interface StockValuationDetail {
   };
 }
 
+export interface FIICadastralData {
+  legal_name?: string;
+  cnpj?: string;
+  trading_code: string;
+  administrator_name?: string;
+  administrator_cnpj?: string;
+  administrator_address?: string;
+  administrator_phone?: string;
+  administrator_site?: string;
+  manager_name?: string;
+  mandate?: string;
+  target_audience?: string;
+  duration_term?: string;
+  management_type?: string;
+  admin_fee_desc?: string;
+  shares_count?: number;
+  shareholders_count?: number;
+}
+
+export interface FIIIndicatorsData {
+  pvp: number;
+  vp_per_share: number;
+  dividend_yield_12m: number;
+  last_dividend: number;
+  expense_pct: number;
+  cash_pct: number;
+  default_pct: number;
+  physical_vacancy_pct: number;
+  financial_vacancy_pct: number;
+  shares_count: number;
+  shareholders_count: number;
+  market_cap: number;
+  daily_trades: number;
+  daily_volume: number;
+  net_worth: number;
+  change_1d: number;
+  change_12m: number;
+  min_52w: number;
+  max_52w: number;
+  cagr_dividends_3y: number;
+  cagr_share_value_3y: number;
+  quote_datetime?: string;
+}
+
+export interface FIIDividendItem {
+  id: string;
+  type: string;
+  reference_month?: string;
+  date_approval?: string;
+  date_com: string;
+  date_ex?: string;
+  date_payment: string;
+  value_per_share: number;
+  yield_pct: number;
+  status: string;
+}
+
+export interface FIIDisclosureItem {
+  document_id: string;
+  document_type: string;
+  title: string;
+  document_date: string;
+  published_at?: string;
+  source_url?: string;
+  external_id?: string;
+  ai_summary?: string;
+  ai_sentiment?: string;
+}
+
+export interface FIIBalanceSheetData {
+  data_referencia: string;
+  total_assets: number;
+  liquid_assets: {
+    caixa: number;
+    titulos_publicos: number;
+    titulos_privados: number;
+    renda_fixa: number;
+    total: number;
+  };
+  investments: {
+    imoveis: number;
+    fiis: number;
+    cris: number;
+    outros: number;
+    total: number;
+  };
+  receivables: {
+    alugueis: number;
+    venda_imoveis: number;
+    outros: number;
+    total: number;
+  };
+  total_liabilities: {
+    rendimentos_distribuir: number;
+    taxa_administracao: number;
+    taxa_performance: number;
+    outros_valores_pagar: number;
+    total: number;
+  };
+  net_worth: number;
+}
+
+export interface FIILucratividadeData {
+  rental_income: number;
+  property_sale_income: number;
+  securities_income: number;
+  financial_income: number;
+  operating_expenses: number;
+  admin_fee_expense: number;
+  other_expenses: number;
+  net_profit: number;
+  distributed_per_share: number;
+}
+
 export interface FIIDetailData {
   ticker: string;
   name: string;
@@ -215,6 +366,20 @@ export interface FIIDetailData {
     rating?: string;
   }>;
   quarterly_dre?: Record<string, number>;
+  cadastral?: FIICadastralData;
+  indicators?: FIIIndicatorsData;
+  dividends?: FIIDividendItem[];
+  disclosures?: FIIDisclosureItem[];
+  balance_sheet?: FIIBalanceSheetData;
+  lucratividade?: FIILucratividadeData;
+}
+
+export interface ETFDrawdownData {
+  ticker: string;
+  max_drawdown_pct: number;
+  valley_date?: string | null;
+  recovery_days?: number | null;
+  drawdown_curve: Array<[timestamp: number, pct: number]>;
 }
 
 export interface ETFDetailData {
@@ -223,8 +388,8 @@ export interface ETFDetailData {
   benchmark_index: string;
   provider: string;
   current_price: number;
-  nav_per_share: number;
-  nav_spread_pct: number;
+  nav_per_share?: number | null;
+  nav_spread_pct?: number | null;
   ter_pct: number;
   primary_fee_pct: number;
   secondary_fee_pct: number;
@@ -242,6 +407,7 @@ export interface ETFDetailData {
     flow_millions: number;
     shares_count: number;
   }>;
+  drawdown?: ETFDrawdownData | null;
 }
 
 export interface FixedIncomeData {
@@ -349,16 +515,82 @@ export async function getBenchmarks(): Promise<BenchmarkItem[]> {
 
 export async function getAssets(
   type?: string,
-  limit: number = 50
+  limit: number = 50,
+  offset: number = 0,
+  search?: string,
+  subsector?: string,
+  sector?: string,
+  sortBy?: string
 ): Promise<AssetSummary[]> {
   try {
     const q = new URLSearchParams();
     if (type && type !== "TODOS") q.set("asset_type", type);
     q.set("limit", limit.toString());
+    if (offset > 0) q.set("offset", offset.toString());
+    if (search && search.trim()) q.set("search", search.trim());
+    if (subsector && subsector !== "TODOS") q.set("subsector", subsector);
+    if (sector && sector !== "TODOS") q.set("sector", sector);
+    if (sortBy) q.set("sort_by", sortBy);
     return await fetchJson<AssetSummary[]>(`/market/assets?${q.toString()}`);
   } catch (err) {
     console.error("Failed to fetch assets:", err);
     return [];
+  }
+}
+
+export async function getAssetsPaginated(params: {
+  type?: string;
+  limit?: number;
+  offset?: number;
+  search?: string;
+  subsector?: string;
+  sector?: string;
+  sortBy?: string;
+}): Promise<PaginatedResult<AssetSummary>> {
+  const { type, limit = 24, offset = 0, search, subsector, sector, sortBy } = params;
+  const q = new URLSearchParams();
+  if (type && type !== "TODOS") q.set("asset_type", type);
+  q.set("limit", limit.toString());
+  q.set("offset", offset.toString());
+  if (search && search.trim()) q.set("search", search.trim());
+  if (subsector && subsector !== "TODOS") q.set("subsector", subsector);
+  if (sector && sector !== "TODOS") q.set("sector", sector);
+  if (sortBy) q.set("sort_by", sortBy);
+
+  try {
+    const { data, headers } = await fetchWithHeaders<AssetSummary[]>(`/market/assets?${q.toString()}`);
+    const totalHeader = headers.get("X-Total-Count");
+    const total = totalHeader ? parseInt(totalHeader, 10) : offset + data.length;
+    const hasMore = offset + data.length < total;
+    return { items: data, total, hasMore };
+  } catch (err) {
+    console.error("Failed to fetch paginated assets:", err);
+    return { items: [], total: 0, hasMore: false };
+  }
+}
+
+export async function getMarketSectors(assetType?: string): Promise<string[]> {
+  try {
+    const q = assetType ? `?asset_type=${assetType}` : "";
+    return await fetchJson<string[]>(`/market/sectors${q}`);
+  } catch (err) {
+    console.error("Failed to fetch market sectors:", err);
+    return ["TODOS"];
+  }
+}
+
+export async function getMarketHighlights(assetType: string = "FII"): Promise<{
+  highest_dy?: { ticker: string; dividendYield: number; name: string };
+  lowest_pvp?: { ticker: string; pvp: number; name: string };
+}> {
+  try {
+    return await fetchJson<{
+      highest_dy?: { ticker: string; dividendYield: number; name: string };
+      lowest_pvp?: { ticker: string; pvp: number; name: string };
+    }>(`/market/highlights?asset_type=${assetType}`);
+  } catch (err) {
+    console.error("Failed to fetch market highlights:", err);
+    return {};
   }
 }
 
@@ -372,6 +604,85 @@ export async function getDividends(limit: number = 15): Promise<DividendCalendar
 }
 
 export const getDividendCalendar = getDividends;
+
+export async function getDividendsPaginated(params: {
+  ticker?: string;
+  status?: "FUTURO" | "PAGO" | "ALL";
+  eventType?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<PaginatedResult<DividendCalendarItem>> {
+  const { ticker, status, eventType, limit = 50, offset = 0 } = params;
+  const q = new URLSearchParams({
+    limit: limit.toString(),
+    offset: offset.toString(),
+  });
+  if (ticker && ticker.trim()) q.set("ticker", ticker.trim().toUpperCase());
+  if (status && status !== "ALL") q.set("status", status);
+  if (eventType && eventType !== "ALL") q.set("event_type", eventType);
+
+  try {
+    const { data, headers } = await fetchWithHeaders<DividendCalendarItem[]>(
+      `/market/dividends?${q.toString()}`
+    );
+    const totalHeader = headers.get("X-Total-Count");
+    const total = totalHeader ? parseInt(totalHeader, 10) : offset + data.length;
+    return { items: data, total, hasMore: offset + data.length < total };
+  } catch (err) {
+    console.error("Failed to fetch paginated dividends:", err);
+    return { items: [], total: 0, hasMore: false };
+  }
+}
+
+export interface DailyQuoteItem {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  close_adjusted: number;
+  volume: number;
+  pct_change: number;
+  num_trades?: number;
+  corporate_events?: string;
+}
+
+export interface QuoteHistoryResponse {
+  ticker: string;
+  timeframe: string;
+  adjusted: boolean;
+  total_days: number;
+  data: DailyQuoteItem[];
+}
+
+export async function getQuoteHistory(
+  ticker: string,
+  timeframe: string = "1Y",
+  adjusted: boolean = true,
+  limit: number = 500,
+  offset: number = 0
+): Promise<QuoteHistoryResponse> {
+  try {
+    const q = new URLSearchParams({
+      timeframe,
+      adjusted: adjusted.toString(),
+      limit: limit.toString(),
+      offset: offset.toString(),
+    });
+    return await fetchJson<QuoteHistoryResponse>(
+      `/market/${encodeURIComponent(ticker)}/history?${q.toString()}`
+    );
+  } catch (err) {
+    console.error(`Failed to fetch quote history for ${ticker}:`, err);
+    return {
+      ticker,
+      timeframe,
+      adjusted,
+      total_days: 0,
+      data: [],
+    };
+  }
+}
 
 export async function queryScreener(
   params: ScreenerFilterParams
@@ -411,6 +722,15 @@ export async function getETFDetail(ticker: string): Promise<ETFDetailData | null
     return await fetchJson<ETFDetailData>(`/etfs/${ticker}`);
   } catch (err) {
     console.error(`Failed to fetch ETF detail for ${ticker}:`, err);
+    return null;
+  }
+}
+
+export async function getETFDrawdown(ticker: string): Promise<ETFDrawdownData | null> {
+  try {
+    return await fetchJson<ETFDrawdownData>(`/etfs/${ticker}/drawdown`);
+  } catch (err) {
+    console.error(`Failed to fetch ETF drawdown for ${ticker}:`, err);
     return null;
   }
 }
@@ -591,13 +911,73 @@ export async function getFundRiskMatrix(fundId: string = "cvm175-macro"): Promis
 
 export async function getStocksRanking(
   sortBy: string = "dy",
-  limit: number = 50
+  limit: number = 50,
+  offset: number = 0,
+  search?: string
 ): Promise<StockRankingRow[]> {
   try {
-    return await fetchJson<StockRankingRow[]>(`/stocks/ranking?sort_by=${sortBy}&limit=${limit}`);
+    const q = new URLSearchParams({
+      sort_by: sortBy,
+      limit: limit.toString(),
+      offset: offset.toString(),
+    });
+    if (search && search.trim()) q.set("search", search.trim());
+    return await fetchJson<StockRankingRow[]>(`/stocks/ranking?${q.toString()}`);
   } catch (err) {
     console.error("Failed to fetch stocks ranking:", err);
     return [];
+  }
+}
+
+export async function getStocksRankingPaginated(params: {
+  sortBy?: string;
+  limit?: number;
+  offset?: number;
+  search?: string;
+  sector?: string;
+  minDY?: number;
+  maxPL?: number;
+  maxPVP?: number;
+  minROE?: number;
+  minROIC?: number;
+  minMargem?: number;
+}): Promise<PaginatedResult<StockRankingRow>> {
+  const {
+    sortBy = "dy",
+    limit = 50,
+    offset = 0,
+    search,
+    sector,
+    minDY,
+    maxPL,
+    maxPVP,
+    minROE,
+    minROIC,
+    minMargem,
+  } = params;
+  const q = new URLSearchParams({
+    sort_by: sortBy,
+    limit: limit.toString(),
+    offset: offset.toString(),
+  });
+  if (search && search.trim()) q.set("search", search.trim());
+  if (sector && sector !== "TODOS") q.set("sector", sector);
+  if (minDY !== undefined) q.set("min_dy", minDY.toString());
+  if (maxPL !== undefined) q.set("max_pl", maxPL.toString());
+  if (maxPVP !== undefined) q.set("max_pvp", maxPVP.toString());
+  if (minROE !== undefined) q.set("min_roe", minROE.toString());
+  if (minROIC !== undefined) q.set("min_roic", minROIC.toString());
+  if (minMargem !== undefined) q.set("min_margem", minMargem.toString());
+
+  try {
+    const { data, headers } = await fetchWithHeaders<StockRankingRow[]>(`/stocks/ranking?${q.toString()}`);
+    const totalHeader = headers.get("X-Total-Count");
+    const total = totalHeader ? parseInt(totalHeader, 10) : offset + data.length;
+    const hasMore = offset + data.length < total;
+    return { items: data, total, hasMore };
+  } catch (err) {
+    console.error("Failed to fetch paginated stocks ranking:", err);
+    return { items: [], total: 0, hasMore: false };
   }
 }
 
@@ -643,13 +1023,64 @@ export async function getStockDividendMatrix(
 
 export async function getFIIRanking(
   sortBy: string = "dy",
-  limit: number = 50
+  limit: number = 50,
+  offset: number = 0,
+  search?: string
 ): Promise<FIIRankingRow[]> {
   try {
-    return await fetchJson<FIIRankingRow[]>(`/fiis/ranking?sort_by=${sortBy}&limit=${limit}`);
+    const q = new URLSearchParams({
+      sort_by: sortBy,
+      limit: limit.toString(),
+      offset: offset.toString(),
+    });
+    if (search && search.trim()) q.set("search", search.trim());
+    return await fetchJson<FIIRankingRow[]>(`/fiis/ranking?${q.toString()}`);
   } catch (err) {
     console.error("Failed to fetch FII ranking:", err);
     return [];
+  }
+}
+
+export async function getFIIRankingPaginated(params: {
+  sortBy?: string;
+  limit?: number;
+  offset?: number;
+  search?: string;
+  segment?: string;
+  minDY?: number;
+  maxPVP?: number;
+  maxVacancia?: number;
+}): Promise<PaginatedResult<FIIRankingRow>> {
+  const {
+    sortBy = "dy",
+    limit = 50,
+    offset = 0,
+    search,
+    segment,
+    minDY,
+    maxPVP,
+    maxVacancia,
+  } = params;
+  const q = new URLSearchParams({
+    sort_by: sortBy,
+    limit: limit.toString(),
+    offset: offset.toString(),
+  });
+  if (search && search.trim()) q.set("search", search.trim());
+  if (segment && segment !== "TODOS") q.set("segment", segment);
+  if (minDY !== undefined) q.set("min_dy", minDY.toString());
+  if (maxPVP !== undefined) q.set("max_pvp", maxPVP.toString());
+  if (maxVacancia !== undefined) q.set("max_vacancia", maxVacancia.toString());
+
+  try {
+    const { data, headers } = await fetchWithHeaders<FIIRankingRow[]>(`/fiis/ranking?${q.toString()}`);
+    const totalHeader = headers.get("X-Total-Count");
+    const total = totalHeader ? parseInt(totalHeader, 10) : offset + data.length;
+    const hasMore = offset + data.length < total;
+    return { items: data, total, hasMore };
+  } catch (err) {
+    console.error("Failed to fetch paginated FII ranking:", err);
+    return { items: [], total: 0, hasMore: false };
   }
 }
 
@@ -825,13 +1256,15 @@ export interface DividendCalendarDetailItem {
   ticker: string;
   tipo: string;
   data_com?: string;
+  data_ex?: string;
   data_pagamento?: string;
+  status?: "FUTURO" | "PAGO" | string;
   valor_bruto: number;
   aliquota_ir_pct: number;
   valor_liquido: number;
   moeda: string;
-  cotacao_atual: number;
-  yield_evento_pct: number;
+  cotacao_atual?: number;
+  yield_evento_pct?: number;
 }
 
 export async function getDetailedDividendCalendar(
@@ -844,6 +1277,35 @@ export async function getDetailedDividendCalendar(
   } catch (err) {
     console.error("Failed to fetch detailed dividend calendar:", err);
     return [];
+  }
+}
+
+export async function getDetailedDividendCalendarPaginated(params: {
+  limit?: number;
+  offset?: number;
+  eventType?: string;
+  status?: string;
+  ticker?: string;
+}): Promise<PaginatedResult<DividendCalendarDetailItem>> {
+  const { limit = 50, offset = 0, eventType, status, ticker } = params;
+  const q = new URLSearchParams({
+    limit: limit.toString(),
+    offset: offset.toString(),
+  });
+  if (eventType && eventType !== "ALL") q.set("event_type", eventType);
+  if (status && status !== "ALL") q.set("status", status);
+  if (ticker && ticker.trim()) q.set("ticker", ticker.trim().toUpperCase());
+
+  try {
+    const { data, headers } = await fetchWithHeaders<DividendCalendarDetailItem[]>(
+      `/analytics/dividend-calendar?${q.toString()}`
+    );
+    const totalHeader = headers.get("X-Total-Count");
+    const total = totalHeader ? parseInt(totalHeader, 10) : offset + data.length;
+    return { items: data, total, hasMore: offset + data.length < total };
+  } catch (err) {
+    console.error("Failed to fetch detailed paginated dividend calendar:", err);
+    return { items: [], total: 0, hasMore: false };
   }
 }
 

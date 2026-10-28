@@ -1,31 +1,43 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
+import { InfiniteScrollFooter } from "@/components/ui/InfiniteScrollFooter";
 import { formatCurrency, formatPercent, formatMultiple } from "@/lib/formatters";
-import { getAssets } from "@/lib/api";
+import { getAssetsPaginated } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 export default function ETFsPage() {
-  const [etfs, setEtfs] = useState<AssetSummary[]>([]);
-  const [, setLoading] = useState(true);
+  const fetchPage = useCallback(
+    async (offset: number, limit: number, searchStr: string) => {
+      return await getAssetsPaginated({
+        type: "ETF",
+        limit,
+        offset,
+        search: searchStr,
+      });
+    },
+    []
+  );
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await getAssets("ETF");
-        setEtfs(res);
-      } catch (err) {
-        console.error("Failed to load ETFs:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
+  const {
+    items: etfs,
+    total,
+    loading,
+    loadingMore,
+    hasMore,
+    search,
+    setSearch,
+    sentinelRef,
+    loadMore,
+  } = useInfiniteScroll<AssetSummary>({
+    fetchPage,
+    limit: 24,
+  });
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -34,6 +46,9 @@ export default function ETFsPage() {
         <div className="flex items-center gap-2 mb-2">
           <span className="badge-neon badge-neon-emerald">ETFs Brasil Standard</span>
           <span className="text-xs text-[#64748b]">Exchange Traded Funds</span>
+          <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+            {total > 0 ? `${total} ETFs no Banco` : "ETFs B3"}
+          </span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
           ETFs Locais & Globais (Fundos de Índice)
@@ -64,6 +79,42 @@ export default function ETFsPage() {
           glow="violet"
         />
       </div>
+
+      {/* Search Input */}
+      <Card>
+        <div className="relative">
+          <input
+            id="etfs-search"
+            name="search"
+            aria-label="Buscar ETFs por ticker ou nome"
+            type="text"
+            placeholder="Buscar por ticker ou nome no banco em tempo real (ex: BOVA11, IVVB11, SMAL11)..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-2 text-xs text-[#64748b] hover:text-white"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        <div className="mt-3 flex items-center justify-between text-[11px] text-[#64748b]">
+          <span>
+            {loading
+              ? "Consultando banco de dados..."
+              : `Exibindo ${etfs.length} de ${total} ETFs ${search ? `para "${search}"` : ""}`}
+          </span>
+          {hasMore && !loading && (
+            <span className="text-[#00f5a0]">Role para carregar mais automaticamente ↓</span>
+          )}
+        </div>
+      </Card>
 
       {/* ETFs Table */}
       <Card>
@@ -129,6 +180,18 @@ export default function ETFsPage() {
             </tbody>
           </table>
         </div>
+
+        <InfiniteScrollFooter
+          loading={loading}
+          loadingMore={loadingMore}
+          hasMore={hasMore}
+          count={etfs.length}
+          total={total}
+          sentinelRef={sentinelRef}
+          onLoadMore={loadMore}
+          entityName="ETFs"
+          emptyMessage="Nenhum ETF encontrado para a busca."
+        />
       </Card>
     </div>
   );

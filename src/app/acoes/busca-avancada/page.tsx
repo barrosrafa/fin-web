@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { InfiniteScrollFooter } from "@/components/ui/InfiniteScrollFooter";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import { getStocksRanking } from "@/lib/api";
+import { getStocksRankingPaginated, getMarketSectors } from "@/lib/api";
 import { StockRankingRow } from "@/schemas/oceans14";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 export default function BuscaAvancadaPage() {
-  const [stocks, setStocks] = useState<StockRankingRow[]>([]);
-  const [loading, setLoading] = useState(true);
-
   // Sliders multi-critério
   const [minDY, setMinDY] = useState(6.0);
   const [maxPL, setMaxPL] = useState(15.0);
@@ -20,31 +19,55 @@ export default function BuscaAvancadaPage() {
   const [minROIC, setMinROIC] = useState(8.0);
   const [minMargem, setMinMargem] = useState(5.0);
   const [sectorFilter, setSectorFilter] = useState("TODOS");
+  const [sectorsList, setSectorsList] = useState<string[]>(["TODOS"]);
 
   useEffect(() => {
-    async function load() {
+    async function loadSectors() {
       try {
-        const data = await getStocksRanking("dy", 100);
-        setStocks(data);
+        const secs = await getMarketSectors("ACAO");
+        if (secs.length > 0) setSectorsList(secs);
       } catch (err) {
-        console.error("Erro ao carregar dados da busca avançada:", err);
-      } finally {
-        setLoading(false);
+        console.error("Erro ao carregar setores:", err);
       }
     }
-    load();
+    loadSectors();
   }, []);
 
-  const filtered = stocks.filter((s) => {
-    const matchDY = s.dy >= minDY;
-    const matchPL = s.pl !== null ? s.pl <= maxPL && s.pl > 0 : true;
-    const matchPVP = s.pvp !== null ? s.pvp <= maxPVP : true;
-    const matchROE = s.roe !== null ? s.roe >= minROE : true;
-    const matchROIC = s.roic !== null ? s.roic >= minROIC : true;
-    const matchMargem = s.margem_liquida !== null ? s.margem_liquida >= minMargem : true;
-    const matchSector = sectorFilter === "TODOS" || s.sector.toLowerCase().includes(sectorFilter.toLowerCase());
+  const filterKey = `${minDY}-${maxPL}-${maxPVP}-${minROE}-${minROIC}-${minMargem}-${sectorFilter}`;
 
-    return matchDY && matchPL && matchPVP && matchROE && matchROIC && matchMargem && matchSector;
+  const fetchPage = useCallback(
+    async (offset: number, limit: number, searchStr: string) => {
+      return await getStocksRankingPaginated({
+        sortBy: "dy",
+        limit,
+        offset,
+        search: searchStr,
+        minDY,
+        maxPL,
+        maxPVP,
+        minROE,
+        minROIC,
+        minMargem,
+        sector: sectorFilter !== "TODOS" ? sectorFilter : undefined,
+      });
+    },
+    [minDY, maxPL, maxPVP, minROE, minROIC, minMargem, sectorFilter]
+  );
+
+  const {
+    items: stocks,
+    total,
+    loading,
+    loadingMore,
+    hasMore,
+    search,
+    setSearch,
+    sentinelRef,
+    loadMore,
+  } = useInfiniteScroll<StockRankingRow>({
+    fetchPage,
+    limit: 50,
+    initialFilter: filterKey,
   });
 
   return (
@@ -53,13 +76,16 @@ export default function BuscaAvancadaPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <span className="badge-neon badge-neon-violet">Super Screener Multi-Slider</span>
-          <span className="text-xs text-[#64748b]">Filtros Compostos Oceans14</span>
+          <span className="text-xs text-[#64748b]">Filtros Server-Side B3</span>
+          <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+            {total > 0 ? `${total} Ações Atendem aos Critérios` : "Filtro no Banco"}
+          </span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
           Busca Avançada de Ações
         </h1>
         <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-          Filtre oportunidades na bolsa através de ranges combinados de múltiplos de valuation, retorno sobre capital, dividend yield e eficiência de margem.
+          Filtre oportunidades na bolsa através de ranges combinados de múltiplos de valuation, retorno sobre capital, dividend yield e eficiência de margem com execução server-side em todo o universo da B3.
         </p>
       </div>
 
@@ -78,7 +104,7 @@ export default function BuscaAvancadaPage() {
               step="0.5"
               value={minDY}
               onChange={(e) => setMinDY(parseFloat(e.target.value))}
-              className="w-full accent-[#00d9f5]"
+              className="w-full accent-[#00d9f5] cursor-pointer"
             />
           </div>
 
@@ -94,7 +120,7 @@ export default function BuscaAvancadaPage() {
               step="0.5"
               value={maxPL}
               onChange={(e) => setMaxPL(parseFloat(e.target.value))}
-              className="w-full accent-[#a855f7]"
+              className="w-full accent-[#a855f7] cursor-pointer"
             />
           </div>
 
@@ -110,7 +136,7 @@ export default function BuscaAvancadaPage() {
               step="0.1"
               value={maxPVP}
               onChange={(e) => setMaxPVP(parseFloat(e.target.value))}
-              className="w-full accent-[#a855f7]"
+              className="w-full accent-[#a855f7] cursor-pointer"
             />
           </div>
 
@@ -126,7 +152,7 @@ export default function BuscaAvancadaPage() {
               step="1"
               value={minROE}
               onChange={(e) => setMinROE(parseFloat(e.target.value))}
-              className="w-full accent-[#00f5a0]"
+              className="w-full accent-[#00f5a0] cursor-pointer"
             />
           </div>
 
@@ -142,7 +168,7 @@ export default function BuscaAvancadaPage() {
               step="1"
               value={minROIC}
               onChange={(e) => setMinROIC(parseFloat(e.target.value))}
-              className="w-full accent-[#00f5a0]"
+              className="w-full accent-[#00f5a0] cursor-pointer"
             />
           </div>
 
@@ -158,7 +184,7 @@ export default function BuscaAvancadaPage() {
               step="1"
               value={minMargem}
               onChange={(e) => setMinMargem(parseFloat(e.target.value))}
-              className="w-full accent-white"
+              className="w-full accent-white cursor-pointer"
             />
           </div>
 
@@ -169,17 +195,35 @@ export default function BuscaAvancadaPage() {
             <select
               value={sectorFilter}
               onChange={(e) => setSectorFilter(e.target.value)}
-              className="w-full bg-[#131926] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#a855f7]"
+              className="w-full bg-[#131926] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#a855f7] cursor-pointer"
             >
-              <option value="TODOS">Todos os Setores</option>
-              <option value="Petróleo">Petróleo, Gás e Biocombustíveis</option>
-              <option value="Materiais">Materiais Básicos / Mineração</option>
-              <option value="Financeiro">Financeiro e Bancos</option>
-              <option value="Industrial">Bens Industriais</option>
-              <option value="Utilidade">Utilidade Pública / Elétricas</option>
-              <option value="Consumo">Consumo e Varejo</option>
+              {sectorsList.map((sec) => (
+                <option key={sec} value={sec}>
+                  {sec === "TODOS" ? "Todos os Setores" : sec}
+                </option>
+              ))}
             </select>
           </div>
+        </div>
+
+        {/* Real-time search input */}
+        <div className="mt-4 pt-4 border-t border-white/5 relative">
+          <input
+            type="text"
+            placeholder="Buscar ação por ticker ou nome (ex: PETR4, Vale, WEG)..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-6 text-xs text-[#64748b] hover:text-white"
+            >
+              ✕
+            </button>
+          )}
         </div>
       </Card>
 
@@ -187,17 +231,19 @@ export default function BuscaAvancadaPage() {
       <Card glow="none" className="p-0 overflow-hidden">
         <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#131926]/40">
           <span className="text-xs font-bold text-white">
-            {loading ? "Carregando..." : `${filtered.length} ações qualificadas`}
+            {loading ? "Filtrando universo de ativos..." : `Exibindo ${stocks.length} de ${total} ações encontradas`}
           </span>
-          <span className="text-[11px] text-[#64748b]">Filtros aplicados em tempo real</span>
+          {hasMore && !loading && (
+            <span className="text-xs text-[#00f5a0]">Role para carregar mais automaticamente ↓</span>
+          )}
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+          <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60">
+              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
                 <th className="py-3 pl-4">Ticker</th>
-                <th className="py-3">Nome</th>
+                <th className="py-3">Empresa</th>
                 <th className="py-3">Setor</th>
                 <th className="py-3 text-right">Preço</th>
                 <th className="py-3 text-right">D.Y.</th>
@@ -205,58 +251,60 @@ export default function BuscaAvancadaPage() {
                 <th className="py-3 text-right">P/VP</th>
                 <th className="py-3 text-right">ROE</th>
                 <th className="py-3 text-right">ROIC</th>
-                <th className="py-3 text-right">Margem Líq</th>
-                <th className="py-3 text-right pr-4">Ação</th>
+                <th className="py-3 text-right">Margem Líq.</th>
+                <th className="py-3 text-right pr-4 font-sans">Ação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 font-mono">
-              {filtered.map((s) => (
-                <tr key={s.ticker} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="py-3 pl-4 font-bold text-white font-sans">
-                    <Link href={`/acoes/${s.ticker}`} className="hover:text-[#00f5a0] transition-colors">
-                      {s.ticker}
-                    </Link>
-                  </td>
-                  <td className="py-3 font-sans text-white text-[11px] truncate max-w-[140px]">
-                    {s.name}
-                  </td>
-                  <td className="py-3 font-sans text-[#94a3b8] text-[11px]">
-                    {s.sector}
-                  </td>
-                  <td className="py-3 text-right font-bold text-white">
-                    {formatCurrency(s.price)}
-                  </td>
-                  <td className="py-3 text-right font-bold text-[#00d9f5]">
-                    {formatPercent(s.dy, false)}
-                  </td>
-                  <td className="py-3 text-right text-white">
-                    {s.pl !== null ? s.pl.toFixed(2) : "—"}
-                  </td>
-                  <td className="py-3 text-right text-white">
-                    {s.pvp !== null ? s.pvp.toFixed(2) : "—"}
-                  </td>
-                  <td className="py-3 text-right text-[#00f5a0] font-bold">
-                    {s.roe !== null ? formatPercent(s.roe, false) : "—"}
-                  </td>
-                  <td className="py-3 text-right text-[#00f5a0]">
-                    {s.roic !== null ? formatPercent(s.roic, false) : "—"}
-                  </td>
-                  <td className="py-3 text-right text-white">
-                    {s.margem_liquida !== null ? formatPercent(s.margem_liquida, false) : "—"}
-                  </td>
-                  <td className="py-3 text-right pr-4 font-sans">
-                    <Link
-                      href={`/acoes/${s.ticker}`}
-                      className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-[#00f5a0] hover:text-black font-semibold transition-all"
-                    >
-                      Ver
-                    </Link>
+            <tbody className="divide-y divide-white/5">
+              {loading ? (
+                <tr>
+                  <td colSpan={11} className="py-12 text-center text-[#64748b] font-sans animate-pulse">
+                    Filtrando ações no Neon DB em tempo real...
                   </td>
                 </tr>
-              ))}
+              ) : (
+                stocks.map((s) => (
+                  <tr key={s.ticker} className="hover:bg-white/[0.02]">
+                    <td className="py-3 pl-4 font-bold text-white font-sans">
+                      <Link href={`/acoes/${s.ticker}`} className="hover:text-[#00f5a0] transition-colors">
+                        {s.ticker}
+                      </Link>
+                    </td>
+                    <td className="py-3 font-sans text-white text-[11px] truncate max-w-[130px]">{s.name}</td>
+                    <td className="py-3 font-sans text-[#94a3b8] text-[11px]">{s.sector}</td>
+                    <td className="py-3 text-right font-bold text-white">{formatCurrency(s.price)}</td>
+                    <td className="py-3 text-right font-bold text-[#00d9f5]">{formatPercent(s.dy, false)}</td>
+                    <td className="py-3 text-right text-white">{s.pl !== null ? s.pl.toFixed(2) : "—"}</td>
+                    <td className="py-3 text-right text-white">{s.pvp !== null ? s.pvp.toFixed(2) : "—"}</td>
+                    <td className="py-3 text-right text-[#00f5a0] font-bold">{s.roe !== null ? formatPercent(s.roe, false) : "—"}</td>
+                    <td className="py-3 text-right text-[#00f5a0]">{s.roic !== null ? formatPercent(s.roic, false) : "—"}</td>
+                    <td className="py-3 text-right text-white">{s.margem_liquida !== null ? formatPercent(s.margem_liquida, false) : "—"}</td>
+                    <td className="py-3 text-right pr-4 font-sans">
+                      <Link
+                        href={`/acoes/${s.ticker}`}
+                        className="text-[11px] px-2.5 py-1 rounded-lg bg-white/5 hover:bg-[#a855f7] hover:text-white font-semibold transition-all"
+                      >
+                        Auditar
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
+
+        <InfiniteScrollFooter
+          loading={loading}
+          loadingMore={loadingMore}
+          hasMore={hasMore}
+          count={stocks.length}
+          total={total}
+          sentinelRef={sentinelRef}
+          onLoadMore={loadMore}
+          entityName="Ações filtradas"
+          emptyMessage="Nenhuma ação encontrada para os filtros selecionados."
+        />
       </Card>
     </div>
   );

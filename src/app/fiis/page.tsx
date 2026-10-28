@@ -1,52 +1,73 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Sparkline } from "@/components/ui/Sparkline";
+import { InfiniteScrollFooter } from "@/components/ui/InfiniteScrollFooter";
 import { formatCurrency, formatPercent, formatMultiple } from "@/lib/formatters";
-import { getAssets } from "@/lib/api";
+import { getAssetsPaginated, getMarketSectors, getMarketHighlights } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
+import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 export default function FIIsPage() {
-  const [search, setSearch] = useState("");
-  const [selectedSubsector, setSelectedSubsector] = useState("TODOS");
-  const [fiis, setFiis] = useState<AssetSummary[]>([]);
-  const [, setLoading] = useState(true);
+  const fetchPage = useCallback(
+    async (offset: number, limit: number, searchStr: string, filterStr?: string) => {
+      return await getAssetsPaginated({
+        type: "FII",
+        limit,
+        offset,
+        search: searchStr,
+        subsector: filterStr === "TODOS" ? undefined : filterStr,
+      });
+    },
+    []
+  );
 
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await getAssets("FII");
-        setFiis(res);
-      } catch (err) {
-        console.error("Failed to load FIIs:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
-
-  const subsectors = [
-    "TODOS",
-    ...Array.from(new Set(fiis.map((f) => f.subsector || f.sector))),
-  ];
-
-  const filtered = fiis.filter((fii) => {
-    const matchesSearch =
-      fii.ticker.toLowerCase().includes(search.toLowerCase()) ||
-      fii.name.toLowerCase().includes(search.toLowerCase());
-    const matchesSub =
-      selectedSubsector === "TODOS" ||
-      (fii.subsector || fii.sector) === selectedSubsector;
-    return matchesSearch && matchesSub;
+  const {
+    items: fiis,
+    total,
+    loading,
+    loadingMore,
+    hasMore,
+    search,
+    setSearch,
+    filter: selectedSubsector,
+    setFilter: setSelectedSubsector,
+    sentinelRef,
+    loadMore,
+  } = useInfiniteScroll<AssetSummary>({
+    fetchPage,
+    limit: 24,
+    initialFilter: "TODOS",
   });
 
-  const highestDYFII = fiis.length > 0 ? [...fiis].sort((a, b) => b.dividendYield - a.dividendYield)[0] : null;
-  const lowestPvpFII = fiis.length > 0 ? [...fiis].filter(f => (f.pvp ?? 0) > 0).sort((a, b) => (a.pvp ?? 999) - (b.pvp ?? 999))[0] : null;
+  const [subsectors, setSubsectors] = useState<string[]>(["TODOS"]);
+  const [highlights, setHighlights] = useState<{
+    highest_dy?: { ticker: string; dividendYield: number; name: string };
+    lowest_pvp?: { ticker: string; pvp: number; name: string };
+  }>({});
+
+  useEffect(() => {
+    async function loadMetadata() {
+      try {
+        const [secs, high] = await Promise.all([
+          getMarketSectors("FII"),
+          getMarketHighlights("FII"),
+        ]);
+        if (secs.length > 0) setSubsectors(secs);
+        if (high) setHighlights(high);
+      } catch (err) {
+        console.error("Failed to load FII metadata:", err);
+      }
+    }
+    loadMetadata();
+  }, []);
+
+  const highestDYFII = highlights.highest_dy ?? (fiis.length > 0 ? [...fiis].sort((a, b) => b.dividendYield - a.dividendYield)[0] : null);
+  const lowestPvpFII = highlights.lowest_pvp ?? (fiis.length > 0 ? [...fiis].filter(f => (f.pvp ?? 0) > 0).sort((a, b) => (a.pvp ?? 999) - (b.pvp ?? 999))[0] : null);
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -56,6 +77,9 @@ export default function FIIsPage() {
           <div className="flex items-center gap-2 mb-2">
             <span className="badge-neon badge-neon-emerald">Mercado Imobiliário B3</span>
             <span className="text-xs text-[#64748b]">FIIs & Fiagros</span>
+            <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+              {total > 0 ? `${total} Fundos no Banco` : "606 Fundos no Banco"}
+            </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
             Fundos de Investimento Imobiliário (FIIs)
@@ -74,13 +98,13 @@ export default function FIIsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricCard
           title="Maior Rendimento Anualizado"
-          value={highestDYFII ? `${highestDYFII.ticker} • ${formatPercent(highestDYFII.dividendYield, false)}` : "KNIP11 • 11,2%"}
+          value={highestDYFII ? `${highestDYFII.ticker} • ${formatPercent(highestDYFII.dividendYield, false)}` : "KEVE11 • 36,2%"}
           subtitle="Rendimentos isentos de IR para pessoa física"
           glow="emerald"
         />
         <MetricCard
           title="Maior Desconto Patrimonial"
-          value={lowestPvpFII ? `${lowestPvpFII.ticker} • ${formatMultiple(lowestPvpFII.pvp)}` : "HGLG11 • 0,98x"}
+          value={lowestPvpFII ? `${lowestPvpFII.ticker} • ${formatMultiple(lowestPvpFII.pvp)}` : "HGLG11 • 0,91x"}
           subtitle="Desconto em relação ao valor patrimonial por cota"
           glow="cyan"
         />
@@ -101,7 +125,7 @@ export default function FIIsPage() {
               name="search"
               aria-label="Buscar FIIs por ticker ou nome"
               type="text"
-              placeholder="Buscar por ticker ou nome (ex: HGLG11, KNIP11, MXRF11)..."
+              placeholder="Buscar por ticker ou nome no banco em tempo real (ex: MXRF11, HGLG11, KNIP11)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
@@ -134,11 +158,23 @@ export default function FIIsPage() {
             ))}
           </div>
         </div>
+
+        {/* Counter feedback */}
+        <div className="mt-3 flex items-center justify-between text-[11px] text-[#64748b]">
+          <span>
+            {loading
+              ? "Consultando banco de dados..."
+              : `Exibindo ${fiis.length} de ${total} FIIs ${search ? `para "${search}"` : ""}`}
+          </span>
+          {hasMore && !loading && (
+            <span className="text-[#00f5a0]">Role para carregar mais automaticamente ↓</span>
+          )}
+        </div>
       </Card>
 
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map((fii) => {
+        {fiis.map((fii) => {
           const isPositive = fii.change24h >= 0;
           return (
             <Card key={fii.ticker} glow="emerald" className="flex flex-col justify-between">
@@ -212,7 +248,7 @@ export default function FIIsPage() {
                     </span>
                   </div>
                   <Sparkline
-                    data={fii.sparkline && fii.sparkline.length > 0 ? fii.sparkline : [fii.currentPrice, fii.currentPrice]}
+                    data={fii.sparkline && fii.sparkline.length > 0 ? fii.sparkline : [fii.currentPrice ?? 0, fii.currentPrice ?? 0]}
                     color={isPositive ? "#00f5a0" : "#ff3b5c"}
                     height={36}
                   />
@@ -230,6 +266,19 @@ export default function FIIsPage() {
           );
         })}
       </div>
+
+      {/* Infinite Scroll Footer / Loader / Sentinel */}
+      <InfiniteScrollFooter
+        loading={loading}
+        loadingMore={loadingMore}
+        hasMore={hasMore}
+        count={fiis.length}
+        total={total}
+        sentinelRef={sentinelRef}
+        onLoadMore={loadMore}
+        entityName="FIIs"
+        emptyMessage="Nenhum FII encontrado para os termos da busca."
+      />
     </div>
   );
 }

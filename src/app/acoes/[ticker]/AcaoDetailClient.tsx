@@ -25,6 +25,7 @@ import {
 import { AssetSummary } from "@/schemas/financial";
 import { FinancialMatrixData, DividendMatrixData } from "@/schemas/oceans14";
 import { StockFundamentalsGrid } from "@/components/stocks/StockFundamentalsGrid";
+import { StockPriceHistorySection } from "@/components/stocks/StockPriceHistorySection";
 
 export function AcaoDetailClient({ ticker }: { ticker: string }) {
   const searchParams = useSearchParams();
@@ -35,6 +36,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
     "VALUATION",
     "MATRIZ_10A",
     "GRADE_PROVENTOS",
+    "COTACAO_HISTORICA",
     "FUNDAMENTOS",
     "CHECKLIST",
     "DRE",
@@ -248,6 +250,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
           { id: "VALUATION", label: "Modelos de Valuation (Graham / Bazin)" },
           { id: "MATRIZ_10A", label: "Balanço 10 Anos (Oceans14)", count: 10 },
           { id: "GRADE_PROVENTOS", label: "Grade Mensal de Proventos (Jan-Dez)" },
+          { id: "COTACAO_HISTORICA", label: "Cotações Diárias & Histórico" },
           { id: "FUNDAMENTOS", label: "Fundamentus (Múltiplos & DRE)", count: 24 },
           { id: "CHECKLIST", label: "Checklist Buy & Hold (Auditado)", count: checklistItems.length },
           { id: "DRE", label: "DRE Histórico 5 Anos" },
@@ -801,6 +804,17 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
       </div>
       )}
 
+      {/* SECTION: Daily Historical Quotes & Chart */}
+      {activeTab === "COTACAO_HISTORICA" && (
+        <div
+          role="tabpanel"
+          id="panel-COTACAO_HISTORICA"
+          aria-labelledby="tab-COTACAO_HISTORICA"
+        >
+          <StockPriceHistorySection ticker={ticker} />
+        </div>
+      )}
+
       {/* SECTION: Fundamentus Fundamentals */}
       {activeTab === "FUNDAMENTOS" && (
         <div
@@ -1024,16 +1038,25 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
           aria-labelledby="tab-PROVENTOS"
         >
           <Card glow="emerald">
-            <div className="flex items-center justify-between mb-4">
-            <div>
-              <span className="badge-neon badge-neon-emerald mb-2">
-                Remuneração aos Acionistas
-              </span>
-              <h3 className="text-xl font-bold text-white tracking-tight">
-                Histórico de Dividendos & JCP Auditados
-              </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+              <div>
+                <span className="badge-neon badge-neon-emerald mb-2">
+                  Remuneração aos Acionistas
+                </span>
+                <h3 className="text-xl font-bold text-white tracking-tight">
+                  Histórico de Dividendos & JCP Auditados
+                </h3>
+              </div>
+              <button
+                onClick={() => {
+                  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                  window.open(`${apiUrl}/stocks/${ticker}/dividends/export`, "_blank");
+                }}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition-all cursor-pointer self-start sm:self-auto"
+              >
+                📥 Exportar Histórico CSV
+              </button>
             </div>
-          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">

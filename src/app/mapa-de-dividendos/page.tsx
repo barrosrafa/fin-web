@@ -13,6 +13,7 @@ const MONTHS = [
 export default function MapaDividendosPage() {
   const [mapData, setMapData] = useState<DividendMapEntry[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<"com" | "pagamento">("com");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,44 +39,72 @@ export default function MapaDividendosPage() {
           <span className="text-xs text-[#64748b]">Matriz 10 Anos B3 & EUA</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Mapa de Dividendos
+          Mapa de Sazonalidade de Dividendos
         </h1>
         <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-          Visualização em matriz de calor da frequência e probabilidade histórica de anúncio e corte
-          de proventos (Data-Com) para cada mês do ano. Descubra quais empresas pagam em cada mês.
+          Visualização em matriz de calor da probabilidade e frequência histórica segregada por{" "}
+          <strong className="text-cyan-300">Data-Com (corte)</strong> e{" "}
+          <strong className="text-emerald-300">Data de Pagamento (crédito em conta)</strong>.
         </p>
       </div>
 
-      {/* Month Filter Selector */}
-      <Card className="flex flex-wrap items-center gap-2 p-4">
-        <span className="text-xs font-semibold text-[#94a3b8] mr-2">Filtrar por Mês:</span>
-        <button
-          onClick={() => setSelectedMonth(null)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-            selectedMonth === null
-              ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
-              : "bg-white/5 text-[#94a3b8] hover:text-white"
-          }`}
-        >
-          Todos os Meses (Heatmap)
-        </button>
-        {MONTHS.map((m, idx) => {
-          const monthNum = idx + 1;
-          const isActive = selectedMonth === monthNum;
-          return (
-            <button
-              key={m}
-              onClick={() => setSelectedMonth(isActive ? null : monthNum)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                isActive
-                  ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                  : "bg-white/5 text-[#94a3b8] hover:text-white"
-              }`}
-            >
-              {m}
-            </button>
-          );
-        })}
+      {/* Controls: Mode & Month Filter */}
+      <Card className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4">
+        {/* View Mode Toggle */}
+        <div className="flex items-center gap-1 bg-white/5 p-1 rounded-xl border border-white/10">
+          <button
+            onClick={() => setViewMode("com")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              viewMode === "com"
+                ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/20"
+                : "text-[#94a3b8] hover:text-white"
+            }`}
+          >
+            📅 Data-Com (Corte)
+          </button>
+          <button
+            onClick={() => setViewMode("pagamento")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              viewMode === "pagamento"
+                ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
+                : "text-[#94a3b8] hover:text-white"
+            }`}
+          >
+            💰 Data de Pagamento (Crédito)
+          </button>
+        </div>
+
+        {/* Month Selector */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-xs font-semibold text-[#94a3b8] mr-1">Filtrar:</span>
+          <button
+            onClick={() => setSelectedMonth(null)}
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
+              selectedMonth === null
+                ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
+                : "bg-white/5 text-[#94a3b8] hover:text-white"
+            }`}
+          >
+            Todos
+          </button>
+          {MONTHS.map((m, idx) => {
+            const monthNum = idx + 1;
+            const isActive = selectedMonth === monthNum;
+            return (
+              <button
+                key={m}
+                onClick={() => setSelectedMonth(isActive ? null : monthNum)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                  isActive
+                    ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                    : "bg-white/5 text-[#94a3b8] hover:text-white"
+                }`}
+              >
+                {m}
+              </button>
+            );
+          })}
+        </div>
       </Card>
 
       {/* Heatmap Grid Table */}
@@ -114,7 +143,7 @@ export default function MapaDividendosPage() {
               ) : (
                 mapData.map((row) => {
                   const heatmapMap = new Map(
-                    row.monthly_heatmap.map((h) => [h.month, h.record_date_probability_pct])
+                    row.monthly_heatmap.map((h) => [h.month, h])
                   );
                   return (
                     <tr key={row.ticker} className="hover:bg-white/[0.02] transition-colors">
@@ -136,13 +165,26 @@ export default function MapaDividendosPage() {
                       </td>
                       {MONTHS.map((_, idx) => {
                         const monthNum = idx + 1;
-                        const prob = heatmapMap.get(monthNum) || 0;
+                        const item = heatmapMap.get(monthNum);
+                        const comProb = item?.record_date_probability_pct || 0;
+                        const pagProb = item?.payment_probability_pct || 0;
+                        const prob = viewMode === "com" ? comProb : pagProb;
                         const isSelected = selectedMonth === monthNum;
 
                         let bgClass = "bg-white/[0.02] text-transparent";
-                        if (prob >= 80) bgClass = "bg-emerald-500/40 text-emerald-300 font-bold";
-                        else if (prob >= 50) bgClass = "bg-emerald-500/20 text-emerald-400";
-                        else if (prob > 0) bgClass = "bg-cyan-500/10 text-cyan-400/80";
+                        if (viewMode === "com") {
+                          if (prob >= 80) bgClass = "bg-cyan-500/40 text-cyan-200 font-bold";
+                          else if (prob >= 50) bgClass = "bg-cyan-500/20 text-cyan-300";
+                          else if (prob > 0) bgClass = "bg-cyan-500/10 text-cyan-400/80";
+                        } else {
+                          if (prob >= 80) bgClass = "bg-emerald-500/40 text-emerald-200 font-bold";
+                          else if (prob >= 50) bgClass = "bg-emerald-500/20 text-emerald-300";
+                          else if (prob > 0) bgClass = "bg-emerald-500/10 text-emerald-400/80";
+                        }
+
+                        const tooltip = item
+                          ? `${row.ticker} em ${MONTHS[idx]}:\n• Data-Com (corte): ${comProb.toFixed(0)}%\n• Pagamento (crédito): ${pagProb.toFixed(0)}%\n• Valor Médio: R$ ${item.average_payout_per_unit.toFixed(2)}${item.last_payment_year ? ` (Último ano: ${item.last_payment_year})` : ""}`
+                          : `${row.ticker} em ${MONTHS[idx]}: Sem histórico`;
 
                         return (
                           <td
@@ -152,8 +194,8 @@ export default function MapaDividendosPage() {
                             }`}
                           >
                             <div
-                              className={`mx-auto w-9 h-8 rounded-lg flex items-center justify-center transition-all ${bgClass}`}
-                              title={`${row.ticker} em ${MONTHS[idx]}: ${prob}% probabilidade`}
+                              className={`mx-auto w-9 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${bgClass}`}
+                              title={tooltip}
                             >
                               {prob > 0 ? `${prob.toFixed(0)}%` : "—"}
                             </div>

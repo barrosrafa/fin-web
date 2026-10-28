@@ -122,7 +122,11 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
           <div className="w-px h-8 bg-[#1e293b]" />
           <div>
             <div className="text-xs text-[#64748b]">Spread NAV (Ágio)</div>
-            <div className="text-xl font-bold text-[#00f5a0] mono-nums">+{etf.nav_spread_pct}%</div>
+            <div className="text-xl font-bold text-[#00f5a0] mono-nums">
+              {typeof etf.nav_spread_pct === "number"
+                ? `${etf.nav_spread_pct > 0 ? "+" : ""}${etf.nav_spread_pct.toFixed(2)}%`
+                : "N/D"}
+            </div>
           </div>
         </div>
       </div>
@@ -137,7 +141,11 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
         />
         <MetricCard
           title="Valor Patrimonial (NAV / Cota)"
-          value={formatCurrency(etf.nav_per_share)}
+          value={
+            typeof etf.nav_per_share === "number" && etf.nav_per_share > 0
+              ? formatCurrency(etf.nav_per_share)
+              : "N/D"
+          }
           subtitle="Cálculo contábil auditado de fechamento"
           glow="emerald"
         />
@@ -218,14 +226,24 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
             <h3 className="text-base font-bold text-white tracking-tight">
               Mecanismo de Criação e Resgate (Arbitragem de Formadores de Mercado)
             </h3>
-            <Badge variant="emerald">Spread Estável</Badge>
+            <Badge variant="emerald">
+              {typeof etf.nav_spread_pct === "number" ? "Spread Monitorado" : "Aguardando Informe"}
+            </Badge>
           </div>
           <div className="p-4 rounded-xl bg-[#0a0f1d] border border-white/10 space-y-3 text-xs leading-relaxed text-[#94a3b8]">
             <p>
-              O ETF é negociado no mercado secundário a <strong className="text-white">{formatCurrency(etf.current_price)}</strong>, enquanto o seu valor intrínseco contábil (NAV) é de <strong className="text-white">{formatCurrency(etf.nav_per_share)}</strong>.
+              O ETF é negociado no mercado secundário a <strong className="text-white">{formatCurrency(etf.current_price)}</strong>, enquanto o seu valor intrínseco contábil (NAV) é de <strong className="text-white">{typeof etf.nav_per_share === "number" && etf.nav_per_share > 0 ? formatCurrency(etf.nav_per_share) : "N/D (em conciliação)"}</strong>.
             </p>
             <p>
-              O spread atual de <strong className="text-[#00f5a0]">+{etf.nav_spread_pct}%</strong> encontra-se dentro do túnel de arbitragem tolerado pelo formador de mercado (Authorized Participant), garantindo que as cotas não se descolem significativamente da carteira subjacente do {etf.benchmark_index}.
+              {typeof etf.nav_spread_pct === "number" ? (
+                <>
+                  O spread atual de <strong className="text-[#00f5a0]">{etf.nav_spread_pct > 0 ? "+" : ""}{etf.nav_spread_pct.toFixed(2)}%</strong> encontra-se dentro do túnel de arbitragem tolerado pelo formador de mercado (Authorized Participant), garantindo que as cotas não se descolem significativamente da carteira subjacente do {etf.benchmark_index}.
+                </>
+              ) : (
+                <>
+                  O cálculo contábil do spread aguarda a publicação diária de cotas emitidas e patrimônio líquido oficial pelo administrador fiduciário perante a CVM.
+                </>
+              )}
             </p>
           </div>
         </Card>
@@ -254,25 +272,35 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
       {/* TAB 4: Drawdown Subaquático */}
       {activeTab === "DRAWDOWN" && (
         <Card glow="crimson">
-          <UnderwaterDrawdownChart
-            data={[
-              [1704153600000, 0.0],
-              [1706745600000, -2.5],
-              [1709251200000, -6.8],
-              [1711929600000, -14.5],
-              [1714521600000, -11.2],
-              [1717200000000, -4.1],
-              [1719792000000, -1.2],
-              [1722470400000, 0.0],
-              [1725148800000, -3.4],
-              [1727740800000, -1.8],
-              [1729814400000, 0.0],
-            ]}
-            maxDrawdownPct={-14.5}
-            valleyDate="2024-04-01"
-            recoveryDays={122}
-            height={220}
-          />
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-base font-bold text-white tracking-tight">
+                Curva Subaquática & Risco Histórico
+              </h3>
+              <p className="text-xs text-[#94a3b8] mt-0.5">
+                Cálculo em tempo real sobre a série de cotações diárias oficiais de fechamento na B3
+              </p>
+            </div>
+            {etf.drawdown && typeof etf.drawdown.max_drawdown_pct === "number" && (
+              <Badge variant="crimson">
+                Queda Máx: {etf.drawdown.max_drawdown_pct.toFixed(2)}%
+              </Badge>
+            )}
+          </div>
+
+          {etf.drawdown && etf.drawdown.drawdown_curve && etf.drawdown.drawdown_curve.length > 0 ? (
+            <UnderwaterDrawdownChart
+              data={etf.drawdown.drawdown_curve}
+              maxDrawdownPct={etf.drawdown.max_drawdown_pct}
+              valleyDate={etf.drawdown.valley_date ?? undefined}
+              recoveryDays={etf.drawdown.recovery_days ?? undefined}
+              height={220}
+            />
+          ) : (
+            <div className="p-8 text-center text-xs text-[#64748b]">
+              Sem dados de cotações suficientes para calcular a curva de drawdown deste ativo.
+            </div>
+          )}
         </Card>
       )}
     </div>
