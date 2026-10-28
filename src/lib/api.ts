@@ -36,7 +36,7 @@ import {
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
 export const API_BASE = rawApiUrl
   ? (rawApiUrl.endsWith("/api/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, "")}/api/v1`)
-  : "http://localhost:8000/api/v1";
+  : "https://fin-api-jbrz.onrender.com/api/v1";
 
 async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE}${path}`;
