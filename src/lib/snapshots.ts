@@ -1,9 +1,10 @@
+import { SnapshotMetaSchema } from "@/schemas/data-provenance";
 /**
  * Cliente de Snapshots CDN/R2 (Borda Cloudflare).
  * 
  * Permite leitura de arquivos estáticos versionados pré-renderizados
  * (/snapshots/acoes/{ticker}.json, /snapshots/fiis/{ticker}.json, etc.)
- * com latência global sub-50ms e zero carga na API FastAPI do Render e Neon DB.
+ * preservando origem e data de geração; sem garantia de latência.
  */
 
 const rawCdnUrl =
@@ -29,7 +30,7 @@ export async function fetchCdnSnapshot<T>(
   category: "acoes" | "fiis" | "rankings" | "market",
   filename: string,
   options?: RequestInit
-): Promise<T | null> {
+): Promise<SnapshotEnvelope<T> & { freshness: "stale" | "periodic" } | null> {
   if (!CDN_BASE) {
     return null;
   }
@@ -54,7 +55,12 @@ export async function fetchCdnSnapshot<T>(
     }
 
     const envelope = (await res.json()) as SnapshotEnvelope<T>;
-    return envelope?.data ?? null;
+    const meta = SnapshotMetaSchema.safeParse(envelope?.meta);
+    if (!meta.success || envelope.data == null) return null;
+    const age = Date.now() - Date.parse(meta.data.generated_at);
+    if (age < -60_000) return null;
+    // Generation time measures the file, never the age of the underlying financial fact.
+    return { meta: meta.data, data: envelope.data, freshness: age > 86_400_000 ? "stale" : "periodic" };
   } catch (err) {
     console.warn(`[CDN Snapshot] Erro de rede ao consultar ${url}:`, err);
     return null;

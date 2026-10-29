@@ -1,10 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export function Navbar() {
+  const header = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!header.current) return;
+    const el = header.current;
+    const resize = new ResizeObserver(() => document.documentElement.style.setProperty("--asset-nav-top", `${el.getBoundingClientRect().height + 32}px`));
+    resize.observe(el);
+    return () => resize.disconnect();
+  }, []);
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -22,7 +30,7 @@ export function Navbar() {
   ];
 
   return (
-    <header className="sticky top-4 z-50 px-4 max-w-7xl mx-auto w-full transition-all duration-300">
+    <header ref={header} className="sticky top-4 z-50 px-4 max-w-7xl mx-auto w-full transition-all duration-300">
       <nav className="glass-island rounded-full px-5 py-2.5 flex items-center justify-between gap-4">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
@@ -34,10 +42,10 @@ export function Navbar() {
             </div>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold tracking-tight text-[#f0f4f8] group-hover:text-[#00f5a0] transition-colors">
+            <span className="text-sm font-bold tracking-tight text-[#f0f4f8] group-hover:text-[var(--positive)] transition-colors">
               FIN<span className="text-[#00d9f5]">·WEB</span>
             </span>
-            <span className="text-[9px] uppercase tracking-widest text-[#64748b] -mt-0.5">
+            <span className="text-[9px] uppercase tracking-widest text-[#94a3b8] -mt-0.5">
               Terminal v4.0
             </span>
           </div>
@@ -57,7 +65,7 @@ export function Navbar() {
                 href={link.href}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 select-none ${
                   isActive
-                    ? "bg-white/10 text-[#00f5a0] border border-[rgba(0,245,160,0.3)] shadow-[0_0_12px_rgba(0,245,160,0.12)]"
+                    ? "bg-white/10 text-[var(--positive)] border border-[rgba(0,245,160,0.3)] shadow-[0_0_12px_rgba(0,245,160,0.12)]"
                     : "text-[#94a3b8] hover:text-[#f0f4f8] hover:bg-white/5 border border-transparent"
                 }`}
               >
@@ -86,7 +94,7 @@ export function Navbar() {
             className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium bg-white/5 hover:bg-white/10 border border-white/10 text-[#94a3b8] hover:text-white transition-all"
           >
             <svg
-              className="w-3.5 h-3.5 text-[#00f5a0]"
+              className="w-3.5 h-3.5 text-[var(--positive)]"
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
@@ -99,7 +107,7 @@ export function Navbar() {
               />
             </svg>
             <span>Buscar Ativo</span>
-            <span className="text-[10px] bg-black/40 px-1.5 py-0.5 rounded text-[#64748b] border border-white/5">
+            <span className="text-[10px] bg-black/40 px-1.5 py-0.5 rounded text-[#94a3b8] border border-white/5">
               ⌘K
             </span>
           </Link>
@@ -145,7 +153,7 @@ export function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`p-2.5 rounded-xl text-xs font-semibold tracking-wide text-center transition-colors ${
                     isActive
-                      ? "bg-[rgba(0,245,160,0.1)] text-[#00f5a0] border border-[rgba(0,245,160,0.3)]"
+                      ? "bg-[rgba(0,245,160,0.1)] text-[var(--positive)] border border-[rgba(0,245,160,0.3)]"
                       : "bg-white/[0.03] text-[#94a3b8] hover:text-white"
                   }`}
                 >

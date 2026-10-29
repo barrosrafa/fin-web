@@ -9,6 +9,7 @@ import { InfiniteScrollFooter } from "@/components/ui/InfiniteScrollFooter";
 import { formatCurrency, formatPercent, formatMultiple } from "@/lib/formatters";
 import { getAssetsPaginated } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
+import { VirtualTableBody } from "@/components/market/VirtualTableBody";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 export function ScreenerClient() {
@@ -25,6 +26,7 @@ export function ScreenerClient() {
   const initialSort = (searchParams.get("sort") as "dividendYield" | "currentPrice" | "pvp" | "change24h") || "dividendYield";
   const initialOrder = searchParams.get("order") === "asc";
 
+  const [fullTable, setFullTable] = useState(false);
   const [assetType, setAssetType] = useState<string>(initialType);
   const [minDY, setMinDY] = useState<number>(initialMinDY);
   const [maxPVP, setMaxPVP] = useState<number>(initialMaxPVP);
@@ -32,7 +34,7 @@ export function ScreenerClient() {
   const [sortAsc, setSortAsc] = useState<boolean>(initialOrder);
 
   const fetchPage = useCallback(
-    async (offset: number, limit: number, searchStr: string, filterStr?: string) => {
+    async (offset: number, limit: number, searchStr: string, filterStr?: string, signal?: AbortSignal) => {
       const sortMap: Record<string, string> = {
         dividendYield: "dy",
         pvp: "pvp",
@@ -40,6 +42,7 @@ export function ScreenerClient() {
         change24h: "change24h",
       };
       return await getAssetsPaginated({
+        signal,
         type: filterStr === "TODOS" ? undefined : filterStr,
         limit,
         offset,
@@ -63,6 +66,7 @@ export function ScreenerClient() {
     setFilter,
     sentinelRef,
     loadMore,
+    error, retry, windowStart, windowFull, nextWindow, previousWindow,
   } = useInfiniteScroll<AssetSummary>({
     fetchPage,
     limit: 50,
@@ -152,8 +156,8 @@ export function ScreenerClient() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <span className="badge-neon badge-neon-cyan">Fundamentus + Status Invest Engine</span>
-          <span className="text-xs text-[#64748b]">Filtro Multiativo em Tempo Real</span>
-          <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+          <span className="text-xs text-[#94a3b8]">Filtro Multiativo em Tempo Real</span>
+          <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
             {total > 0 ? `${total} Ativos no Universo B3` : "Universo B3"}
           </span>
         </div>
@@ -169,7 +173,7 @@ export function ScreenerClient() {
       <Card glow="cyan">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="text-[11px] uppercase font-bold text-[#64748b] block mb-1">
+            <label className="text-[11px] uppercase font-bold text-[#94a3b8] block mb-1">
               Buscar Ticker / Nome
             </label>
             <input
@@ -182,7 +186,7 @@ export function ScreenerClient() {
           </div>
 
           <div>
-            <label className="text-[11px] uppercase font-bold text-[#64748b] block mb-1">
+            <label className="text-[11px] uppercase font-bold text-[#94a3b8] block mb-1">
               Tipo de Ativo
             </label>
             <select
@@ -198,7 +202,7 @@ export function ScreenerClient() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>Dividend Yield Mínimo</span>
               <span className="text-[#00d9f5] font-mono">{formatPercent(minDY, false)}</span>
             </div>
@@ -214,9 +218,9 @@ export function ScreenerClient() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>P/VP Máximo</span>
-              <span className="text-[#00f5a0] font-mono">{formatMultiple(maxPVP, 1)}</span>
+              <span className="text-[var(--positive)] font-mono">{formatMultiple(maxPVP, 1)}</span>
             </div>
             <input
               type="range"
@@ -231,13 +235,15 @@ export function ScreenerClient() {
         </div>
       </Card>
 
+      <p className="text-xs text-[#94a3b8]">Os filtros numéricos e a ordenação visual se aplicam ao bloco carregado.</p>
+      <button type="button" aria-pressed={fullTable} onClick={() => setFullTable(value => !value)} className="text-xs underline">{fullTable ? "Usar janela de tabela" : "Exibir todo o bloco da tabela (acesso por teclado)"}</button>
       {/* Results Table */}
       <Card>
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs text-[#94a3b8] font-mono">
             {loading ? "Consultando banco em tempo real..." : `Exibindo ${filtered.length} de ${total} ativos`}
           </span>
-          <span className="text-xs text-[#64748b]">
+          <span className="text-xs text-[#94a3b8]">
             Clique nos cabeçalhos para ordenar
           </span>
         </div>
@@ -245,7 +251,7 @@ export function ScreenerClient() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+              <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px]">
                 <th className="pb-3 pl-2">Ticker</th>
                 <th className="pb-3">Tipo</th>
                 <th
@@ -275,8 +281,7 @@ export function ScreenerClient() {
                 <th className="pb-3 text-right pr-2">Ação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 mono-nums">
-              {filtered.map((a) => (
+            <VirtualTableBody key={`${windowStart}:${debouncedSearch}:${filter}`} items={filtered} columns={7} full={fullTable} getKey={a => `B3:${a.type}:${a.ticker}`} renderRow={(a) => (
                 <tr key={a.ticker} className="hover:bg-white/[0.02]">
                   <td className="py-3 pl-2 font-bold text-white font-sans">
                     <Link
@@ -287,7 +292,7 @@ export function ScreenerClient() {
                           ? `/etfs/${a.ticker}`
                           : `/acoes/${a.ticker}`
                       }
-                      className="hover:text-[#00f5a0] transition-colors"
+                      className="hover:text-[var(--positive)] transition-colors"
                     >
                       {a.ticker}
                     </Link>
@@ -301,7 +306,7 @@ export function ScreenerClient() {
                   <td className="py-3 text-right">
                     <span
                       className={`font-bold ${
-                        a.change24h >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"
+                        a.change24h >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"
                       }`}
                     >
                       {formatPercent(a.change24h)}
@@ -328,8 +333,7 @@ export function ScreenerClient() {
                     </Link>
                   </td>
                 </tr>
-              ))}
-            </tbody>
+              )} />
           </table>
         </div>
 
@@ -341,6 +345,9 @@ export function ScreenerClient() {
           total={total}
           sentinelRef={sentinelRef}
           onLoadMore={loadMore}
+          error={error} onRetry={retry}
+          windowStart={windowStart} windowFull={windowFull}
+          onNextWindow={nextWindow} onPreviousWindow={previousWindow}
           entityName="ativos"
           emptyMessage="Nenhum ativo correspondeu aos filtros aplicados."
         />

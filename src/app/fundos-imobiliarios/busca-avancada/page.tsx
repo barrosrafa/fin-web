@@ -20,8 +20,9 @@ export default function FIIBuscaAvancadaPage() {
   const filterKey = `${minDY}-${maxPVP}-${maxVacancia}-${selectedSegment}`;
 
   const fetchPage = useCallback(
-    async (offset: number, limit: number, searchStr: string) => {
+    async (offset: number, limit: number, searchStr: string, _filter?: string, signal?: AbortSignal) => {
       return await getFIIRankingPaginated({
+        signal,
         sortBy: "dy",
         limit,
         offset,
@@ -45,6 +46,7 @@ export default function FIIBuscaAvancadaPage() {
     setSearch,
     sentinelRef,
     loadMore,
+    error, retry, windowStart, windowFull, nextWindow, previousWindow,
   } = useInfiniteScroll<FIIRankingRow>({
     fetchPage,
     limit: 50,
@@ -57,8 +59,8 @@ export default function FIIBuscaAvancadaPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <span className="badge-neon badge-neon-emerald">Screener de FIIs</span>
-          <span className="text-xs text-[#64748b]">Filtros por Mandato e Imóveis</span>
-          <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+          <span className="text-xs text-[#94a3b8]">Filtros por Mandato e Imóveis</span>
+          <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
             {total > 0 ? `${total} Fundos Atendem aos Critérios` : "Filtro no Banco"}
           </span>
         </div>
@@ -74,7 +76,7 @@ export default function FIIBuscaAvancadaPage() {
       <Card glow="emerald">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>Dividend Yield Mínimo</span>
               <span className="text-[#00d9f5] font-mono">{minDY}%</span>
             </div>
@@ -90,7 +92,7 @@ export default function FIIBuscaAvancadaPage() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>P/VP Máximo</span>
               <span className="text-white font-mono">{maxPVP.toFixed(2)}x</span>
             </div>
@@ -106,7 +108,7 @@ export default function FIIBuscaAvancadaPage() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>Vacância Física Máxima</span>
               <span className="text-white font-mono">{maxVacancia}%</span>
             </div>
@@ -122,7 +124,7 @@ export default function FIIBuscaAvancadaPage() {
           </div>
 
           <div>
-            <label className="text-[11px] uppercase font-bold text-[#64748b] block mb-1">
+            <label className="text-[11px] uppercase font-bold text-[#94a3b8] block mb-1">
               Segmento / Mandato
             </label>
             <select
@@ -147,13 +149,13 @@ export default function FIIBuscaAvancadaPage() {
             placeholder="Buscar FII por ticker ou nome (ex: MXRF11, HGLG11, KNIP11)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
+            className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#94a3b8] focus:outline-none focus:border-[#00f5a0] transition-colors"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              className="absolute right-3 top-6 text-xs text-[#64748b] hover:text-white"
+              className="absolute right-3 top-6 text-xs text-[#94a3b8] hover:text-white"
             >
               ✕
             </button>
@@ -168,14 +170,14 @@ export default function FIIBuscaAvancadaPage() {
             {loading ? "Filtrando FIIs no banco..." : `Exibindo ${fiis.length} de ${total} fundos encontrados`}
           </span>
           {hasMore && !loading && (
-            <span className="text-xs text-[#00f5a0]">Role para carregar mais automaticamente ↓</span>
+            <span className="text-xs text-[var(--positive)]">Role para carregar mais automaticamente ↓</span>
           )}
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
+              <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
                 <th className="py-3 pl-4">Ticker</th>
                 <th className="py-3">Nome</th>
                 <th className="py-3">Segmento</th>
@@ -189,7 +191,7 @@ export default function FIIBuscaAvancadaPage() {
             <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-[#64748b] font-sans animate-pulse">
+                  <td colSpan={8} className="py-12 text-center text-[#94a3b8] font-sans animate-pulse">
                     Filtrando FIIs no banco de dados em tempo real...
                   </td>
                 </tr>
@@ -197,7 +199,7 @@ export default function FIIBuscaAvancadaPage() {
                 fiis.map((f) => (
                   <tr key={f.ticker} className="hover:bg-white/[0.02]">
                     <td className="py-3 pl-4 font-bold text-white font-sans">
-                      <Link href={`/fiis/${f.ticker}`} className="hover:text-[#00f5a0] transition-colors">
+                      <Link href={`/fiis/${f.ticker}`} className="hover:text-[var(--positive)] transition-colors">
                         {f.ticker}
                       </Link>
                     </td>
@@ -230,6 +232,9 @@ export default function FIIBuscaAvancadaPage() {
           total={total}
           sentinelRef={sentinelRef}
           onLoadMore={loadMore}
+          error={error} onRetry={retry}
+          windowStart={windowStart} windowFull={windowFull}
+          onNextWindow={nextWindow} onPreviousWindow={previousWindow}
           entityName="FIIs filtrados"
           emptyMessage="Nenhum FII encontrado para os critérios selecionados."
         />

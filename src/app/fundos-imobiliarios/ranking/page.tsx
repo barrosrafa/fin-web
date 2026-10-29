@@ -14,8 +14,9 @@ export default function FIIRankingPage() {
   const [sortBy, setSortBy] = useState("dy");
 
   const fetchPage = useCallback(
-    async (offset: number, limit: number, searchStr: string, filterStr?: string) => {
+    async (offset: number, limit: number, searchStr: string, filterStr?: string, signal?: AbortSignal) => {
       return await getFIIRankingPaginated({
+        signal,
         sortBy: filterStr || "dy",
         limit,
         offset,
@@ -35,6 +36,7 @@ export default function FIIRankingPage() {
     setSearch,
     sentinelRef,
     loadMore,
+    error, retry, windowStart, windowFull, nextWindow, previousWindow,
   } = useInfiniteScroll<FIIRankingRow>({
     fetchPage,
     limit: 50,
@@ -47,8 +49,8 @@ export default function FIIRankingPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <span className="badge-neon badge-neon-emerald">FIIs & Real Estate</span>
-          <span className="text-xs text-[#64748b]">Ranking Oceans14</span>
-          <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+          <span className="text-xs text-[#94a3b8]">Ranking Oceans14</span>
+          <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
             {total > 0 ? `${total} Fundos no Ranking` : "FIIs B3"}
           </span>
         </div>
@@ -64,7 +66,7 @@ export default function FIIRankingPage() {
       <Card glow="emerald">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold uppercase text-[#64748b] mr-2">Ordenar por:</span>
+            <span className="text-xs font-bold uppercase text-[#94a3b8] mr-2">Ordenar por:</span>
             {[
               { id: "dy", label: "Maior Dividend Yield (12M)" },
               { id: "pvp", label: "Menor P/VP (Desconto)" },
@@ -91,13 +93,13 @@ export default function FIIRankingPage() {
               placeholder="Buscar no ranking por ticker ou nome..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
+              className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#94a3b8] focus:outline-none focus:border-[#00f5a0] transition-colors"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="absolute right-3 top-2 text-xs text-[#64748b] hover:text-white"
+                className="absolute right-3 top-2 text-xs text-[#94a3b8] hover:text-white"
               >
                 ✕
               </button>
@@ -113,14 +115,14 @@ export default function FIIRankingPage() {
             {loading ? "Consultando banco de dados..." : `Exibindo ${ranking.length} de ${total} fundos`}
           </span>
           {hasMore && !loading && (
-            <span className="text-xs text-[#00f5a0]">Role para carregar mais automaticamente ↓</span>
+            <span className="text-xs text-[var(--positive)]">Role para carregar mais automaticamente ↓</span>
           )}
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
+              <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
                 <th className="py-3 pl-4 w-12 text-center">Pos</th>
                 <th className="py-3">Fundo (Ticker)</th>
                 <th className="py-3">Segmento</th>
@@ -136,21 +138,21 @@ export default function FIIRankingPage() {
             <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-[#64748b] font-sans animate-pulse">
+                  <td colSpan={10} className="py-12 text-center text-[#94a3b8] font-sans animate-pulse">
                     Consultando rankings de FIIs no banco de dados...
                   </td>
                 </tr>
               ) : (
                 ranking.map((row) => (
                   <tr key={row.ticker} className="hover:bg-white/[0.02]">
-                    <td className="py-3 pl-4 text-center font-bold text-[#64748b]">
+                    <td className="py-3 pl-4 text-center font-bold text-[#94a3b8]">
                       #{row.rank}
                     </td>
                     <td className="py-3 font-sans">
-                      <Link href={`/fiis/${row.ticker}`} className="font-bold text-white hover:text-[#00f5a0] transition-colors">
+                      <Link href={`/fiis/${row.ticker}`} className="font-bold text-white hover:text-[var(--positive)] transition-colors">
                         {row.ticker}
                       </Link>
-                      <span className="block text-[10px] text-[#64748b] truncate max-w-[130px]">
+                      <span className="block text-[10px] text-[#94a3b8] truncate max-w-[130px]">
                         {row.name}
                       </span>
                     </td>
@@ -198,6 +200,9 @@ export default function FIIRankingPage() {
           total={total}
           sentinelRef={sentinelRef}
           onLoadMore={loadMore}
+          error={error} onRetry={retry}
+          windowStart={windowStart} windowFull={windowFull}
+          onNextWindow={nextWindow} onPreviousWindow={previousWindow}
           entityName="FIIs no Ranking"
           emptyMessage="Nenhum FII encontrado no ranking."
         />

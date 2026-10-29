@@ -23,13 +23,13 @@ export default function DebtorAnalysisPage() {
         if (res.ok) {
           const data = await res.json();
           if (data && data.debtors && data.debtors.length > 0) {
-            setDebtors(data.debtors.map((d: any) => ({
+            setDebtors(data.debtors.map((d: { debtor_name?: string; entityName: string; total_exposure_pct?: number; totalExposurePct: number; is_level_0?: boolean; rating?: string; rating_agency?: string; contributing_assets?: { ticker: string; asset_class: string; allocation_pct: number; effective_exposure_pct: number }[] }) => ({
               entityName: d.debtor_name || d.entityName,
-              totalExposurePct: d.total_exposure_pct || d.totalExposurePct,
+              totalExposurePct: d.total_exposure_pct ?? d.totalExposurePct,
               isLevel0: d.is_level_0 ?? false,
               rating: d.rating,
               ratingAgency: d.rating_agency,
-              contributingAssets: (d.contributing_assets || []).map((a: any) => ({
+              contributingAssets: (d.contributing_assets || []).map((a) => ({
                 ticker: a.ticker,
                 assetClass: a.asset_class,
                 allocationPct: a.allocation_pct,

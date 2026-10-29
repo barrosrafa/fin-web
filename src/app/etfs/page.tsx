@@ -13,8 +13,9 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 export default function ETFsPage() {
   const fetchPage = useCallback(
-    async (offset: number, limit: number, searchStr: string) => {
+    async (offset: number, limit: number, searchStr: string, _filter?: string, signal?: AbortSignal) => {
       return await getAssetsPaginated({
+        signal,
         type: "ETF",
         limit,
         offset,
@@ -34,6 +35,7 @@ export default function ETFsPage() {
     setSearch,
     sentinelRef,
     loadMore,
+    error, retry, windowStart, windowFull, nextWindow, previousWindow,
   } = useInfiniteScroll<AssetSummary>({
     fetchPage,
     limit: 24,
@@ -45,8 +47,8 @@ export default function ETFsPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <span className="badge-neon badge-neon-emerald">ETFs Brasil Standard</span>
-          <span className="text-xs text-[#64748b]">Exchange Traded Funds</span>
-          <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+          <span className="text-xs text-[#94a3b8]">Exchange Traded Funds</span>
+          <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
             {total > 0 ? `${total} ETFs no Banco` : "ETFs B3"}
           </span>
         </div>
@@ -91,27 +93,27 @@ export default function ETFsPage() {
             placeholder="Buscar por ticker ou nome no banco em tempo real (ex: BOVA11, IVVB11, SMAL11)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
+            className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#94a3b8] focus:outline-none focus:border-[#00f5a0] transition-colors"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              className="absolute right-3 top-2 text-xs text-[#64748b] hover:text-white"
+              className="absolute right-3 top-2 text-xs text-[#94a3b8] hover:text-white"
             >
               ✕
             </button>
           )}
         </div>
 
-        <div className="mt-3 flex items-center justify-between text-[11px] text-[#64748b]">
+        <div className="mt-3 flex items-center justify-between text-[11px] text-[#94a3b8]">
           <span>
             {loading
               ? "Consultando banco de dados..."
               : `Exibindo ${etfs.length} de ${total} ETFs ${search ? `para "${search}"` : ""}`}
           </span>
           {hasMore && !loading && (
-            <span className="text-[#00f5a0]">Role para carregar mais automaticamente ↓</span>
+            <span className="text-[var(--positive)]">Role para carregar mais automaticamente ↓</span>
           )}
         </div>
       </Card>
@@ -121,7 +123,7 @@ export default function ETFsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+              <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px]">
                 <th className="pb-3 pl-2">ETF / Ticker</th>
                 <th className="pb-3">Índice Subjacente</th>
                 <th className="pb-3 text-right">Cotação</th>
@@ -145,7 +147,7 @@ export default function ETFsPage() {
                           </Badge>
                         )}
                       </div>
-                      <span className="text-[11px] text-[#64748b] font-sans block mt-0.5">
+                      <span className="text-[11px] text-[#94a3b8] font-sans block mt-0.5">
                         {asset.name}
                       </span>
                     </td>
@@ -155,7 +157,7 @@ export default function ETFsPage() {
                     </td>
                     <td
                       className={`py-3 text-right font-bold ${
-                        isPositive ? "text-[#00f5a0]" : "text-[#ff3b5c]"
+                        isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                       }`}
                     >
                       {formatPercent(asset.change24h)}
@@ -189,6 +191,9 @@ export default function ETFsPage() {
           total={total}
           sentinelRef={sentinelRef}
           onLoadMore={loadMore}
+          error={error} onRetry={retry}
+          windowStart={windowStart} windowFull={windowFull}
+          onNextWindow={nextWindow} onPreviousWindow={previousWindow}
           entityName="ETFs"
           emptyMessage="Nenhum ETF encontrado para a busca."
         />

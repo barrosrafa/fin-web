@@ -1,41 +1,14 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { getGlossaryTerm, GlossaryItem } from "@/lib/api";
+import type { GlossaryItem } from "@/lib/api";
 
-export function TermDetailClient({ slug }: { slug: string }) {
-  const [term, setTerm] = useState<GlossaryItem | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const data = await getGlossaryTerm(slug);
-        setTerm(data);
-      } catch (err) {
-        console.error("Failed to load term:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <div className="py-24 text-center text-[#94a3b8] font-mono">
-        Carregando termo {slug}...
-      </div>
-    );
-  }
-
+export function TermDetail({ term }: { term: GlossaryItem | null }) {
   if (!term) {
     return (
       <div className="py-24 text-center">
-        <h2 className="text-xl font-bold text-white mb-2">Termo não encontrado</h2>
+        <h2 className="text-xl font-bold text-white mb-2">Definição indisponível</h2>
         <Link href="/dicionario" className="text-cyan-400 hover:underline text-sm">
           ← Voltar ao Dicionário
         </Link>

@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { SectionState } from "@/components/shared/SectionState";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import { getQuoteHistory, QuoteHistoryResponse, DailyQuoteItem } from "@/lib/api";
+import { getQuoteHistory, QuoteHistoryResponse, API_BASE } from "@/lib/api";
 
 interface StockPriceHistorySectionProps {
   ticker: string;
@@ -19,27 +19,27 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
   const [page, setPage] = useState<number>(0);
   const pageSize = 20;
 
-  const loadHistory = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await getQuoteHistory(ticker, timeframe, adjusted, 500, 0);
-      setHistory(res);
-      setPage(0);
-    } catch (err) {
-      console.error("Failed to load quote history:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [ticker, timeframe, adjusted]);
-
+  const [error, setError] = useState<string | null>(null);
+  const [revision, setRevision] = useState(0);
   useEffect(() => {
-    loadHistory();
-  }, [loadHistory]);
+    const controller = new AbortController();
+    // Clear the previous instrument/period before starting its replacement request.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
+    setError(null);
+    setHistory(null);
+    void getQuoteHistory(ticker, timeframe, adjusted, 500, 0, controller.signal).then(data => {
+      if (!controller.signal.aborted) { setHistory(data); setPage(0); }
+    }).catch(() => {
+      if (!controller.signal.aborted) setError("Histórico indisponível. Tente novamente.");
+    }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [ticker, timeframe, adjusted, revision]);
 
   const handleExportCSV = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const apiUrl = API_BASE;
     window.open(
-      `${apiUrl}/market/${ticker}/history/export?timeframe=${timeframe}&adjusted=${adjusted}`,
+      `${apiUrl}/market/${encodeURIComponent(ticker)}/history/export?timeframe=${timeframe}&adjusted=${adjusted}`,
       "_blank"
     );
   };
@@ -52,9 +52,9 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
   const latestQuote = data[0];
   const oldestQuote = data[data.length - 1];
   const periodReturnPct =
-    oldestQuote && latestQuote && oldestQuote.close > 0
-      ? ((latestQuote.close - oldestQuote.close) / oldestQuote.close) * 100
-      : 0;
+    oldestQuote && latestQuote && (adjusted ? oldestQuote.close_adjusted : oldestQuote.close) > 0
+      ? (((adjusted ? latestQuote.close_adjusted : latestQuote.close) - (adjusted ? oldestQuote.close_adjusted : oldestQuote.close)) / (adjusted ? oldestQuote.close_adjusted : oldestQuote.close)) * 100
+      : Number.NaN;
 
   let minPrice = Infinity;
   let maxPrice = -Infinity;
@@ -68,8 +68,8 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
   });
 
   const avgVolume = data.length > 0 ? totalVolume / data.length : 0;
-  if (minPrice === Infinity) minPrice = 0;
-  if (maxPrice === -Infinity) maxPrice = 0;
+  if (minPrice === Infinity) minPrice = Number.NaN;
+  if (maxPrice === -Infinity) maxPrice = Number.NaN;
 
   // Pagination for table
   const totalPages = Math.ceil(data.length / pageSize);
@@ -117,13 +117,15 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
 
   return (
     <div className="flex flex-col gap-6 animate-fade-up">
+      <SectionState loading={loading} error={error} onRetry={() => setRevision(n => n + 1)} />
+      {history?.cache_status === "offline-stale" && <p role="status" className="text-sm text-amber-300">Offline — histórico salvo anteriormente; dados podem estar desatualizados.</p>}
       {/* Controls & Summary Header */}
       <Card glow="cyan" className="p-6">
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="badge-neon badge-neon-cyan">Série Histórica Diária</span>
-              <span className="text-xs text-[#64748b] font-mono">B3 TimescaleDB</span>
+              <span className="text-xs text-[#94a3b8] font-mono">B3 TimescaleDB</span>
             </div>
             <h2 className="text-2xl font-black text-white tracking-tight">
               Cotações Diárias & Ajustes Corporativos — {ticker}
@@ -176,21 +178,21 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
             <div>
-              <span className="text-[#64748b] block text-[10px] uppercase font-sans">Retorno no Período</span>
-              <span className={`font-bold text-sm ${periodReturnPct >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"}`}>
-                {periodReturnPct >= 0 ? "+" : ""}{periodReturnPct.toFixed(2)}%
+              <span className="text-[#94a3b8] block text-[10px] uppercase font-sans">Retorno no Período</span>
+              <span className={`font-bold text-sm ${periodReturnPct >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"}`}>
+                {formatPercent(periodReturnPct)}
               </span>
             </div>
             <div>
-              <span className="text-[#64748b] block text-[10px] uppercase font-sans">Mínima</span>
+              <span className="text-[#94a3b8] block text-[10px] uppercase font-sans">Mínima</span>
               <span className="font-bold text-white text-sm">{formatCurrency(minPrice)}</span>
             </div>
             <div>
-              <span className="text-[#64748b] block text-[10px] uppercase font-sans">Máxima</span>
+              <span className="text-[#94a3b8] block text-[10px] uppercase font-sans">Máxima</span>
               <span className="font-bold text-white text-sm">{formatCurrency(maxPrice)}</span>
             </div>
             <div>
-              <span className="text-[#64748b] block text-[10px] uppercase font-sans">Volume Médio Diário</span>
+              <span className="text-[#94a3b8] block text-[10px] uppercase font-sans">Volume Médio Diário</span>
               <span className="font-bold text-cyan-400 text-sm">{formatCurrency(avgVolume)}</span>
             </div>
           </div>
@@ -201,17 +203,17 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
       <Card glow="none" className="p-4 overflow-hidden border border-white/10">
         <div className="flex justify-between items-center mb-2 px-2">
           <span className="text-xs font-bold text-white">Curva de Fechamento ({timeframe})</span>
-          <span className="text-[11px] text-[#64748b]">
+          <span className="text-[11px] text-[#94a3b8]">
             {chartData.length} pregões negociados
           </span>
         </div>
 
         {loading ? (
-          <div className="h-[260px] flex items-center justify-center text-xs text-[#64748b]">
+          <div className="h-[260px] flex items-center justify-center text-xs text-[#94a3b8]">
             Carregando série histórica...
           </div>
         ) : chartData.length === 0 ? (
-          <div className="h-[260px] flex items-center justify-center text-xs text-[#64748b]">
+          <div className="h-[260px] flex items-center justify-center text-xs text-[#94a3b8]">
             Nenhuma cotação encontrada no período selecionado.
           </div>
         ) : (
@@ -244,10 +246,10 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
                     <text
                       x={padding.left - 8}
                       y={y + 3}
-                      fill="#64748b"
+                      fill="#94a3b8"
                       textAnchor="end"
                     >
-                      R$ {val.toFixed(2)}
+                      {formatCurrency(val)}
                     </text>
                   </g>
                 );
@@ -274,7 +276,7 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
                   <text
                     x={padding.left}
                     y={height - 10}
-                    fill="#64748b"
+                    fill="#94a3b8"
                     textAnchor="start"
                   >
                     {chartData[0].date}
@@ -282,7 +284,7 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
                   <text
                     x={width / 2}
                     y={height - 10}
-                    fill="#64748b"
+                    fill="#94a3b8"
                     textAnchor="middle"
                   >
                     {chartData[Math.floor(chartData.length / 2)].date}
@@ -290,7 +292,7 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
                   <text
                     x={width - padding.right}
                     y={height - 10}
-                    fill="#64748b"
+                    fill="#94a3b8"
                     textAnchor="end"
                   >
                     {chartData[chartData.length - 1].date}
@@ -309,7 +311,7 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
             <span className="text-xs font-bold text-white">
               Tabela Diária de Pregões ({data.length} registros)
             </span>
-            <span className="text-[11px] text-[#64748b] block mt-0.5">
+            <span className="text-[11px] text-[#94a3b8] block mt-0.5">
               Página {page + 1} de {Math.max(1, totalPages)}
             </span>
           </div>
@@ -336,7 +338,7 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
+              <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
                 <th className="py-3 pl-4">Data Pregão</th>
                 <th className="py-3 text-right">Fechamento</th>
                 <th className="py-3 text-right">Ajustado</th>
@@ -352,13 +354,13 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
             <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
-                  <td colSpan={10} className="py-8 text-center text-[#64748b] font-sans">
+                  <td colSpan={10} className="py-8 text-center text-[#94a3b8] font-sans">
                     Carregando dados diários...
                   </td>
                 </tr>
               ) : paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-8 text-center text-[#64748b] font-sans">
+                  <td colSpan={10} className="py-8 text-center text-[#94a3b8] font-sans">
                     Nenhum registro para o filtro atual.
                   </td>
                 </tr>
@@ -374,11 +376,10 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
                     </td>
                     <td
                       className={`py-2.5 text-right font-bold ${
-                        row.pct_change >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"
+                        row.pct_change >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"
                       }`}
                     >
-                      {row.pct_change >= 0 ? "+" : ""}
-                      {row.pct_change.toFixed(2)}%
+                      {formatPercent(row.pct_change)}
                     </td>
                     <td className="py-2.5 text-right text-[#94a3b8]">{formatCurrency(row.open)}</td>
                     <td className="py-2.5 text-right text-[#94a3b8]">{formatCurrency(row.high)}</td>
@@ -393,7 +394,7 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
                           {row.corporate_events}
                         </span>
                       ) : (
-                        <span className="text-[#64748b] text-[10px]">—</span>
+                        <span className="text-[#94a3b8] text-[10px]">—</span>
                       )}
                     </td>
                   </tr>

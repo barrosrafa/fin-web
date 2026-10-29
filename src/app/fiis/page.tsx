@@ -14,8 +14,9 @@ import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
 
 export default function FIIsPage() {
   const fetchPage = useCallback(
-    async (offset: number, limit: number, searchStr: string, filterStr?: string) => {
+    async (offset: number, limit: number, searchStr: string, filterStr?: string, signal?: AbortSignal) => {
       return await getAssetsPaginated({
+        signal,
         type: "FII",
         limit,
         offset,
@@ -38,6 +39,7 @@ export default function FIIsPage() {
     setFilter: setSelectedSubsector,
     sentinelRef,
     loadMore,
+    error, retry, windowStart, windowFull, nextWindow, previousWindow,
   } = useInfiniteScroll<AssetSummary>({
     fetchPage,
     limit: 24,
@@ -76,8 +78,8 @@ export default function FIIsPage() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="badge-neon badge-neon-emerald">Mercado Imobiliário B3</span>
-            <span className="text-xs text-[#64748b]">FIIs & Fiagros</span>
-            <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+            <span className="text-xs text-[#94a3b8]">FIIs & Fiagros</span>
+            <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
               {total > 0 ? `${total} Fundos no Banco` : "606 Fundos no Banco"}
             </span>
           </div>
@@ -128,13 +130,13 @@ export default function FIIsPage() {
               placeholder="Buscar por ticker ou nome no banco em tempo real (ex: MXRF11, HGLG11, KNIP11)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
+              className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#94a3b8] focus:outline-none focus:border-[#00f5a0] transition-colors"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => setSearch("")}
-                className="absolute right-3 top-2 text-xs text-[#64748b] hover:text-white"
+                className="absolute right-3 top-2 text-xs text-[#94a3b8] hover:text-white"
               >
                 ✕
               </button>
@@ -160,14 +162,14 @@ export default function FIIsPage() {
         </div>
 
         {/* Counter feedback */}
-        <div className="mt-3 flex items-center justify-between text-[11px] text-[#64748b]">
+        <div className="mt-3 flex items-center justify-between text-[11px] text-[#94a3b8]">
           <span>
             {loading
               ? "Consultando banco de dados..."
               : `Exibindo ${fiis.length} de ${total} FIIs ${search ? `para "${search}"` : ""}`}
           </span>
           {hasMore && !loading && (
-            <span className="text-[#00f5a0]">Role para carregar mais automaticamente ↓</span>
+            <span className="text-[var(--positive)]">Role para carregar mais automaticamente ↓</span>
           )}
         </div>
       </Card>
@@ -194,7 +196,7 @@ export default function FIIsPage() {
                     <div className="text-xs text-[#94a3b8] font-medium truncate max-w-[220px]">
                       {fii.name}
                     </div>
-                    <div className="text-[11px] text-[#64748b] mt-0.5">
+                    <div className="text-[11px] text-[#94a3b8] mt-0.5">
                       {fii.sector} • {fii.subsector}
                     </div>
                   </div>
@@ -205,7 +207,7 @@ export default function FIIsPage() {
                     </div>
                     <div
                       className={`text-xs font-mono font-medium ${
-                        isPositive ? "text-[#00f5a0]" : "text-[#ff3b5c]"
+                        isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                       }`}
                     >
                       {formatPercent(fii.change24h)}
@@ -215,15 +217,15 @@ export default function FIIsPage() {
 
                 <div className="grid grid-cols-3 gap-2 my-4 p-3 rounded-xl bg-[#131926] border border-white/5 text-center">
                   <div>
-                    <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
                       D.Y. (12M)
                     </div>
-                    <div className="text-xs font-bold font-mono text-[#00f5a0] mt-0.5">
+                    <div className="text-xs font-bold font-mono text-[var(--positive)] mt-0.5">
                       {formatPercent(fii.dividendYield, false)}
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
                       P/VP
                     </div>
                     <div className="text-xs font-bold font-mono text-white mt-0.5">
@@ -231,7 +233,7 @@ export default function FIIsPage() {
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
                       Liquidez
                     </div>
                     <div className="text-xs font-bold font-mono text-white mt-0.5">
@@ -241,7 +243,7 @@ export default function FIIsPage() {
                 </div>
 
                 <div className="mb-4">
-                  <div className="text-[10px] text-[#64748b] mb-1 font-semibold flex justify-between">
+                  <div className="text-[10px] text-[#94a3b8] mb-1 font-semibold flex justify-between">
                     <span>Tendência 5D</span>
                     <span className="font-mono text-white">
                       12M: {formatPercent(fii.change12m)}
@@ -276,6 +278,9 @@ export default function FIIsPage() {
         total={total}
         sentinelRef={sentinelRef}
         onLoadMore={loadMore}
+        error={error} onRetry={retry}
+        windowStart={windowStart} windowFull={windowFull}
+        onNextWindow={nextWindow} onPreviousWindow={previousWindow}
         entityName="FIIs"
         emptyMessage="Nenhum FII encontrado para os termos da busca."
       />

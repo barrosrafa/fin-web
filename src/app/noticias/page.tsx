@@ -58,6 +58,8 @@ export default function NoticiasPage() {
   );
 
   useEffect(() => {
+    // A filter change invalidates the current page before its replacement request.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchNewsBatch(0, true);
   }, [fetchNewsBatch]);
 

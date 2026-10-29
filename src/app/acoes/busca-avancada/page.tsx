@@ -36,8 +36,9 @@ export default function BuscaAvancadaPage() {
   const filterKey = `${minDY}-${maxPL}-${maxPVP}-${minROE}-${minROIC}-${minMargem}-${sectorFilter}`;
 
   const fetchPage = useCallback(
-    async (offset: number, limit: number, searchStr: string) => {
+    async (offset: number, limit: number, searchStr: string, _filter?: string, signal?: AbortSignal) => {
       return await getStocksRankingPaginated({
+        signal,
         sortBy: "dy",
         limit,
         offset,
@@ -64,6 +65,7 @@ export default function BuscaAvancadaPage() {
     setSearch,
     sentinelRef,
     loadMore,
+    error, retry, windowStart, windowFull, nextWindow, previousWindow,
   } = useInfiniteScroll<StockRankingRow>({
     fetchPage,
     limit: 50,
@@ -76,8 +78,8 @@ export default function BuscaAvancadaPage() {
       <div>
         <div className="flex items-center gap-2 mb-2">
           <span className="badge-neon badge-neon-violet">Super Screener Multi-Slider</span>
-          <span className="text-xs text-[#64748b]">Filtros Server-Side B3</span>
-          <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
+          <span className="text-xs text-[#94a3b8]">Filtros Server-Side B3</span>
+          <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
             {total > 0 ? `${total} Ações Atendem aos Critérios` : "Filtro no Banco"}
           </span>
         </div>
@@ -93,7 +95,7 @@ export default function BuscaAvancadaPage() {
       <Card glow="violet">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>Dividend Yield Mínimo</span>
               <span className="text-[#00d9f5] font-mono">{minDY}%</span>
             </div>
@@ -109,7 +111,7 @@ export default function BuscaAvancadaPage() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>P/L Máximo</span>
               <span className="text-white font-mono">{maxPL}x</span>
             </div>
@@ -125,7 +127,7 @@ export default function BuscaAvancadaPage() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>P/VP Máximo</span>
               <span className="text-white font-mono">{maxPVP.toFixed(1)}x</span>
             </div>
@@ -141,9 +143,9 @@ export default function BuscaAvancadaPage() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>ROE Mínimo</span>
-              <span className="text-[#00f5a0] font-mono">{minROE}%</span>
+              <span className="text-[var(--positive)] font-mono">{minROE}%</span>
             </div>
             <input
               type="range"
@@ -157,9 +159,9 @@ export default function BuscaAvancadaPage() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>ROIC Mínimo</span>
-              <span className="text-[#00f5a0] font-mono">{minROIC}%</span>
+              <span className="text-[var(--positive)] font-mono">{minROIC}%</span>
             </div>
             <input
               type="range"
@@ -173,7 +175,7 @@ export default function BuscaAvancadaPage() {
           </div>
 
           <div>
-            <div className="flex justify-between text-[11px] uppercase font-bold text-[#64748b] mb-1">
+            <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
               <span>Margem Líquida Mínima</span>
               <span className="text-white font-mono">{minMargem}%</span>
             </div>
@@ -189,7 +191,7 @@ export default function BuscaAvancadaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <label className="text-[11px] uppercase font-bold text-[#64748b] block mb-1">
+            <label className="text-[11px] uppercase font-bold text-[#94a3b8] block mb-1">
               Filtrar por Setor Econômico
             </label>
             <select
@@ -213,13 +215,13 @@ export default function BuscaAvancadaPage() {
             placeholder="Buscar ação por ticker ou nome (ex: PETR4, Vale, WEG)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#64748b] focus:outline-none focus:border-[#00f5a0] transition-colors"
+            className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#94a3b8] focus:outline-none focus:border-[#00f5a0] transition-colors"
           />
           {search && (
             <button
               type="button"
               onClick={() => setSearch("")}
-              className="absolute right-3 top-6 text-xs text-[#64748b] hover:text-white"
+              className="absolute right-3 top-6 text-xs text-[#94a3b8] hover:text-white"
             >
               ✕
             </button>
@@ -234,14 +236,14 @@ export default function BuscaAvancadaPage() {
             {loading ? "Filtrando universo de ativos..." : `Exibindo ${stocks.length} de ${total} ações encontradas`}
           </span>
           {hasMore && !loading && (
-            <span className="text-xs text-[#00f5a0]">Role para carregar mais automaticamente ↓</span>
+            <span className="text-xs text-[var(--positive)]">Role para carregar mais automaticamente ↓</span>
           )}
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
-              <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
+              <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
                 <th className="py-3 pl-4">Ticker</th>
                 <th className="py-3">Empresa</th>
                 <th className="py-3">Setor</th>
@@ -258,7 +260,7 @@ export default function BuscaAvancadaPage() {
             <tbody className="divide-y divide-white/5">
               {loading ? (
                 <tr>
-                  <td colSpan={11} className="py-12 text-center text-[#64748b] font-sans animate-pulse">
+                  <td colSpan={11} className="py-12 text-center text-[#94a3b8] font-sans animate-pulse">
                     Filtrando ações no Neon DB em tempo real...
                   </td>
                 </tr>
@@ -266,7 +268,7 @@ export default function BuscaAvancadaPage() {
                 stocks.map((s) => (
                   <tr key={s.ticker} className="hover:bg-white/[0.02]">
                     <td className="py-3 pl-4 font-bold text-white font-sans">
-                      <Link href={`/acoes/${s.ticker}`} className="hover:text-[#00f5a0] transition-colors">
+                      <Link href={`/acoes/${s.ticker}`} className="hover:text-[var(--positive)] transition-colors">
                         {s.ticker}
                       </Link>
                     </td>
@@ -276,8 +278,8 @@ export default function BuscaAvancadaPage() {
                     <td className="py-3 text-right font-bold text-[#00d9f5]">{formatPercent(s.dy, false)}</td>
                     <td className="py-3 text-right text-white">{s.pl !== null ? s.pl.toFixed(2) : "—"}</td>
                     <td className="py-3 text-right text-white">{s.pvp !== null ? s.pvp.toFixed(2) : "—"}</td>
-                    <td className="py-3 text-right text-[#00f5a0] font-bold">{s.roe !== null ? formatPercent(s.roe, false) : "—"}</td>
-                    <td className="py-3 text-right text-[#00f5a0]">{s.roic !== null ? formatPercent(s.roic, false) : "—"}</td>
+                    <td className="py-3 text-right text-[var(--positive)] font-bold">{s.roe !== null ? formatPercent(s.roe, false) : "—"}</td>
+                    <td className="py-3 text-right text-[var(--positive)]">{s.roic !== null ? formatPercent(s.roic, false) : "—"}</td>
                     <td className="py-3 text-right text-white">{s.margem_liquida !== null ? formatPercent(s.margem_liquida, false) : "—"}</td>
                     <td className="py-3 text-right pr-4 font-sans">
                       <Link
@@ -302,6 +304,9 @@ export default function BuscaAvancadaPage() {
           total={total}
           sentinelRef={sentinelRef}
           onLoadMore={loadMore}
+          error={error} onRetry={retry}
+          windowStart={windowStart} windowFull={windowFull}
+          onNextWindow={nextWindow} onPreviousWindow={previousWindow}
           entityName="Ações filtradas"
           emptyMessage="Nenhuma ação encontrada para os filtros selecionados."
         />

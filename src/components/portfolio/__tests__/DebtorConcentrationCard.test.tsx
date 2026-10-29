@@ -1,4 +1,5 @@
 import assert from "node:assert";
+import { it } from "vitest";
 import { DebtorConcentrationCard, DebtorItem } from "../DebtorConcentrationCard";
 
 export function testDebtorConcentrationCardContract() {
@@ -17,4 +18,4 @@ export function testDebtorConcentrationCardContract() {
   assert.strictEqual(mockDebtors[0].entityName, "Grupo JHSF");
 }
 
-testDebtorConcentrationCardContract();
+it("retains the debtor concentration component contract", testDebtorConcentrationCardContract);

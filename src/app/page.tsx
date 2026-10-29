@@ -29,17 +29,17 @@ export default function HomePage() {
   const [dividends, setDividends] = useState<DividendCalendarItem[]>([]);
   const [aiVerdict, setAiVerdict] = useState<AISentimentData | null>(null);
   const [valuationPetr4, setValuationPetr4] = useState<StockValuationDetail | null>(null);
-  const [, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       try {
         const [bRes, aRes, dRes, aiRes, vRes] = await Promise.all([
-          getBenchmarks(),
+          getBenchmarks().catch(() => []),
           getAssets(),
           getDividends(5),
           getAISentiment("PETR4"),
-          getStockValuation("PETR4"),
+          getStockValuation("PETR4").catch(() => null),
         ]);
         setBenchmarks(bRes);
         setAssets(aRes);
@@ -67,11 +67,11 @@ export default function HomePage() {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <span className="badge-neon badge-neon-emerald">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00f5a0] animate-pulse" />
-              Mercado B3 Aberto
+              <span className="w-1.5 h-1.5 rounded-full bg-[#94a3b8]" />
+              Sessão B3 não informada
             </span>
-            <span className="text-xs text-[#64748b] mono-nums">
-              Pregão Regular • Atualização contínua via Neon DB
+            <span className="text-xs text-[#94a3b8] mono-nums">
+              Dados periódicos • Horário de mercado não verificado
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
@@ -118,8 +118,8 @@ export default function HomePage() {
               <div>
                 <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
                   <span>Radar de Oportunidades</span>
-                  <span className="text-xs text-[#64748b] font-normal">
-                    (Múltiplos em tempo real)
+                  <span className="text-xs text-[#94a3b8] font-normal">
+                    (Últimos dados disponíveis)
                   </span>
                 </h2>
                 <p className="text-xs text-[#94a3b8]">
@@ -143,7 +143,7 @@ export default function HomePage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
-                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                  <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px]">
                     <th className="pb-3 pl-2">Ativo</th>
                     <th className="pb-3 text-right">Preço</th>
                     <th className="pb-3 text-right">Var. 24h</th>
@@ -176,7 +176,7 @@ export default function HomePage() {
                             </div>
                             <div>
                               <div className="flex items-center gap-1.5">
-                                <span className="font-bold text-white text-xs group-hover:text-[#00f5a0] transition-colors">
+                                <span className="font-bold text-white text-xs group-hover:text-[var(--positive)] transition-colors">
                                   {asset.ticker}
                                 </span>
                                 {asset.badge && (
@@ -194,7 +194,7 @@ export default function HomePage() {
                                   </Badge>
                                 )}
                               </div>
-                              <div className="text-[11px] text-[#64748b] truncate max-w-[140px] sm:max-w-[200px]">
+                              <div className="text-[11px] text-[#94a3b8] truncate max-w-[140px] sm:max-w-[200px]">
                                 {asset.name}
                               </div>
                             </div>
@@ -207,7 +207,7 @@ export default function HomePage() {
 
                         <td
                           className={`py-3.5 text-right font-mono font-medium ${
-                            isPositive ? "text-[#00f5a0]" : "text-[#ff3b5c]"
+                            isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                           }`}
                         >
                           {formatPercent(asset.change24h)}
@@ -263,40 +263,36 @@ export default function HomePage() {
                 </h3>
               </div>
               <Badge variant="violet">
-                Score {aiVerdict?.confidence_score ?? 92}%
+                Score {aiVerdict?.confidence_score ?? "—"}%
               </Badge>
             </div>
 
             <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 mb-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold text-white">
-                  Destaque: {aiVerdict?.ticker ?? "PETR4"}
+                  Destaque: {aiVerdict?.ticker ?? "—"}
                 </span>
                 <Badge variant={aiVerdict?.sentiment === "BEARISH" ? "crimson" : "emerald"} dot>
-                  {aiVerdict?.sentiment ?? "BULLISH"}
+                  {aiVerdict?.sentiment ?? "Indisponível"}
                 </Badge>
               </div>
               <p className="text-xs text-[#94a3b8] leading-relaxed line-clamp-4">
-                {aiVerdict?.executive_summary ??
-                  "O Comitê de IA analisou os fluxos operacionais com geração consistente de caixa livre e governança de capital sob controle."}
+                {aiVerdict?.executive_summary ?? "Análise indisponível para este instrumento."}
               </p>
             </div>
 
             <div className="flex flex-col gap-2 mb-5">
-              <span className="text-[10px] uppercase tracking-wider font-semibold text-[#64748b]">
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
                 Principais Forças Detectadas:
               </span>
-              {(aiVerdict?.swot?.strengths ?? [
-                "Liderança absoluta de mercado e margens elevadas",
-                "Geração robusta de Fluxo de Caixa Livre e baixo lifting cost",
-              ])
+              {(aiVerdict?.swot?.strengths ?? [])
                 .slice(0, 2)
                 .map((s, idx) => (
                   <div
                     key={idx}
                     className="flex items-start gap-2 text-xs text-[#f0f4f8]"
                   >
-                    <span className="text-[#00f5a0] mt-0.5">✓</span>
+                    <span className="text-[var(--positive)] mt-0.5">✓</span>
                     <span>{s}</span>
                   </div>
                 ))}
@@ -318,28 +314,25 @@ export default function HomePage() {
 
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
-                <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
                   Preço Justo Graham
                 </div>
                 {valuationPetr4 ? (
                   <>
-                    <div className="text-base font-bold text-[#00f5a0] font-mono mt-0.5">
+                    <div className="text-base font-bold text-[var(--positive)] font-mono mt-0.5">
                       {formatCurrency(valuationPetr4.graham_fair_value)}
                     </div>
-                    <div className="text-[10px] text-[#00f5a0] font-medium">
+                    <div className="text-[10px] text-[var(--positive)] font-medium">
                       {formatPercent(valuationPetr4.graham_upside_pct)} Margem
                     </div>
                   </>
                 ) : (
-                  <div className="mt-1 space-y-1">
-                    <div className="h-5 w-24 bg-white/10 rounded animate-pulse" />
-                    <div className="h-3 w-16 bg-white/5 rounded animate-pulse" />
-                  </div>
+                  <p role="status" className="mt-1 text-xs text-[#94a3b8]">{loading ? "Carregando…" : "Dados indisponíveis"}</p>
                 )}
               </div>
 
               <div className="p-2.5 rounded-xl bg-white/[0.02] border border-white/5">
-                <div className="text-[10px] text-[#64748b] uppercase font-semibold">
+                <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
                   Preço Teto Bazin
                 </div>
                 {valuationPetr4 ? (
@@ -352,10 +345,7 @@ export default function HomePage() {
                     </div>
                   </>
                 ) : (
-                  <div className="mt-1 space-y-1">
-                    <div className="h-5 w-24 bg-white/10 rounded animate-pulse" />
-                    <div className="h-3 w-16 bg-white/5 rounded animate-pulse" />
-                  </div>
+                  <p role="status" className="mt-1 text-xs text-[#94a3b8]">{loading ? "Carregando…" : "Dados indisponíveis"}</p>
                 )}
               </div>
             </div>
@@ -385,7 +375,7 @@ export default function HomePage() {
             </div>
             <Link
               href="/agenda-dividendos"
-              className="text-xs text-[#00f5a0] hover:underline font-medium"
+              className="text-xs text-[var(--positive)] hover:underline font-medium"
             >
               Ver Todos ↗
             </Link>
@@ -398,7 +388,7 @@ export default function HomePage() {
                 className="py-3 flex items-center justify-between gap-4"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[rgba(0,245,160,0.1)] border border-[rgba(0,245,160,0.2)] flex items-center justify-center font-bold text-[#00f5a0] text-xs">
+                  <div className="w-8 h-8 rounded-lg bg-[rgba(0,245,160,0.1)] border border-[rgba(0,245,160,0.2)] flex items-center justify-center font-bold text-[var(--positive)] text-xs">
                     {div.assetTicker.slice(0, 4)}
                   </div>
                   <div>
@@ -410,17 +400,17 @@ export default function HomePage() {
                         Comp: {div.referenceMonth}
                       </Badge>
                     </div>
-                    <span className="text-[11px] text-[#64748b]">
+                    <span className="text-[11px] text-[#94a3b8]">
                       Data-Com: {div.dateCom} • Pagamento: {div.paymentDate}
                     </span>
                   </div>
                 </div>
 
                 <div className="text-right font-mono">
-                  <div className="text-xs font-bold text-[#00f5a0]">
+                  <div className="text-xs font-bold text-[var(--positive)]">
                     {formatDividendUnit(div.valuePerShare)} / cota
                   </div>
-                  <div className="text-[10px] text-[#64748b]">
+                  <div className="text-[10px] text-[#94a3b8]">
                     Yield {formatPercent(div.yieldOnCostPct, false)}
                   </div>
                 </div>
@@ -456,19 +446,19 @@ export default function HomePage() {
             </div>
             <div className="flex justify-between items-center text-xs">
               <span className="text-[#94a3b8]">Último Rendimento Distribuído</span>
-              <span className="font-mono text-[#00f5a0]">R$ 1,10 / cota</span>
+              <span className="font-mono text-[var(--positive)]">R$ 1,10 / cota</span>
             </div>
             <div className="pt-3 border-t border-white/10 flex justify-between items-center">
               <div>
                 <span className="text-xs font-bold text-white block">
                   Número Mágico Calculado:
                 </span>
-                <span className="text-[10px] text-[#64748b]">
+                <span className="text-[10px] text-[#94a3b8]">
                   Ponto de reinvestimento autônomo
                 </span>
               </div>
               <div className="text-right font-mono">
-                <span className="text-xl font-black text-[#00f5a0]">
+                <span className="text-xl font-black text-[var(--positive)]">
                   148 cotas
                 </span>
                 <span className="text-[10px] text-[#94a3b8] block">

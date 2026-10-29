@@ -59,6 +59,8 @@ export function ComparadorClient() {
     if (param) {
       const parsed = param.split(",").map((s) => s.trim().toUpperCase()).filter(Boolean);
       if (parsed.length >= 2 && parsed.join(",") !== selectedTickers.join(",")) {
+        // Keep the controls synchronized with browser URL navigation.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSelectedTickers(parsed.slice(0, 4));
       }
     }

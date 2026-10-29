@@ -1,0 +1,25 @@
+import { test, expect } from "@playwright/test";
+import { mockPublicApi } from "./fixtures/route";
+test("preferences persist and secondary navigation clears the actual header", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await mockPublicApi(page);
+  await page.goto("/acoes/SDDD3");
+  await page.getByRole("button", { name: "Cores: padrão" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-palette", "accessible");
+  await page.getByRole("button", { name: "Densidade: detalhada" }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-density", "compact");
+  await expect(page.locator("html")).toHaveAttribute("data-palette", "accessible");
+  await page.locator("#tab-FUNDAMENTOS").click();
+  const header = await page.locator("header").boundingBox();
+  const subnav = await page.getByRole("navigation", { name: "Navegação rápida da ação" }).boundingBox();
+  expect(header).not.toBeNull(); expect(subnav).not.toBeNull();
+  expect(header!.y).toBeLessThanOrEqual(20);
+  expect(subnav!.y).toBeGreaterThanOrEqual(header!.y + header!.height);
+  await page.keyboard.press("Tab");
+  expect(await page.locator(":focus").count()).toBe(1);
+  expect(errors).toEqual([]);
+  await page.screenshot({ path: "test-results/sdd-desktop.png" });
+});

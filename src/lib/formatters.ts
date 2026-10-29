@@ -3,11 +3,11 @@
  */
 
 export function formatCurrency(
-  value: number,
+  value?: number | null,
   compact: boolean = false,
   fractionDigits: number = 2
 ): string {
-  if (isNaN(value)) return "R$ 0,00";
+  if (value == null || !Number.isFinite(value)) return "—";
 
   if (compact) {
     if (Math.abs(value) >= 1_000_000_000_000) {
@@ -40,8 +40,8 @@ export function formatCurrency(
   });
 }
 
-export function formatPercent(value: number, includeSign: boolean = true): string {
-  if (isNaN(value)) return "0,00%";
+export function formatPercent(value?: number | null, includeSign: boolean = true): string {
+  if (value == null || !Number.isFinite(value)) return "—";
   const sign = includeSign && value > 0 ? "+" : "";
   return `${sign}${value.toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
@@ -50,11 +50,11 @@ export function formatPercent(value: number, includeSign: boolean = true): strin
 }
 
 export function formatNumber(
-  value: number,
+  value?: number | null,
   decimals: number = 2,
   compact: boolean = false
 ): string {
-  if (isNaN(value)) return "0";
+  if (value == null || !Number.isFinite(value)) return "—";
   if (compact) {
     if (Math.abs(value) >= 1_000_000_000) {
       return `${(value / 1_000_000_000).toLocaleString("pt-BR", {
@@ -81,7 +81,7 @@ export function formatMultiple(
   decimals: number = 2,
   fallback: string = "—"
 ): string {
-  if (value === undefined || value === null || isNaN(value)) return fallback;
+  if (value === undefined || value === null || !Number.isFinite(value)) return fallback;
   return `${formatNumber(value, decimals)}x`;
 }
 
@@ -89,7 +89,7 @@ export function formatMultiple(
  * Preserves 4 decimal places for unit share dividends (e.g. R$ 0,4460) as required by D1.
  */
 export function formatDividendUnit(value?: number | null): string {
-  if (value === undefined || value === null || isNaN(value)) return "R$ 0,0000";
+  if (value === undefined || value === null || !Number.isFinite(value)) return "—";
   // If the value has fractions beyond 2 decimals, format with 4 decimals
   const hasSubCents = Math.abs(value * 100 - Math.round(value * 100)) > 0.001;
   const decimals = hasSubCents ? 4 : 2;
@@ -110,7 +110,7 @@ export function formatPercentPtBr(
   decimals: number = 2,
   fallback: string = "—"
 ): string {
-  if (value === undefined || value === null || isNaN(value)) return fallback;
+  if (value === undefined || value === null || !Number.isFinite(value)) return fallback;
   const sign = includeSign && value > 0 ? "+" : "";
   return `${sign}${value.toLocaleString("pt-BR", {
     minimumFractionDigits: decimals,

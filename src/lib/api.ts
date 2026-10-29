@@ -1,3 +1,4 @@
+import { historyKey, readPublicHistory, writePublicHistory } from "./cache/market-db";
 import {
   AssetSummary,
   ChecklistItem,
@@ -145,6 +146,7 @@ export interface BenchmarkItem {
   value: number;
   change: number;
   sparkline: number[];
+  provenance?: import("@/schemas/data-provenance").DataProvenance;
 }
 
 export interface DividendCalendarItem {
@@ -197,14 +199,14 @@ export interface StockValuationDetail {
   lpa: number;
   vpa: number;
   dpa_medio: number;
-  graham_fair_value: number;
-  graham_upside_pct: number;
-  bazin_ceiling_price: number;
-  bazin_upside_pct: number;
+  graham_fair_value?: number | null;
+  graham_upside_pct?: number | null;
+  bazin_ceiling_price?: number | null;
+  bazin_upside_pct?: number | null;
   gordon_fair_value?: number;
-  dcf_intrinsic_value: number;
-  dcf_upside_pct: number;
-  margin_of_safety_pct: number;
+  dcf_intrinsic_value?: number | null;
+  dcf_upside_pct?: number | null;
+  margin_of_safety_pct?: number | null;
   checklist: ChecklistItem[];
   dre_history: DREEntry[];
   dividends: DividendEntry[];
@@ -490,26 +492,27 @@ export interface FundRiskMatrixData {
 // API Client Functions (Zero Mocks / Live DB)
 // ==========================================
 
-export async function getBenchmarks(): Promise<BenchmarkItem[]> {
+export async function getBenchmarks(signal?: AbortSignal): Promise<BenchmarkItem[]> {
   try {
     if (CDN_BASE) {
       const snap = await fetchCdnSnapshot<{
         indices: Array<{ codigo: string; nome: string; valor: number; variacao_pct: number }>;
-      }>("market", "overview.json");
-      if (snap?.indices && snap.indices.length > 0) {
-        return snap.indices.map((idx) => ({
+      }>("market", "overview.json", { signal });
+      if (snap?.data.indices && snap.data.indices.length > 0) {
+        return snap.data.indices.map((idx) => ({
           name: idx.nome,
           ticker: idx.codigo,
           value: idx.valor,
           change: idx.variacao_pct,
-          sparkline: [idx.valor, idx.valor, idx.valor, idx.valor, idx.valor],
+          sparkline: [],
+          provenance: { mode: snap.freshness, source: snap.meta.source, collectedAt: snap.meta.generated_at },
         }));
       }
     }
-    return await fetchJson<BenchmarkItem[]>("/market/benchmarks");
+    return await fetchJson<BenchmarkItem[]>("/market/benchmarks", { signal });
   } catch (err) {
     console.error("Failed to fetch benchmarks:", err);
-    return [];
+    throw err;
   }
 }
 
@@ -546,8 +549,9 @@ export async function getAssetsPaginated(params: {
   subsector?: string;
   sector?: string;
   sortBy?: string;
+  signal?: AbortSignal;
 }): Promise<PaginatedResult<AssetSummary>> {
-  const { type, limit = 24, offset = 0, search, subsector, sector, sortBy } = params;
+  const { type, limit = 24, offset = 0, search, subsector, sector, sortBy, signal } = params;
   const q = new URLSearchParams();
   if (type && type !== "TODOS") q.set("asset_type", type);
   q.set("limit", limit.toString());
@@ -558,14 +562,14 @@ export async function getAssetsPaginated(params: {
   if (sortBy) q.set("sort_by", sortBy);
 
   try {
-    const { data, headers } = await fetchWithHeaders<AssetSummary[]>(`/market/assets?${q.toString()}`);
+    const { data, headers } = await fetchWithHeaders<AssetSummary[]>(`/market/assets?${q.toString()}`, { signal });
     const totalHeader = headers.get("X-Total-Count");
     const total = totalHeader ? parseInt(totalHeader, 10) : offset + data.length;
     const hasMore = offset + data.length < total;
     return { items: data, total, hasMore };
   } catch (err) {
     console.error("Failed to fetch paginated assets:", err);
-    return { items: [], total: 0, hasMore: false };
+    throw err;
   }
 }
 
@@ -651,36 +655,28 @@ export interface QuoteHistoryResponse {
   ticker: string;
   timeframe: string;
   adjusted: boolean;
+  cache_status?: "network" | "offline-stale";
   total_days: number;
   data: DailyQuoteItem[];
 }
 
 export async function getQuoteHistory(
-  ticker: string,
-  timeframe: string = "1Y",
-  adjusted: boolean = true,
-  limit: number = 500,
-  offset: number = 0
+  ticker: string, timeframe: string = "1Y", adjusted: boolean = true,
+  limit: number = 500, offset: number = 0, signal?: AbortSignal,
 ): Promise<QuoteHistoryResponse> {
+  const key = historyKey(ticker, timeframe, adjusted, limit, offset);
   try {
-    const q = new URLSearchParams({
-      timeframe,
-      adjusted: adjusted.toString(),
-      limit: limit.toString(),
-      offset: offset.toString(),
-    });
-    return await fetchJson<QuoteHistoryResponse>(
-      `/market/${encodeURIComponent(ticker)}/history?${q.toString()}`
-    );
-  } catch (err) {
-    console.error(`Failed to fetch quote history for ${ticker}:`, err);
-    return {
-      ticker,
-      timeframe,
-      adjusted,
-      total_days: 0,
-      data: [],
-    };
+    const q = new URLSearchParams({ timeframe, adjusted: String(adjusted), limit: String(limit), offset: String(offset) });
+    const data = await fetchJson<QuoteHistoryResponse>(`/market/${encodeURIComponent(ticker)}/history?${q}`, { signal, cache: "no-store" });
+    if (!data || data.ticker?.toUpperCase() !== ticker.toUpperCase() || !Array.isArray(data.data)) throw new Error("Histórico inválido");
+    // ETag/adjustment version is not available yet: always consult the network before reuse.
+    void writePublicHistory(key, data);
+    return { ...data, cache_status: "network" };
+  } catch (error) {
+    if (signal?.aborted) throw error;
+    const cached = await readPublicHistory<QuoteHistoryResponse>(key);
+    if (cached) return { ...cached, cache_status: "offline-stale" };
+    throw error;
   }
 }
 
@@ -698,12 +694,12 @@ export async function queryScreener(
   }
 }
 
-export async function getStockValuation(ticker: string): Promise<StockValuationDetail | null> {
+export async function getStockValuation(ticker: string, signal?: AbortSignal): Promise<StockValuationDetail | null> {
   try {
-    return await fetchJson<StockValuationDetail>(`/stocks/${ticker}/valuation`);
+    return await fetchJson<StockValuationDetail>(`/stocks/${ticker}/valuation`, { signal });
   } catch (err) {
     console.error(`Failed to fetch stock valuation for ${ticker}:`, err);
-    return null;
+    throw err;
   }
 }
 
@@ -793,12 +789,12 @@ export async function getAISentiment(ticker: string): Promise<AISentimentData | 
   }
 }
 
-export async function getDemoPortfolioPositions(): Promise<DemoPosition[]> {
+export async function getDemoPortfolioPositions(signal?: AbortSignal): Promise<DemoPosition[]> {
   try {
-    return await fetchJson<DemoPosition[]>("/portfolio/demo/positions");
+    return await fetchJson<DemoPosition[]>("/portfolio/demo/positions", { signal });
   } catch (err) {
     console.error("Failed to fetch demo portfolio positions:", err);
-    return [];
+    throw err;
   }
 }
 
@@ -810,7 +806,7 @@ export interface StockDetails {
   sector?: string;
   subsector?: string;
   segmento?: string;
-  current_price: number;
+  current_price?: number | null;
   data_cotacao?: string;
   min_52_semanas?: number;
   max_52_semanas?: number;
@@ -875,12 +871,12 @@ export interface StockCompleteDetails {
   financials: StockFinancials;
 }
 
-export async function getStockCompleteDetails(ticker: string): Promise<StockCompleteDetails | null> {
+export async function getStockCompleteDetails(ticker: string, signal?: AbortSignal): Promise<StockCompleteDetails | null> {
   try {
-    return await fetchJson<StockCompleteDetails>(`/stocks/${ticker}`);
+    return await fetchJson<StockCompleteDetails>(`/stocks/${ticker}`, { signal });
   } catch (err) {
     console.error(`Failed to fetch complete stock details for ${ticker}:`, err);
-    return null;
+    throw err;
   }
 }
 
@@ -930,6 +926,7 @@ export async function getStocksRanking(
 }
 
 export async function getStocksRankingPaginated(params: {
+  signal?: AbortSignal;
   sortBy?: string;
   limit?: number;
   offset?: number;
@@ -970,14 +967,14 @@ export async function getStocksRankingPaginated(params: {
   if (minMargem !== undefined) q.set("min_margem", minMargem.toString());
 
   try {
-    const { data, headers } = await fetchWithHeaders<StockRankingRow[]>(`/stocks/ranking?${q.toString()}`);
+    const { data, headers } = await fetchWithHeaders<StockRankingRow[]>(`/stocks/ranking?${q.toString()}`, { signal: params.signal });
     const totalHeader = headers.get("X-Total-Count");
     const total = totalHeader ? parseInt(totalHeader, 10) : offset + data.length;
     const hasMore = offset + data.length < total;
     return { items: data, total, hasMore };
   } catch (err) {
     console.error("Failed to fetch paginated stocks ranking:", err);
-    return { items: [], total: 0, hasMore: false };
+    throw err;
   }
 }
 
@@ -998,26 +995,26 @@ export async function getConsistencyScreener(
 
 export async function getStockFinancialMatrix(
   ticker: string,
-  periodType: "ANUAL" | "TRIMESTRAL" = "ANUAL"
+  periodType: "ANUAL" | "TRIMESTRAL" = "ANUAL", signal?: AbortSignal
 ): Promise<FinancialMatrixData | null> {
   try {
     return await fetchJson<FinancialMatrixData>(
-      `/stocks/${ticker}/financials/matrix?period_type=${periodType}`
+      `/stocks/${ticker}/financials/matrix?period_type=${periodType}`, { signal }
     );
   } catch (err) {
     console.error(`Failed to fetch financial matrix for ${ticker}:`, err);
-    return null;
+    throw err;
   }
 }
 
 export async function getStockDividendMatrix(
-  ticker: string
+  ticker: string, signal?: AbortSignal
 ): Promise<DividendMatrixData | null> {
   try {
-    return await fetchJson<DividendMatrixData>(`/stocks/${ticker}/dividends/matrix`);
+    return await fetchJson<DividendMatrixData>(`/stocks/${ticker}/dividends/matrix`, { signal });
   } catch (err) {
     console.error(`Failed to fetch dividend matrix for ${ticker}:`, err);
-    return null;
+    throw err;
   }
 }
 
@@ -1042,6 +1039,7 @@ export async function getFIIRanking(
 }
 
 export async function getFIIRankingPaginated(params: {
+  signal?: AbortSignal;
   sortBy?: string;
   limit?: number;
   offset?: number;
@@ -1073,14 +1071,14 @@ export async function getFIIRankingPaginated(params: {
   if (maxVacancia !== undefined) q.set("max_vacancia", maxVacancia.toString());
 
   try {
-    const { data, headers } = await fetchWithHeaders<FIIRankingRow[]>(`/fiis/ranking?${q.toString()}`);
+    const { data, headers } = await fetchWithHeaders<FIIRankingRow[]>(`/fiis/ranking?${q.toString()}`, { signal: params.signal });
     const totalHeader = headers.get("X-Total-Count");
     const total = totalHeader ? parseInt(totalHeader, 10) : offset + data.length;
     const hasMore = offset + data.length < total;
     return { items: data, total, hasMore };
   } catch (err) {
     console.error("Failed to fetch paginated FII ranking:", err);
-    return { items: [], total: 0, hasMore: false };
+    throw err;
   }
 }
 
@@ -1338,9 +1336,9 @@ export async function getGlossary(
   }
 }
 
-export async function getGlossaryTerm(slug: string): Promise<GlossaryItem | null> {
+export async function getGlossaryTerm(slug: string, signal?: AbortSignal): Promise<GlossaryItem | null> {
   try {
-    return await fetchJson<GlossaryItem>(`/cms/glossary/${slug}`);
+    return await fetchJson<GlossaryItem>(`/cms/glossary/${encodeURIComponent(slug)}`, { signal });
   } catch (err) {
     console.error(`Failed to fetch glossary term ${slug}:`, err);
     return null;
@@ -1569,16 +1567,17 @@ export async function getBillingPlans(): Promise<PlanItem[]> {
 // =============================================================================
 
 export async function simulatePortfolio(
-  request: SimulatePortfolioRequest
+  request: SimulatePortfolioRequest, signal?: AbortSignal
 ): Promise<SimulatePortfolioResponse | null> {
   try {
     return await fetchJson<SimulatePortfolioResponse>("/simulate-portfolio", {
       method: "POST",
+      signal,
       body: JSON.stringify(request),
     });
   } catch (err) {
     console.error("Failed to run portfolio simulation:", err);
-    return null;
+    throw err;
   }
 }
 

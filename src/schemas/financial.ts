@@ -74,16 +74,16 @@ export type ChecklistItem = z.infer<typeof ChecklistItemSchema>;
 
 export const DREEntrySchema = z.object({
   year: z.string(),
-  netRevenue: z.number(),
-  cogs: z.number(),
-  grossProfit: z.number(),
-  operatingExpenses: z.number(),
-  ebitda: z.number(),
-  ebit: z.number(),
-  financialResult: z.number(),
-  taxes: z.number(),
-  netIncome: z.number(),
-  netMarginPct: z.number(),
+  netRevenue: z.number().nullable().optional(),
+  cogs: z.number().nullable().optional(),
+  grossProfit: z.number().nullable().optional(),
+  operatingExpenses: z.number().nullable().optional(),
+  ebitda: z.number().nullable().optional(),
+  ebit: z.number().nullable().optional(),
+  financialResult: z.number().nullable().optional(),
+  taxes: z.number().nullable().optional(),
+  netIncome: z.number().nullable().optional(),
+  netMarginPct: z.number().nullable().optional(),
 });
 
 export type DREEntry = z.infer<typeof DREEntrySchema>;
@@ -320,6 +320,7 @@ export interface PortfolioSimulationResultItem {
 }
 
 export interface SimulatePortfolioResponse {
+  assumptions?: string[];
   simulationId?: string;
   benchmark: {
     name: string;

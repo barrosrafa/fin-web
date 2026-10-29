@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { SectionState } from "@/components/shared/SectionState";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { MetricCard } from "@/components/ui/MetricCard";
@@ -59,8 +60,16 @@ export default function SimuladorPortfoliosPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedPortfolioIdx, setSelectedPortfolioIdx] = useState<number>(0);
 
+  const request = useRef<AbortController | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => () => request.current?.abort(), []);
   const runSimulation = async () => {
+    request.current?.abort();
+    const controller = new AbortController();
+    request.current = controller;
     setLoading(true);
+    setError(null);
+    setResult(null);
     try {
       const res = await simulatePortfolio({
         startDate,
@@ -70,16 +79,18 @@ export default function SimuladorPortfoliosPage() {
         rebalancingFrequency: rebalancing,
         advisoryFee,
         portfolioList: portfolios,
-      });
-      if (res) setResult(res);
-    } catch (err) {
-      console.error("Erro na simulação:", err);
+      }, controller.signal);
+      if (!controller.signal.aborted && res) setResult(res);
+    } catch {
+      if (!controller.signal.aborted) setError("Simulação indisponível com os dados históricos atuais. Nenhuma série fictícia foi gerada.");
     } finally {
-      setLoading(false);
+      if (request.current === controller) setLoading(false);
     }
   };
 
   useEffect(() => {
+    // Date changes intentionally start a new request.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     runSimulation();
   }, [startDate, endDate]);
 
@@ -217,7 +228,7 @@ export default function SimuladorPortfoliosPage() {
             </label>
             <select
               value={rebalancing}
-              onChange={(e) => setRebalancing(e.target.value as any)}
+              onChange={(e) => setRebalancing(e.target.value as typeof rebalancing)}
               className="w-full bg-[#131926] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white font-bold font-mono focus:outline-none focus:border-[#00f5a0]"
             >
               <option value="NENHUM">Sem Rebalanceamento (Buy & Hold)</option>
@@ -253,6 +264,8 @@ export default function SimuladorPortfoliosPage() {
         </div>
       </Card>
 
+      <SectionState loading={loading} error={error} onRetry={runSimulation} />
+      {result?.assumptions?.map(assumption => <p key={assumption} className="text-xs text-[#94a3b8]">Hipótese da simulação: {assumption}</p>)}
       {/* Resultados de Métricas Comparativas */}
       {result && result.portfolios.length > 0 && (
         <>

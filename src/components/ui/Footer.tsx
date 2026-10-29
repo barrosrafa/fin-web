@@ -13,10 +13,10 @@ export function Footer() {
                 FIN<span className="text-[#00d9f5]">·WEB</span>
               </span>
               <Badge variant="emerald" dot>
-                Sistemas Operacionais
+                Plataforma analítica
               </Badge>
             </div>
-            <p className="text-xs text-[#64748b] max-w-md">
+            <p className="text-xs text-[#94a3b8] max-w-md">
               Plataforma institucional de inteligência de mercado financeiro, análise quantitativa e valuation integrado de ativos B3 e globais.
             </p>
           </div>
@@ -24,15 +24,15 @@ export function Footer() {
           <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-[#94a3b8]">
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.03] border border-white/5">
               <span className="w-2 h-2 rounded-full bg-[#00f5a0]" />
-              <span>B3 Market Data: 12ms</span>
+              <span>Latência indisponível</span>
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.03] border border-white/5">
               <span className="w-2 h-2 rounded-full bg-[#00d9f5]" />
-              <span>CVM 175 Sync: Ativo</span>
+              <span>Sincronização sob consulta</span>
             </div>
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.03] border border-white/5">
               <span className="w-2 h-2 rounded-full bg-[#a855f7]" />
-              <span>IA Comitê: Online</span>
+              <span>Análises sob consulta</span>
             </div>
           </div>
         </div>
@@ -42,10 +42,10 @@ export function Footer() {
             <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
               Mercados B3 & Globais
             </span>
-            <Link href="/acoes" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/acoes" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Ações & Companhias B3
             </Link>
-            <Link href="/fiis" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/fiis" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Fundos Imobiliários (FIIs)
             </Link>
             <Link href="/stocks" className="text-[#94a3b8] hover:text-[#00d9f5] transition-colors">
@@ -60,16 +60,16 @@ export function Footer() {
             <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
               Proventos & Renda
             </span>
-            <Link href="/agenda-dividendos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/agenda-dividendos" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Agenda de Dividendos & JCP
             </Link>
-            <Link href="/mapa-de-dividendos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/mapa-de-dividendos" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Mapa de Sazonalidade 12M
             </Link>
-            <Link href="/simulador-de-dividendos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/simulador-de-dividendos" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Simulador de Renda Passiva
             </Link>
-            <Link href="/perfil-de-investidor" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/perfil-de-investidor" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Suitability & Perfil CVM
             </Link>
           </div>
@@ -78,16 +78,16 @@ export function Footer() {
             <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
               Educação & Conteúdo
             </span>
-            <Link href="/dicionario" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/dicionario" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Dicionário do Investidor (A-Z)
             </Link>
-            <Link href="/livros-investimentos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/livros-investimentos" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Biblioteca de Livros Recomendados
             </Link>
-            <Link href="/artigos" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/artigos" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Artigos & Análises Setoriais
             </Link>
-            <Link href="/noticias" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/noticias" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Notícias & Fatos Relevantes CVM
             </Link>
           </div>
@@ -96,22 +96,22 @@ export function Footer() {
             <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
               Ferramentas & Plataformas
             </span>
-            <Link href="/simulador-de-portfolios" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/simulador-de-portfolios" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Simulador de Portfólios
             </Link>
-            <Link href="/rankings" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/rankings" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Rankings dos Melhores Ativos
             </Link>
-            <Link href="/comparador" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/comparador" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Comparador Head-to-Head
             </Link>
-            <Link href="/corretoras" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/corretoras" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Comparador de Corretoras
             </Link>
-            <Link href="/screener" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/screener" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Super Screener Multiativo
             </Link>
-            <Link href="/carteira" className="text-[#94a3b8] hover:text-[#00f5a0] transition-colors">
+            <Link href="/carteira" className="text-[#94a3b8] hover:text-[var(--positive)] transition-colors">
               Minha Carteira Consolidada
             </Link>
           </div>
@@ -120,7 +120,7 @@ export function Footer() {
             <span className="font-semibold text-white uppercase tracking-wider text-[11px]">
               Institucional & Legal
             </span>
-            <Link href="/premium" className="text-[#00f5a0] font-bold hover:underline transition-colors">
+            <Link href="/premium" className="text-[var(--positive)] font-bold hover:underline transition-colors">
               Planos Premium Pro
             </Link>
             <Link href="/quem-somos" className="text-[#94a3b8] hover:text-white transition-colors">
@@ -141,7 +141,7 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-[#64748b]">
+        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-[#94a3b8]">
           <p>
             © 2026 FIN Platform. Todas as informações exibidas têm caráter exclusivamente educacional e analítico.
           </p>

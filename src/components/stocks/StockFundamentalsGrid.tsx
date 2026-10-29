@@ -17,20 +17,20 @@ export function StockFundamentalsGrid({ data }: StockFundamentalsGridProps) {
   const formatNumberCompact = (val?: number | null) => {
     if (val === undefined || val === null) return "-";
     if (Math.abs(val) >= 1_000_000_000_000) {
-      return `R$ ${(val / 1_000_000_000_000).toFixed(2)} Tri`;
+      return `R$ ${(val / 1_000_000_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Tri`;
     }
     if (Math.abs(val) >= 1_000_000_000) {
-      return `R$ ${(val / 1_000_000_000).toFixed(2)} Bi`;
+      return `R$ ${(val / 1_000_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Bi`;
     }
     if (Math.abs(val) >= 1_000_000) {
-      return `R$ ${(val / 1_000_000).toFixed(2)} Mi`;
+      return `R$ ${(val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} Mi`;
     }
     return formatCurrency(val);
   };
 
   const formatMultiple = (val?: number | null, suffix = "") => {
     if (val === undefined || val === null) return "-";
-    return `${val.toFixed(2)}${suffix}`;
+    return `${val.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}${suffix}`;
   };
 
   return (
@@ -38,7 +38,7 @@ export function StockFundamentalsGrid({ data }: StockFundamentalsGridProps) {
       {/* Banking / Financial Institution Alert Notice */}
       {isBank && (
         <div className="p-4 rounded-2xl bg-[#00f5a0]/10 border border-[#00f5a0]/30 flex items-start gap-4">
-          <div className="w-8 h-8 rounded-xl bg-[#00f5a0]/20 text-[#00f5a0] flex items-center justify-center font-bold text-sm shrink-0 mt-0.5">
+          <div className="w-8 h-8 rounded-xl bg-[#00f5a0]/20 text-[var(--positive)] flex items-center justify-center font-bold text-sm shrink-0 mt-0.5">
             🏦
           </div>
           <div>
@@ -74,42 +74,42 @@ export function StockFundamentalsGrid({ data }: StockFundamentalsGridProps) {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Cotação Atual</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Cotação Atual</span>
             <span className="text-lg font-black font-mono text-white">
               {formatCurrency(details.current_price)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Mín 52 Semanas</span>
-            <span className="text-base font-bold font-mono text-[#ff3b69]">
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Mín 52 Semanas</span>
+            <span className="text-base font-bold font-mono text-[var(--negative)]">
               {details.min_52_semanas ? formatCurrency(details.min_52_semanas) : "-"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Máx 52 Semanas</span>
-            <span className="text-base font-bold font-mono text-[#00f5a0]">
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Máx 52 Semanas</span>
+            <span className="text-base font-bold font-mono text-[var(--positive)]">
               {details.max_52_semanas ? formatCurrency(details.max_52_semanas) : "-"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Vol. Médio (2M)</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Vol. Médio (2M)</span>
             <span className="text-base font-bold font-mono text-white">
               {formatNumberCompact(details.volume_medio_2m)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Valor de Mercado</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Valor de Mercado</span>
             <span className="text-base font-bold font-mono text-[#00d9f5]">
               {formatNumberCompact(details.valor_mercado)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Valor da Firma (EV)</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Valor da Firma (EV)</span>
             <span className="text-base font-bold font-mono text-white">
               {details.valor_firma ? formatNumberCompact(details.valor_firma) : "-"}
             </span>
@@ -133,126 +133,126 @@ export function StockFundamentalsGrid({ data }: StockFundamentalsGridProps) {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">P/L</span>
-            <span className="text-base font-bold font-mono text-[#00f5a0]">
+            <span className="text-[11px] text-[#94a3b8] block mb-1">P/L</span>
+            <span className="text-base font-bold font-mono text-[var(--positive)]">
               {formatMultiple(multiples.pl)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">P/VP</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">P/VP</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.pvp)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Div. Yield</span>
-            <span className="text-base font-bold font-mono text-[#00f5a0]">
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Div. Yield</span>
+            <span className="text-base font-bold font-mono text-[var(--positive)]">
               {multiples.dividend_yield ? formatPercent(multiples.dividend_yield, false) : "-"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">P/EBIT</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">P/EBIT</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.pebit)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">PSR</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">PSR</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.psr)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">P/Ativos</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">P/Ativos</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.p_ativos)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">EV / EBITDA</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">EV / EBITDA</span>
             <span className="text-base font-bold font-mono text-[#00d9f5]">
               {formatMultiple(multiples.ev_ebitda)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">EV / EBIT</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">EV / EBIT</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.ev_ebit)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Margem Bruta</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Margem Bruta</span>
             <span className="text-base font-bold font-mono text-white">
               {multiples.margem_bruta !== undefined && multiples.margem_bruta !== null ? `${multiples.margem_bruta.toFixed(1)}%` : "-"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Margem EBIT</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Margem EBIT</span>
             <span className="text-base font-bold font-mono text-white">
               {multiples.margem_ebit !== undefined && multiples.margem_ebit !== null ? `${multiples.margem_ebit.toFixed(1)}%` : "-"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Margem Líquida</span>
-            <span className="text-base font-bold font-mono text-[#00f5a0]">
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Margem Líquida</span>
+            <span className="text-base font-bold font-mono text-[var(--positive)]">
               {multiples.margem_liquida !== undefined && multiples.margem_liquida !== null ? `${multiples.margem_liquida.toFixed(1)}%` : "-"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">ROE</span>
-            <span className="text-base font-bold font-mono text-[#00f5a0]">
+            <span className="text-[11px] text-[#94a3b8] block mb-1">ROE</span>
+            <span className="text-base font-bold font-mono text-[var(--positive)]">
               {multiples.roe !== undefined && multiples.roe !== null ? `${multiples.roe.toFixed(1)}%` : "-"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">ROIC</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">ROIC</span>
             <span className="text-base font-bold font-mono text-[#00d9f5]">
               {multiples.roic !== undefined && multiples.roic !== null ? `${multiples.roic.toFixed(1)}%` : "-"}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Liquidez Corrente</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Liquidez Corrente</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.liquidez_corrente)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Dív. Bruta / PL</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Dív. Bruta / PL</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.div_bruta_patrimonio)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">Giro dos Ativos</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">Giro dos Ativos</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.giro_ativos)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">P/Cap. Giro</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">P/Cap. Giro</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.p_cap_giro)}
             </span>
           </div>
 
           <div className="p-3 rounded-xl bg-[#131926] border border-white/5">
-            <span className="text-[11px] text-[#64748b] block mb-1">P/Ativo Circ. Líq.</span>
+            <span className="text-[11px] text-[#94a3b8] block mb-1">P/Ativo Circ. Líq.</span>
             <span className="text-base font-bold font-mono text-white">
               {formatMultiple(multiples.p_ativo_circ_liq)}
             </span>
@@ -284,7 +284,7 @@ export function StockFundamentalsGrid({ data }: StockFundamentalsGridProps) {
 
             <div className="flex justify-between items-center py-1.5 border-b border-white/5">
               <span className="text-[#94a3b8]">Disponibilidades / Caixa</span>
-              <span className="font-bold text-[#00f5a0]">{formatNumberCompact(financials.disponibilidades)}</span>
+              <span className="font-bold text-[var(--positive)]">{formatNumberCompact(financials.disponibilidades)}</span>
             </div>
 
             {isBank ? (
@@ -306,18 +306,18 @@ export function StockFundamentalsGrid({ data }: StockFundamentalsGridProps) {
                 </div>
                 <div className="flex justify-between items-center py-1.5 border-b border-white/5">
                   <span className="text-[#94a3b8]">Dívida Bruta</span>
-                  <span className="font-bold text-[#ff3b69]">{formatNumberCompact(financials.divida_bruta)}</span>
+                  <span className="font-bold text-[var(--negative)]">{formatNumberCompact(financials.divida_bruta)}</span>
                 </div>
                 <div className="flex justify-between items-center py-1.5 border-b border-white/5">
                   <span className="text-[#94a3b8]">Dívida Líquida</span>
-                  <span className="font-bold text-[#ff3b69]">{formatNumberCompact(financials.divida_liquida)}</span>
+                  <span className="font-bold text-[var(--negative)]">{formatNumberCompact(financials.divida_liquida)}</span>
                 </div>
               </>
             )}
 
             <div className="flex justify-between items-center py-1.5 pt-2">
               <span className="text-white font-bold">Patrimônio Líquido</span>
-              <span className="font-black text-[#00f5a0] text-base">{formatNumberCompact(financials.patrimonio_liquido)}</span>
+              <span className="font-black text-[var(--positive)] text-base">{formatNumberCompact(financials.patrimonio_liquido)}</span>
             </div>
           </div>
         </Card>
@@ -379,12 +379,12 @@ export function StockFundamentalsGrid({ data }: StockFundamentalsGridProps) {
 
             <div className="flex justify-between items-center py-1.5 border-b border-white/5">
               <span className="text-white font-semibold">Lucro Líquido (12M)</span>
-              <span className="font-black text-[#00f5a0] text-base">{formatNumberCompact(financials.lucro_liquido_12m)}</span>
+              <span className="font-black text-[var(--positive)] text-base">{formatNumberCompact(financials.lucro_liquido_12m)}</span>
             </div>
 
             <div className="flex justify-between items-center py-1.5 pt-2">
               <span className="text-white font-semibold">Lucro Líquido (Últimos 3M)</span>
-              <span className="font-black text-[#00f5a0] text-base">{formatNumberCompact(financials.lucro_liquido_3m)}</span>
+              <span className="font-black text-[var(--positive)] text-base">{formatNumberCompact(financials.lucro_liquido_3m)}</span>
             </div>
           </div>
         </Card>
