@@ -36,6 +36,34 @@ test.describe("FIN Web E2E & Accessibility Regression Suite", () => {
     await expect(page.locator("text=Margem Segurança").first()).toBeVisible();
   });
 
+  test("3b. /acoes/PETR4 renders continuous vertical onePage layout with zero clicks", async ({ page }) => {
+    await page.goto("/acoes/PETR4");
+    await expect(page.locator("h1")).toContainText("PETR4");
+
+    // All sections must exist simultaneously in the DOM without clicking
+    await expect(page.locator("#valuation")).toBeAttached();
+    await expect(page.locator("#matriz-10a")).toBeAttached();
+    await expect(page.locator("#grade-proventos")).toBeAttached();
+    await expect(page.locator("#cotacao-historica")).toBeAttached();
+    await expect(page.locator("#fundamentos")).toBeAttached();
+    await expect(page.locator("#checklist")).toBeAttached();
+    await expect(page.locator("#dre")).toBeAttached();
+    await expect(page.locator("#proventos")).toBeAttached();
+    await expect(page.locator("#tecnica")).toBeAttached();
+    await expect(page.locator("#ia")).toBeAttached();
+  });
+
+  test("3c. /etfs/BOVA11 renders continuous vertical onePage layout with zero clicks", async ({ page }) => {
+    await page.goto("/etfs/BOVA11");
+    await expect(page.locator("h1")).toContainText("BOVA11");
+
+    // All sections must exist simultaneously in the DOM without clicking
+    await expect(page.locator("#composicao")).toBeAttached();
+    await expect(page.locator("#nav-spread")).toBeAttached();
+    await expect(page.locator("#aluguel")).toBeAttached();
+    await expect(page.locator("#drawdown")).toBeAttached();
+  });
+
   test("4. /artigos and dynamic article reading page", async ({ page }) => {
     await page.goto("/artigos");
     await expect(page.locator("h1")).toContainText(/Artigos/i);

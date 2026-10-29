@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Tabs } from "@/components/ui/Tabs";
 import { BarChart } from "@/components/ui/BarChart";
 import {
   formatCurrency,
@@ -29,23 +28,7 @@ import { StockPriceHistorySection } from "@/components/stocks/StockPriceHistoryS
 
 export function AcaoDetailClient({ ticker }: { ticker: string }) {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const VALID_TABS = [
-    "VALUATION",
-    "MATRIZ_10A",
-    "GRADE_PROVENTOS",
-    "COTACAO_HISTORICA",
-    "FUNDAMENTOS",
-    "CHECKLIST",
-    "DRE",
-    "PROVENTOS",
-    "TECNICA",
-    "IA",
-  ];
   const tabParam = searchParams.get("tab");
-  const initialTab = tabParam && VALID_TABS.includes(tabParam) ? tabParam : "VALUATION";
 
   const [valuationData, setValuationData] = useState<StockValuationDetail | null>(null);
   const [completeDetails, setCompleteDetails] = useState<StockCompleteDetails | null>(null);
@@ -53,28 +36,45 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
   const [dividendMatrix, setDividendMatrix] = useState<DividendMatrixData | null>(null);
   const [matrixPeriod, setMatrixPeriod] = useState<"ANUAL" | "TRIMESTRAL">("ANUAL");
   const [stockInfo, setStockInfo] = useState<AssetSummary | null>(null);
-  const [activeTab, setActiveTab] = useState(initialTab);
   const [, setLoading] = useState(true);
-
-  // Sync state if URL changes externally (back/forward navigation)
-  useEffect(() => {
-    if (tabParam && VALID_TABS.includes(tabParam) && tabParam !== activeTab) {
-      setActiveTab(tabParam);
-    }
-  }, [tabParam]);
-
-  const handleTabChange = (newTab: string) => {
-    setActiveTab(newTab);
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", newTab);
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  };
 
   // Dynamic Graham & Bazin interactive sliders
   const [lpaInput, setLpaInput] = useState(8.12);
   const [vpaInput, setVpaInput] = useState(33.50);
   const [dpaInput, setDpaInput] = useState(4.25);
   const [bazinYieldTarget, setBazinYieldTarget] = useState(0.06);
+
+  // Dynamic Gordon & DCF Interactive States
+  const [gordonGrowth, setGordonGrowth] = useState(0.04);
+  const [gordonDiscount, setGordonDiscount] = useState(0.12);
+  const [dcfGrowth5y, setDcfGrowth5y] = useState(0.06);
+  const [dcfWacc, setDcfWacc] = useState(0.11);
+  const [dcfTerminalGrowth, setDcfTerminalGrowth] = useState(0.035);
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  // Deep linking: if tab or hash param is present, smooth scroll to section
+  useEffect(() => {
+    const hash = typeof window !== "undefined" ? window.location.hash.replace("#", "") : "";
+    const target =
+      hash ||
+      (tabParam ? tabParam.toLowerCase().replace(/_/g, "-") : "");
+    if (target) {
+      const el =
+        document.getElementById(target) ||
+        document.getElementById(`panel-${tabParam}`) ||
+        (target === "matriz-10a" ? document.getElementById("matriz-10a") : null) ||
+        (target === "valuation" ? document.getElementById("valuation") : null);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
+      }
+    }
+  }, [tabParam]);
 
   useEffect(() => {
     async function load() {
@@ -143,9 +143,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
   const dynamicBazinMargin =
     dynamicBazin > stockPrice ? ((dynamicBazin - stockPrice) / dynamicBazin) * 100 : 0;
 
-  // Dynamic Gordon & DCF Interactive States
-  const [gordonGrowth, setGordonGrowth] = useState(0.04);
-  const [gordonDiscount, setGordonDiscount] = useState(0.12);
+  // Gordon calculation
   const dynamicGordon =
     gordonDiscount > gordonGrowth
       ? (dpaInput * (1 + gordonGrowth)) / (gordonDiscount - gordonGrowth)
@@ -153,11 +151,14 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
   const dynamicGordonUpside =
     stockPrice > 0 ? ((dynamicGordon - stockPrice) / stockPrice) * 100 : 0;
 
-  const [dcfGrowth5y, setDcfGrowth5y] = useState(0.06);
-  const [dcfWacc, setDcfWacc] = useState(0.11);
-  const [dcfTerminalGrowth, setDcfTerminalGrowth] = useState(0.035);
+  // DCF calculation
   let pvFcf = 0;
-  const baseFcf = valuationData?.lpa && valuationData.lpa > 0 ? valuationData.lpa * 0.8 : (lpaInput > 0 ? lpaInput * 0.8 : 3.0);
+  const baseFcf =
+    valuationData?.lpa && valuationData.lpa > 0
+      ? valuationData.lpa * 0.8
+      : lpaInput > 0
+      ? lpaInput * 0.8
+      : 3.0;
   let curFcf = baseFcf;
   for (let i = 1; i <= 5; i++) {
     curFcf *= 1 + dcfGrowth5y;
@@ -186,8 +187,21 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
   const technical = valuationData?.technical;
   const aiVerdict = valuationData?.ai_verdict;
 
+  const navItems = [
+    { id: "valuation", label: "1. Valuation (Graham / Bazin)", testId: "tab-VALUATION" },
+    { id: "matriz-10a", label: "2. Balanço 10A (Oceans14)", testId: "tab-MATRIZ_10A" },
+    { id: "grade-proventos", label: "3. Grade de Proventos", testId: "tab-GRADE_PROVENTOS" },
+    { id: "cotacao-historica", label: "4. Cotações B3", testId: "tab-COTACAO_HISTORICA" },
+    { id: "fundamentos", label: "5. Fundamentos (Fundamentus)", testId: "tab-FUNDAMENTOS" },
+    { id: "checklist", label: `6. Checklist Buy & Hold (${checklistItems.length})`, testId: "tab-CHECKLIST" },
+    { id: "dre", label: "7. DRE 5 Anos", testId: "tab-DRE" },
+    { id: "proventos", label: `8. Proventos (${dividendEntries.length})`, testId: "tab-PROVENTOS" },
+    { id: "tecnica", label: "9. Análise Técnica", testId: "tab-TECNICA" },
+    { id: "ia", label: "10. Radar IA & SWOT", testId: "tab-IA" },
+  ];
+
   return (
-    <div className="flex flex-col gap-8 animate-fade-up">
+    <div className="flex flex-col gap-8 animate-fade-up pb-16">
       {/* Breadcrumb & Navigation */}
       <div className="flex items-center gap-2 text-xs text-[#64748b]">
         <Link href="/" className="hover:text-white transition-colors">
@@ -202,7 +216,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
       </div>
 
       {/* Asset Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 rounded-3xl bg-[#0c1017] border border-white/10 relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 rounded-3xl bg-[#0c1017] border border-white/10 relative overflow-hidden shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[radial-gradient(circle,rgba(0,245,160,0.06)_0%,transparent_70%)] pointer-events-none" />
 
         <div className="flex items-center gap-4 z-10">
@@ -225,10 +239,10 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
           </div>
         </div>
 
-        <div className="flex items-end md:items-center gap-6 z-10">
+        <div className="flex items-end md:items-center gap-6 z-10 bg-white/[0.03] p-4 rounded-2xl border border-white/5">
           <div className="text-right">
             <div className="text-xs text-[#64748b] uppercase font-semibold">
-              Cotação Atual (Tempo Real)
+              Cotação Atual (Tempo Real B3)
             </div>
             <div className="text-3xl font-black font-mono text-white mt-0.5">
               {formatCurrency(stockPrice)}
@@ -244,28 +258,117 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <Tabs
-        tabs={[
-          { id: "VALUATION", label: "Modelos de Valuation (Graham / Bazin)" },
-          { id: "MATRIZ_10A", label: "Balanço 10 Anos (Oceans14)", count: 10 },
-          { id: "GRADE_PROVENTOS", label: "Grade Mensal de Proventos (Jan-Dez)" },
-          { id: "COTACAO_HISTORICA", label: "Cotações Diárias & Histórico" },
-          { id: "FUNDAMENTOS", label: "Fundamentus (Múltiplos & DRE)", count: 24 },
-          { id: "CHECKLIST", label: "Checklist Buy & Hold (Auditado)", count: checklistItems.length },
-          { id: "DRE", label: "DRE Histórico 5 Anos" },
-          { id: "PROVENTOS", label: "Proventos & Bola de Neve", count: dividendEntries.length },
-          { id: "TECNICA", label: "Análise Técnica & Pivôs" },
-          { id: "IA", label: "Comitê de IA & Fatos Relevantes" },
-        ]}
-        activeTab={activeTab}
-        onChange={handleTabChange}
-      />
+      {/* KPI Top Bar - Executive Dashboard */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <Card className="text-center p-3 border-emerald-500/20 bg-emerald-500/[0.02]">
+          <span className="text-[10px] uppercase font-bold text-[#64748b]">
+            Dividend Yield (12M)
+          </span>
+          <div className="text-xl font-black font-mono text-[#00f5a0] mt-1">
+            {formatPercent(stockInfo?.dividendYield ?? (stockPrice > 0 ? (dpaInput / stockPrice) * 100 : 8.4), false)}
+          </div>
+          <span className="text-[10px] text-[#64748b] font-mono">
+            DPA Médio: {formatCurrency(dpaInput)}
+          </span>
+        </Card>
 
-      {/* SECTION 1: Valuation Models */}
-      {activeTab === "VALUATION" && (
+        <Card className="text-center p-3">
+          <span className="text-[10px] uppercase font-bold text-[#64748b]">
+            P/L (Preço / Lucro)
+          </span>
+          <div className="text-xl font-black font-mono text-white mt-1">
+            {(stockInfo?.pl ?? (lpaInput > 0 ? stockPrice / lpaInput : 5.8)).toFixed(2)}x
+          </div>
+          <span className="text-[10px] text-[#64748b] font-mono">
+            LPA: {formatCurrency(lpaInput)}
+          </span>
+        </Card>
+
+        <Card className="text-center p-3">
+          <span className="text-[10px] uppercase font-bold text-[#64748b]">
+            P/VP (Preço / Valor Patr.)
+          </span>
+          <div className="text-xl font-black font-mono text-white mt-1">
+            {(stockInfo?.pvp ?? (vpaInput > 0 ? stockPrice / vpaInput : 1.1)).toFixed(2)}x
+          </div>
+          <span className="text-[10px] text-[#64748b] font-mono">
+            VPA: {formatCurrency(vpaInput)}
+          </span>
+        </Card>
+
+        <Card className="text-center p-3 border-emerald-500/20">
+          <span className="text-[10px] uppercase font-bold text-[#64748b]">
+            Justo Benjamin Graham
+          </span>
+          <div className={`text-xl font-black font-mono mt-1 ${dynamicGrahamUpside >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"}`}>
+            {formatCurrency(dynamicGraham)}
+          </div>
+          <span className={`text-[10px] font-mono font-bold ${dynamicGrahamUpside >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"}`}>
+            {dynamicGrahamUpside >= 0 ? "▲ Upside" : "▼ Ágio"} {formatPercent(dynamicGrahamUpside)}
+          </span>
+        </Card>
+
+        <Card className="text-center p-3 border-cyan-500/20">
+          <span className="text-[10px] uppercase font-bold text-[#64748b]">
+            Teto Décio Bazin
+          </span>
+          <div className={`text-xl font-black font-mono mt-1 ${dynamicBazinUpside >= 0 ? "text-[#00d9f5]" : "text-[#ff3b69]"}`}>
+            {formatCurrency(dynamicBazin)}
+          </div>
+          <span className={`text-[10px] font-mono font-bold ${dynamicBazinUpside >= 0 ? "text-[#00d9f5]" : "text-[#ff3b69]"}`}>
+            Margem: {formatPercent(dynamicBazinMargin)}
+          </span>
+        </Card>
+
+        <Card className="text-center p-3">
+          <span className="text-[10px] uppercase font-bold text-[#64748b]">
+            Checklist Buy & Hold
+          </span>
+          <div className="text-xl font-black font-mono text-[#00f5a0] mt-1">
+            {checklistItems.filter((c) => c.passed).length} / {checklistItems.length || 6}
+          </div>
+          <span className="text-[10px] text-[#64748b] font-mono">
+            {checklistItems.filter((c) => c.passed).length === (checklistItems.length || 6) ? "100% Conforme" : "Auditado B3/CVM"}
+          </span>
+        </Card>
+      </div>
+
+      {/* Zero Clicks Sticky Anchor Navigation */}
+      <nav
+        aria-label="Navegação rápida da ação"
+        className="sticky top-4 z-40 bg-[#0c1017]/95 backdrop-blur-md p-2 rounded-2xl border border-white/10 shadow-2xl flex items-center gap-1.5 overflow-x-auto scrollbar-none"
+      >
+        <span className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider px-3 hidden md:inline">
+          Ir para:
+        </span>
+        {navItems.map((item) => (
+          <button
+            key={item.id}
+            id={item.testId}
+            onClick={() => scrollToSection(item.id)}
+            className="px-3 py-1.5 rounded-xl text-xs font-medium text-[#94a3b8] hover:text-white hover:bg-white/10 transition-all whitespace-nowrap active:scale-95 cursor-pointer"
+          >
+            {item.label}
+          </button>
+        ))}
+      </nav>
+
+      {/* CONTINUOUS VERTICAL CONTENT FLOW (NO TABS, ZERO CLICKS) */}
+
+      {/* SECTION 1: Modelos de Valuation */}
+      <section id="valuation" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              1. Modelos de Valuation & Preço Justo (Graham, Bazin, Gordon & DCF)
+            </h2>
+          </div>
+          <Badge variant="emerald">Modelos Quantitativos</Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-VALUATION"
           aria-labelledby="tab-VALUATION"
           className="grid grid-cols-1 lg:grid-cols-12 gap-6"
@@ -428,7 +531,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </Card>
           </div>
 
-          {/* Gordon & DCF */}
+          {/* Gordon Model */}
           <div className="lg:col-span-6 flex flex-col gap-4">
             <Card glow="violet">
               <div className="flex items-center justify-between mb-4">
@@ -489,6 +592,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </Card>
           </div>
 
+          {/* DCF Model */}
           <div className="lg:col-span-6 flex flex-col gap-4">
             <Card glow="cyan">
               <div className="flex items-center justify-between mb-4">
@@ -571,15 +675,25 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </Card>
           </div>
         </div>
-      )}
+      </section>
 
-      {/* SECTION: Oceans14 10-Year Statement Matrix */}
-      {activeTab === "MATRIZ_10A" && (
+      {/* SECTION 2: Oceans14 10-Year Statement Matrix */}
+      <section id="matriz-10a" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              2. Matriz Contábil Padronizada Oceans14 (Série Histórica 10 Anos)
+            </h2>
+          </div>
+          <Badge variant="cyan">Demonstrações Auditadas CVM</Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-MATRIZ_10A"
           aria-labelledby="tab-MATRIZ_10A"
-          className="flex flex-col gap-6 animate-fade-up"
+          className="flex flex-col gap-6"
         >
           <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#131926]/40 border border-white/5">
             <div>
@@ -593,7 +707,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setMatrixPeriod("ANUAL")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   matrixPeriod === "ANUAL"
                     ? "bg-[#00f5a0] text-black shadow-[0_0_15px_rgba(0,245,160,0.4)]"
                     : "bg-white/5 text-[#94a3b8] hover:bg-white/10 hover:text-white"
@@ -603,7 +717,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
               </button>
               <button
                 onClick={() => setMatrixPeriod("TRIMESTRAL")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   matrixPeriod === "TRIMESTRAL"
                     ? "bg-[#00f5a0] text-black shadow-[0_0_15px_rgba(0,245,160,0.4)]"
                     : "bg-white/5 text-[#94a3b8] hover:bg-white/10 hover:text-white"
@@ -654,7 +768,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </div>
           </Card>
 
-          {/* Balanço Patrimonial Matrix */}
+          {/* Balance Sheet Matrix */}
           <Card glow="none" className="p-0 overflow-hidden">
             <div className="p-3.5 bg-[#131926]/70 border-b border-white/5 flex items-center justify-between">
               <span className="text-xs font-bold text-white uppercase tracking-wider">
@@ -693,7 +807,7 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </div>
           </Card>
 
-          {/* DFC Matrix */}
+          {/* Cash Flow Matrix */}
           <Card glow="none" className="p-0 overflow-hidden">
             <div className="p-3.5 bg-[#131926]/70 border-b border-white/5 flex items-center justify-between">
               <span className="text-xs font-bold text-white uppercase tracking-wider">
@@ -733,92 +847,122 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </div>
           </Card>
         </div>
-      )}
+      </section>
 
-      {/* SECTION: Monthly Dividend Matrix (Jan-Dez) */}
-      {activeTab === "GRADE_PROVENTOS" && (
+      {/* SECTION 3: Monthly Dividend Matrix (Jan-Dez) */}
+      <section id="grade-proventos" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#00f5a0]" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              3. Grade Mensal de Proventos & Sazonalidade (Jan a Dez)
+            </h2>
+          </div>
+          <Badge variant="emerald">Sazonalidade Oceans14</Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-GRADE_PROVENTOS"
           aria-labelledby="tab-GRADE_PROVENTOS"
         >
-          <Card glow="emerald" className="p-0 overflow-hidden animate-fade-up">
-          <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#131926]/40">
-            <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Grade Histórica de Proventos por Mês de Pagamento (Jan a Dez)
-              </span>
-              <p className="text-[11px] text-[#64748b] mt-0.5">
-                Valores nominais por ação distribuídos por competência de desembolso financeiro efetivo.
-              </p>
+          <Card glow="emerald" className="p-0 overflow-hidden">
+            <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#131926]/40">
+              <div>
+                <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  Grade Histórica de Proventos por Mês de Pagamento (Jan a Dez)
+                </span>
+                <p className="text-[11px] text-[#64748b] mt-0.5">
+                  Valores nominais por ação distribuídos por competência de desembolso financeiro efetivo.
+                </p>
+              </div>
+              <Badge variant="emerald">Sazonalidade Oceans14</Badge>
             </div>
-            <Badge variant="emerald">Sazonalidade Oceans14</Badge>
-          </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead>
-                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
-                  <th className="py-3 pl-4">Ano</th>
-                  <th className="py-3 text-right">Jan</th>
-                  <th className="py-3 text-right">Fev</th>
-                  <th className="py-3 text-right">Mar</th>
-                  <th className="py-3 text-right">Abr</th>
-                  <th className="py-3 text-right">Mai</th>
-                  <th className="py-3 text-right">Jun</th>
-                  <th className="py-3 text-right">Jul</th>
-                  <th className="py-3 text-right">Ago</th>
-                  <th className="py-3 text-right">Set</th>
-                  <th className="py-3 text-right">Out</th>
-                  <th className="py-3 text-right">Nov</th>
-                  <th className="py-3 text-right">Dez</th>
-                  <th className="py-3 text-right font-bold text-white">Total Anual</th>
-                  <th className="py-3 text-right pr-4 text-[#00d9f5]">Yield / Custo</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {(dividendMatrix?.matrix ?? []).map((row) => (
-                  <tr key={row.year} className="hover:bg-white/[0.02]">
-                    <td className="py-2.5 pl-4 font-bold text-white font-sans">{row.year}</td>
-                    {row.months.map((m, mIdx) => (
-                      <td key={mIdx} className="py-2.5 text-right text-white">
-                        {m !== null && m !== undefined ? (
-                          <span className="text-[#00f5a0] font-bold">R$ {m.toFixed(2)}</span>
-                        ) : (
-                          <span className="text-[#64748b]">—</span>
-                        )}
-                      </td>
-                    ))}
-                    <td className="py-2.5 text-right font-bold text-white">
-                      {formatCurrency(row.annual_total)}
-                    </td>
-                    <td className="py-2.5 text-right pr-4 font-bold text-[#00d9f5]">
-                      {row.yield_on_cost_pct > 0 ? `${row.yield_on_cost_pct.toFixed(2)}%` : "—"}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-mono">
+                <thead>
+                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
+                    <th className="py-3 pl-4">Ano</th>
+                    <th className="py-3 text-right">Jan</th>
+                    <th className="py-3 text-right">Fev</th>
+                    <th className="py-3 text-right">Mar</th>
+                    <th className="py-3 text-right">Abr</th>
+                    <th className="py-3 text-right">Mai</th>
+                    <th className="py-3 text-right">Jun</th>
+                    <th className="py-3 text-right">Jul</th>
+                    <th className="py-3 text-right">Ago</th>
+                    <th className="py-3 text-right">Set</th>
+                    <th className="py-3 text-right">Out</th>
+                    <th className="py-3 text-right">Nov</th>
+                    <th className="py-3 text-right">Dez</th>
+                    <th className="py-3 text-right font-bold text-white">Total Anual</th>
+                    <th className="py-3 text-right pr-4 text-[#00d9f5]">Yield / Custo</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </div>
-      )}
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {(dividendMatrix?.matrix ?? []).map((row) => (
+                    <tr key={row.year} className="hover:bg-white/[0.02]">
+                      <td className="py-2.5 pl-4 font-bold text-white font-sans">{row.year}</td>
+                      {row.months.map((m, mIdx) => (
+                        <td key={mIdx} className="py-2.5 text-right text-white">
+                          {m !== null && m !== undefined ? (
+                            <span className="text-[#00f5a0] font-bold">R$ {m.toFixed(2)}</span>
+                          ) : (
+                            <span className="text-[#64748b]">—</span>
+                          )}
+                        </td>
+                      ))}
+                      <td className="py-2.5 text-right font-bold text-white">
+                        {formatCurrency(row.annual_total)}
+                      </td>
+                      <td className="py-2.5 text-right pr-4 font-bold text-[#00d9f5]">
+                        {row.yield_on_cost_pct > 0 ? `${row.yield_on_cost_pct.toFixed(2)}%` : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      </section>
 
-      {/* SECTION: Daily Historical Quotes & Chart */}
-      {activeTab === "COTACAO_HISTORICA" && (
+      {/* SECTION 4: Daily Historical Quotes & Chart */}
+      <section id="cotacao-historica" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-blue-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              4. Cotações Diárias & Histórico de Negociação B3
+            </h2>
+          </div>
+          <Badge variant="outline">Série Oficial Diária B3</Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-COTACAO_HISTORICA"
           aria-labelledby="tab-COTACAO_HISTORICA"
         >
           <StockPriceHistorySection ticker={ticker} />
         </div>
-      )}
+      </section>
 
-      {/* SECTION: Fundamentus Fundamentals */}
-      {activeTab === "FUNDAMENTOS" && (
+      {/* SECTION 5: Fundamentus Fundamentals */}
+      <section id="fundamentos" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              5. Indicadores Fundamentalistas & Múltiplos de Mercado (Fundamentus)
+            </h2>
+          </div>
+          <Badge variant="amber">24 Indicadores Contábeis</Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-FUNDAMENTOS"
           aria-labelledby="tab-FUNDAMENTOS"
         >
@@ -859,12 +1003,24 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             }
           />
         </div>
-      )}
+      </section>
 
-      {/* SECTION 2: Checklist */}
-      {activeTab === "CHECKLIST" && (
+      {/* SECTION 6: Checklist */}
+      <section id="checklist" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              6. Checklist Buy & Hold do Investidor (Auditado)
+            </h2>
+          </div>
+          <Badge variant="emerald">
+            {checklistItems.filter((c) => c.passed).length} de {checklistItems.length} Aprovados
+          </Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-CHECKLIST"
           aria-labelledby="tab-CHECKLIST"
         >
@@ -916,124 +1072,144 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </div>
           </Card>
         </div>
-      )}
+      </section>
 
-      {/* SECTION 3: DRE */}
-      {activeTab === "DRE" && (
+      {/* SECTION 7: DRE */}
+      <section id="dre" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              7. Demonstração do Resultado do Exercício (DRE 5 Anos)
+            </h2>
+          </div>
+          <Badge variant="cyan">Auditoria PWC / CVM</Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-DRE"
           aria-labelledby="tab-DRE"
         >
           <Card glow="cyan">
             <div className="flex items-center justify-between mb-6">
-            <div>
-              <span className="badge-neon badge-neon-cyan mb-2">
-                Demonstração do Resultado do Exercício
-              </span>
-              <h3 className="text-xl font-bold text-white tracking-tight">
-                Evolução Contábil Consolidada (Últimos 5 Exercícios)
-              </h3>
-            </div>
-            <Badge variant="cyan">Auditoria PWC / CVM</Badge>
-          </div>
-
-          {dreChartData.length > 0 && (
-            <div className="mb-6 p-4 rounded-2xl bg-[#131926] border border-white/5">
-              <div className="text-xs font-bold text-[#64748b] uppercase tracking-wider mb-2">
-                Receita Líquida vs. Lucro Líquido (R$ Bilhões)
+              <div>
+                <span className="badge-neon badge-neon-cyan mb-2">
+                  Demonstração do Resultado do Exercício
+                </span>
+                <h3 className="text-xl font-bold text-white tracking-tight">
+                  Evolução Contábil Consolidada (Últimos 5 Exercícios)
+                </h3>
               </div>
-              <BarChart
-                data={dreChartData.map((d) => ({
-                  label: d.label,
-                  value: d.value / 1_000_000_000,
-                  secondaryValue: (d.secondaryValue ?? 0) / 1_000_000_000,
-                }))}
-                height={160}
-              />
+              <Badge variant="cyan">Auditoria PWC / CVM</Badge>
             </div>
-          )}
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                  <th className="pb-3 pl-2">Rubrica Contábil</th>
-                  {dreEntries.map((entry) => (
-                    <th key={entry.year} className="pb-3 text-right">
-                      {entry.year}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 mono-nums">
-                <tr>
-                  <td className="py-2.5 pl-2 text-white font-medium">Receita Líquida</td>
-                  {dreEntries.map((e) => (
-                    <td key={e.year} className="py-2.5 text-right text-white">
-                      {formatCurrency(e.netRevenue, true)}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="py-2.5 pl-2 text-[#94a3b8]">Custos (CPV)</td>
-                  {dreEntries.map((e) => (
-                    <td key={e.year} className="py-2.5 text-right text-[#ff3b69]">
-                      {formatCurrency(e.cogs, true)}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="py-2.5 pl-2 text-white font-medium">Lucro Bruto</td>
-                  {dreEntries.map((e) => (
-                    <td key={e.year} className="py-2.5 text-right text-[#00d9f5]">
-                      {formatCurrency(e.grossProfit, true)}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="py-2.5 pl-2 text-white font-semibold">EBITDA</td>
-                  {dreEntries.map((e) => (
-                    <td key={e.year} className="py-2.5 text-right text-[#00f5a0] font-bold">
-                      {formatCurrency(e.ebitda, true)}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="py-2.5 pl-2 text-[#94a3b8]">Resultado Financeiro</td>
-                  {dreEntries.map((e) => (
-                    <td key={e.year} className="py-2.5 text-right text-[#94a3b8]">
-                      {formatCurrency(e.financialResult, true)}
-                    </td>
-                  ))}
-                </tr>
-                <tr className="font-bold text-white bg-white/[0.02]">
-                  <td className="py-3 pl-2 text-[#00f5a0]">Lucro Líquido Consolidado</td>
-                  {dreEntries.map((e) => (
-                    <td key={e.year} className="py-3 text-right text-[#00f5a0]">
-                      {formatCurrency(e.netIncome, true)}
-                    </td>
-                  ))}
-                </tr>
-                <tr>
-                  <td className="py-2.5 pl-2 text-[#64748b]">Margem Líquida</td>
-                  {dreEntries.map((e) => (
-                    <td key={e.year} className="py-2.5 text-right text-white font-medium">
-                      {e.netMarginPct.toFixed(1)}%
-                    </td>
-                  ))}
-                </tr>
-              </tbody>
-            </table>
+            {dreChartData.length > 0 && (
+              <div className="mb-6 p-4 rounded-2xl bg-[#131926] border border-white/5">
+                <div className="text-xs font-bold text-[#64748b] uppercase tracking-wider mb-2">
+                  Receita Líquida vs. Lucro Líquido (R$ Bilhões)
+                </div>
+                <BarChart
+                  data={dreChartData.map((d) => ({
+                    label: d.label,
+                    value: d.value / 1_000_000_000,
+                    secondaryValue: (d.secondaryValue ?? 0) / 1_000_000_000,
+                  }))}
+                  height={160}
+                />
+              </div>
+            )}
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                    <th className="pb-3 pl-2">Rubrica Contábil</th>
+                    {dreEntries.map((entry) => (
+                      <th key={entry.year} className="pb-3 text-right">
+                        {entry.year}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5 mono-nums">
+                  <tr>
+                    <td className="py-2.5 pl-2 text-white font-medium">Receita Líquida</td>
+                    {dreEntries.map((e) => (
+                      <td key={e.year} className="py-2.5 text-right text-white">
+                        {formatCurrency(e.netRevenue, true)}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="py-2.5 pl-2 text-[#94a3b8]">Custos (CPV)</td>
+                    {dreEntries.map((e) => (
+                      <td key={e.year} className="py-2.5 text-right text-[#ff3b69]">
+                        {formatCurrency(e.cogs, true)}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="py-2.5 pl-2 text-white font-medium">Lucro Bruto</td>
+                    {dreEntries.map((e) => (
+                      <td key={e.year} className="py-2.5 text-right text-[#00d9f5]">
+                        {formatCurrency(e.grossProfit, true)}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="py-2.5 pl-2 text-white font-semibold">EBITDA</td>
+                    {dreEntries.map((e) => (
+                      <td key={e.year} className="py-2.5 text-right text-[#00f5a0] font-bold">
+                        {formatCurrency(e.ebitda, true)}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="py-2.5 pl-2 text-[#94a3b8]">Resultado Financeiro</td>
+                    {dreEntries.map((e) => (
+                      <td key={e.year} className="py-2.5 text-right text-[#94a3b8]">
+                        {formatCurrency(e.financialResult, true)}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr className="font-bold text-white bg-white/[0.02]">
+                    <td className="py-3 pl-2 text-[#00f5a0]">Lucro Líquido Consolidado</td>
+                    {dreEntries.map((e) => (
+                      <td key={e.year} className="py-3 text-right text-[#00f5a0]">
+                        {formatCurrency(e.netIncome, true)}
+                      </td>
+                    ))}
+                  </tr>
+                  <tr>
+                    <td className="py-2.5 pl-2 text-[#64748b]">Margem Líquida</td>
+                    {dreEntries.map((e) => (
+                      <td key={e.year} className="py-2.5 text-right text-white font-medium">
+                        {e.netMarginPct.toFixed(1)}%
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* SECTION 8: Proventos */}
+      <section id="proventos" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#00f5a0]" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              8. Histórico Detalhado de Proventos, Dividendos & JCP
+            </h2>
           </div>
-        </Card>
-      </div>
-      )}
+          <Badge variant="emerald">{dividendEntries.length} Eventos Corporativos</Badge>
+        </div>
 
-      {/* SECTION 4: Proventos */}
-      {activeTab === "PROVENTOS" && (
         <div
-          role="tabpanel"
+          role="region"
           id="panel-PROVENTOS"
           aria-labelledby="tab-PROVENTOS"
         >
@@ -1058,51 +1234,61 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
               </button>
             </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead>
-                <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                  <th className="pb-3 pl-2">Tipo</th>
-                  <th className="pb-3">Mês Ref.</th>
-                  <th className="pb-3">Data-Com</th>
-                  <th className="pb-3">Pagamento</th>
-                  <th className="pb-3 text-right">Valor por Ação</th>
-                  <th className="pb-3 text-right pr-2">Yield on Cost</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 mono-nums">
-                {dividendEntries.map((div) => (
-                  <tr key={div.id} className="hover:bg-white/[0.02]">
-                    <td className="py-3 pl-2">
-                      <Badge variant={div.type === "DIVIDENDO" ? "emerald" : "cyan"}>
-                        {div.type}
-                      </Badge>
-                    </td>
-                    <td className="py-3 text-white">{div.referenceMonth}</td>
-                    <td className="py-3 text-[#94a3b8]">{div.dateCom}</td>
-                    <td className="py-3 text-[#94a3b8]">{div.paymentDate}</td>
-                    <td className="py-3 text-right font-bold text-white">
-                      {formatCurrency(div.valuePerShare, false, 4)}
-                    </td>
-                    <td className="py-3 text-right pr-2 font-bold text-[#00f5a0]">
-                      {div.yieldOnCostPct.toFixed(2)}%
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead>
+                  <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
+                    <th className="pb-3 pl-2">Tipo</th>
+                    <th className="pb-3">Mês Ref.</th>
+                    <th className="pb-3">Data-Com</th>
+                    <th className="pb-3">Pagamento</th>
+                    <th className="pb-3 text-right">Valor por Ação</th>
+                    <th className="pb-3 text-right pr-2">Yield on Cost</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      </div>
-      )}
+                </thead>
+                <tbody className="divide-y divide-white/5 mono-nums">
+                  {dividendEntries.map((div) => (
+                    <tr key={div.id} className="hover:bg-white/[0.02]">
+                      <td className="py-3 pl-2">
+                        <Badge variant={div.type === "DIVIDENDO" ? "emerald" : "cyan"}>
+                          {div.type}
+                        </Badge>
+                      </td>
+                      <td className="py-3 text-white">{div.referenceMonth}</td>
+                      <td className="py-3 text-[#94a3b8]">{div.dateCom}</td>
+                      <td className="py-3 text-[#94a3b8]">{div.paymentDate}</td>
+                      <td className="py-3 text-right font-bold text-white">
+                        {formatCurrency(div.valuePerShare, false, 4)}
+                      </td>
+                      <td className="py-3 text-right pr-2 font-bold text-[#00f5a0]">
+                        {div.yieldOnCostPct.toFixed(2)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      </section>
 
-      {/* SECTION 5: Technical Analysis */}
-      {activeTab === "TECNICA" && (
+      {/* SECTION 9: Technical Analysis */}
+      <section id="tecnica" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              9. Análise Técnica, Médias Móveis, Suportes & Pivôs
+            </h2>
+          </div>
+          <Badge variant="cyan">Timeframe Diário</Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-TECNICA"
           aria-labelledby="tab-TECNICA"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-up"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-6"
         >
           <div className="lg:col-span-6">
             <Card glow="cyan">
@@ -1187,71 +1373,84 @@ export function AcaoDetailClient({ ticker }: { ticker: string }) {
             </Card>
           </div>
         </div>
-      )}
-      {/* SECTION 6: AI Committee */}
-      {activeTab === "IA" && (
+      </section>
+
+      {/* SECTION 10: AI Committee */}
+      <section id="ia" className="scroll-mt-24 flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-violet-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              10. Parecer do Comitê de Inteligência Artificial & Matriz SWOT
+            </h2>
+          </div>
+          <Badge variant="violet">
+            Confiança: {aiVerdict?.confidenceScore ?? 92}%
+          </Badge>
+        </div>
+
         <div
-          role="tabpanel"
+          role="region"
           id="panel-IA"
           aria-labelledby="tab-IA"
         >
-          <Card glow="violet" className="animate-fade-up">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2.5">
-              <span className="w-3 h-3 rounded-full bg-[#a855f7] animate-pulse" />
-              <h3 className="text-lg font-bold text-white tracking-tight">
-                Parecer do Comitê de Inteligência Artificial
-              </h3>
-            </div>
-            <Badge variant="violet">
-              Confiança: {aiVerdict?.confidenceScore ?? 92}%
-            </Badge>
-          </div>
-
-          <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 mb-6">
-            <p className="text-xs text-[#f0f4f8] leading-relaxed">
-              {aiVerdict?.executiveSummary ??
-                "O Comitê de Inteligência Artificial analisou os relatórios e fatos relevantes auditados CVM. Os fluxos operacionais permanecem consistentes com geração robusta de fluxo de caixa livre."}
-            </p>
-          </div>
-
-          <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748b] mb-3">
-            Matriz SWOT Sintetizada
-          </h4>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-              <span className="text-xs font-bold text-[#00f5a0] flex items-center gap-1.5 mb-2">
-                <span>✓</span> Forças (Strengths)
-              </span>
-              <ul className="text-xs text-[#94a3b8] space-y-1.5 list-disc list-inside">
-                {(aiVerdict?.swot?.strengths ?? [
-                  "Liderança absoluta de mercado e margens operacionais elevadas",
-                  "Geração robusta de Fluxo de Caixa Livre e baixo lifting cost",
-                  "Histórico consistente de distribuição de proventos",
-                ]).map((s, i) => (
-                  <li key={i}>{s}</li>
-                ))}
-              </ul>
+          <Card glow="violet">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2.5">
+                <span className="w-3 h-3 rounded-full bg-[#a855f7] animate-pulse" />
+                <h3 className="text-lg font-bold text-white tracking-tight">
+                  Parecer do Comitê de Inteligência Artificial
+                </h3>
+              </div>
+              <Badge variant="violet">
+                Confiança: {aiVerdict?.confidenceScore ?? 92}%
+              </Badge>
             </div>
 
-            <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
-              <span className="text-xs font-bold text-[#ff3b69] flex items-center gap-1.5 mb-2">
-                <span>⚠</span> Fraquezas (Weaknesses)
-              </span>
-              <ul className="text-xs text-[#94a3b8] space-y-1.5 list-disc list-inside">
-                {(aiVerdict?.swot?.weaknesses ?? [
-                  "Exposição a ciclos internacionais de preços de commodities",
-                  "Sensibilidade a diretrizes regulatórias e fiscais",
-                ]).map((w, i) => (
-                  <li key={i}>{w}</li>
-                ))}
-              </ul>
+            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 mb-6">
+              <p className="text-xs text-[#f0f4f8] leading-relaxed">
+                {aiVerdict?.executiveSummary ??
+                  "O Comitê de Inteligência Artificial analisou os relatórios e fatos relevantes auditados CVM. Os fluxos operacionais permanecem consistentes com geração robusta de fluxo de caixa livre."}
+              </p>
             </div>
-          </div>
-        </Card>
-      </div>
-      )}
+
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748b] mb-3">
+              Matriz SWOT Sintetizada
+            </h4>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                <span className="text-xs font-bold text-[#00f5a0] flex items-center gap-1.5 mb-2">
+                  <span>✓</span> Forças (Strengths)
+                </span>
+                <ul className="text-xs text-[#94a3b8] space-y-1.5 list-disc list-inside">
+                  {(aiVerdict?.swot?.strengths ?? [
+                    "Liderança absoluta de mercado e margens operacionais elevadas",
+                    "Geração robusta de Fluxo de Caixa Livre e baixo lifting cost",
+                    "Histórico consistente de distribuição de proventos",
+                  ]).map((s, i) => (
+                    <li key={i}>{s}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
+                <span className="text-xs font-bold text-[#ff3b69] flex items-center gap-1.5 mb-2">
+                  <span>⚠</span> Fraquezas (Weaknesses)
+                </span>
+                <ul className="text-xs text-[#94a3b8] space-y-1.5 list-disc list-inside">
+                  {(aiVerdict?.swot?.weaknesses ?? [
+                    "Exposição a ciclos internacionais de preços de commodities",
+                    "Sensibilidade a diretrizes regulatórias e fiscais",
+                  ]).map((w, i) => (
+                    <li key={i}>{w}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
     </div>
   );
 }
