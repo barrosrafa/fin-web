@@ -1,4 +1,6 @@
-import React, { useId } from "react";
+"use client";
+
+import React, { memo, useId } from "react";
 
 interface SparklineProps {
   data: number[];
@@ -8,7 +10,7 @@ interface SparklineProps {
   positive?: boolean;
 }
 
-export function Sparkline({
+export const Sparkline = memo(function Sparkline({
   data,
   color,
   height = 36,
@@ -18,7 +20,9 @@ export function Sparkline({
   const rawId = useId();
   const gradientId = `sparkline-grad-${rawId.replace(/:/g, "")}`;
 
-  if (!data || data.length < 2) return null;
+  if (!data || data.length < 2 || data.some(value => !Number.isFinite(value))) {
+    return <span role="img" aria-label="Histórico indisponível" style={{ display: "inline-block", width, height }} />;
+  }
 
   const min = Math.min(...data);
   const max = Math.max(...data);
@@ -38,6 +42,8 @@ export function Sparkline({
 
   return (
     <svg
+      role="img"
+      aria-label={`Histórico de preços: ${data[data.length - 1] > data[0] ? "alta" : data[data.length - 1] < data[0] ? "baixa" : "estável"}`}
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
@@ -60,4 +66,9 @@ export function Sparkline({
       />
     </svg>
   );
-}
+}, (previous, next) =>
+  previous.color === next.color && previous.height === next.height &&
+  previous.width === next.width && previous.positive === next.positive &&
+  previous.data.length === next.data.length &&
+  previous.data.every((value, index) => Object.is(value, next.data[index]))
+);
