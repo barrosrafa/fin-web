@@ -140,6 +140,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/content/ui-texts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Ui Texts */
+        get: operations["ui_texts_api_v1_content_ui_texts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/content/feature-flags": {
         parameters: {
             query?: never;
@@ -3251,29 +3268,29 @@ export interface components {
             /** Subtipo Reit */
             subtipo_reit: string;
             /** Price Usd */
-            price_usd: number;
+            price_usd?: number | null;
             /** Price Brl */
-            price_brl: number;
+            price_brl?: number | null;
             /** Ptax Rate */
-            ptax_rate: number;
+            ptax_rate?: number | null;
             /** Ffo Per Share */
-            ffo_per_share: number;
+            ffo_per_share?: number | null;
             /** Affo Per Share */
-            affo_per_share: number;
+            affo_per_share?: number | null;
             /** P Ffo */
-            p_ffo: number;
+            p_ffo?: number | null;
             /** P Affo */
-            p_affo: number;
+            p_affo?: number | null;
             /** Ffo Payout Pct */
-            ffo_payout_pct: number;
+            ffo_payout_pct?: number | null;
             /** Occupancy Rate Pct */
-            occupancy_rate_pct: number;
+            occupancy_rate_pct?: number | null;
             /** Gross Dy Pct */
-            gross_dy_pct: number;
+            gross_dy_pct?: number | null;
             /** Net Dy Brl Pct */
-            net_dy_brl_pct: number;
+            net_dy_brl_pct?: number | null;
             /** Properties Count */
-            properties_count: number;
+            properties_count?: number | null;
         };
         /** RankingAssetItem */
         RankingAssetItem: {
@@ -3979,15 +3996,15 @@ export interface components {
             /** Name */
             name: string;
             /** Price Usd */
-            price_usd: number;
+            price_usd?: number | null;
             /** Price Brl */
-            price_brl: number;
+            price_brl?: number | null;
             /** Ptax Rate */
-            ptax_rate: number;
+            ptax_rate?: number | null;
             /** Pe Ratio */
             pe_ratio?: number | null;
             /** Dividend Yield Pct */
-            dividend_yield_pct: number;
+            dividend_yield_pct?: number | null;
             /** Market Cap Usd */
             market_cap_usd?: number | null;
             /**
@@ -4241,6 +4258,26 @@ export interface operations {
         };
     };
     navigation_api_v1_content_navigation_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentEnvelope"];
+                };
+            };
+        };
+    };
+    ui_texts_api_v1_content_ui_texts_get: {
         parameters: {
             query?: never;
             header?: never;

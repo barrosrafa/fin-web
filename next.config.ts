@@ -11,20 +11,6 @@ const nextConfig: NextConfig = {
       },
     },
   },
-  async rewrites() {
-    const backendUrl = process.env.API_BACKEND_URL ||
-      (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "");
-    if (!backendUrl) {
-      throw new Error("API_BACKEND_URL must point to the environment gateway (staging for Preview, production for Production).");
-    }
-    const cleanedBackend = backendUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
-    return [
-      {
-        source: "/api/v1/:path*",
-        destination: `${cleanedBackend}/api/v1/:path*`,
-      },
-    ];
-  },
   async headers() {
     return [
       {
@@ -32,7 +18,7 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "X-XSS-Protection", value: "1; mode=block" },
+          { key: "Content-Security-Policy", value: "base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
         ],

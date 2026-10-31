@@ -46,7 +46,7 @@ export default function REITsPage() {
               <CmsText>{reits.length}</CmsText><CmsText>{" REITs Listados"}</CmsText></span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"REITs (Real Estate Investment Trusts)"}</CmsText></h1>
-          <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Catálogo especializado de Fundos Imobiliários norte-americanos com múltiplos Nareit (FFO, AFFO, P/FFO) e cálculo do Dividend Yield Líquido já descontados os 30% de imposto retido na fonte pelo IRS."}</CmsText></p>
+          <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Catálogo de fundos imobiliários norte-americanos e indicadores FFO, AFFO e P/FFO quando disponíveis. Dados sem fonte são exibidos como indisponíveis."}</CmsText></p>
         </div>
 
         <div className="flex items-center gap-2">
@@ -96,14 +96,14 @@ export default function REITsPage() {
                     <td className="py-4 px-4">
                       <Badge variant="indigo"><CmsText>{reit.subtipo_reit}</CmsText></Badge>
                     </td>
-                    <td className="py-4 px-4 text-right font-mono font-bold text-white"><CmsText>{"$"}</CmsText><CmsText>{reit.price_usd.toFixed(2)}</CmsText>
+                    <td className="py-4 px-4 text-right font-mono font-bold text-white"><CmsText>{"$"}</CmsText><CmsText>{reit.price_usd?.toFixed(2) ?? "—"}</CmsText>
                     </td>
                     <td className="py-4 px-4 text-right font-mono text-cyan-400">
-                      <CmsText>{reit.p_ffo.toFixed(1)}</CmsText><CmsText>{"x"}</CmsText></td>
+                      <CmsText>{reit.p_ffo?.toFixed(1) ?? "—"}</CmsText><CmsText>{"x"}</CmsText></td>
                     <td className="py-4 px-4 text-right font-mono text-amber-400">
-                      <CmsText>{reit.p_affo.toFixed(1)}</CmsText><CmsText>{"x"}</CmsText></td>
+                      <CmsText>{reit.p_affo?.toFixed(1) ?? "—"}</CmsText><CmsText>{"x"}</CmsText></td>
                     <td className="py-4 px-4 text-right font-mono text-[#94a3b8]">
-                      <CmsText>{reit.occupancy_rate_pct.toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
+                      <CmsText>{reit.occupancy_rate_pct?.toFixed(1) ?? "—"}</CmsText><CmsText>{"%"}</CmsText></td>
                     <td className="py-4 px-4 text-right font-mono text-[#94a3b8]">
                       <CmsText>{formatPercent(reit.gross_dy_pct)}</CmsText>
                     </td>
