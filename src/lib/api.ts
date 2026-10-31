@@ -60,25 +60,24 @@ export const API_BASE = typeof window !== "undefined"
   ? "/api/v1"
   : normalizedApiUrl(serverApiUrl || (process.env.NODE_ENV === "development" ? "http://localhost:8000" : ""));
 
-function getStoredToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("fin_token");
+function clearLegacyToken() {
+  if (typeof window === "undefined") return;
+  try { localStorage.removeItem("fin_token"); } catch { /* Storage may be disabled. */ }
 }
 
 async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
+  clearLegacyToken();
   const url = `${API_BASE}${path}`;
-  const token = getStoredToken();
-  const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
-  const defaultCache = options?.cache ?? (token ? "no-store" : "default");
+  const defaultCache = options?.cache ?? "no-store";
   const res = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...authHeaders,
       ...options?.headers,
     },
     cache: defaultCache,
+    credentials: "same-origin",
   });
   if (!res.ok) {
     throw new Error(`API error [${res.status}] on ${path}: ${res.statusText}`);
@@ -102,19 +101,18 @@ async function fetchWithHeaders<T>(
   path: string,
   options?: RequestInit
 ): Promise<{ data: T; headers: Headers }> {
+  clearLegacyToken();
   const url = `${API_BASE}${path}`;
-  const token = getStoredToken();
-  const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
 
-  const defaultCache = options?.cache ?? (token ? "no-store" : "default");
+  const defaultCache = options?.cache ?? "no-store";
   const res = await fetch(url, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...authHeaders,
       ...options?.headers,
     },
     cache: defaultCache,
+    credentials: "same-origin",
   });
   if (!res.ok) {
     throw new Error(`API error [${res.status}] on ${path}: ${res.statusText}`);
@@ -1516,11 +1514,11 @@ export async function getBrokers(): Promise<BrokerItem[]> {
 export interface USEquityItem {
   ticker: string;
   name: string;
-  price_usd: number;
-  price_brl: number;
-  ptax_rate: number;
+  price_usd?: number;
+  price_brl?: number;
+  ptax_rate?: number;
   pe_ratio?: number;
-  dividend_yield_pct: number;
+  dividend_yield_pct?: number;
   market_cap_usd?: number;
   sector: string;
 }
@@ -1538,18 +1536,18 @@ export interface REITItem {
   ticker: string;
   name: string;
   subtipo_reit: string;
-  price_usd: number;
-  price_brl: number;
-  ptax_rate: number;
-  ffo_per_share: number;
-  affo_per_share: number;
-  p_ffo: number;
-  p_affo: number;
-  ffo_payout_pct: number;
-  occupancy_rate_pct: number;
-  gross_dy_pct: number;
-  net_dy_brl_pct: number;
-  properties_count: number;
+  price_usd?: number;
+  price_brl?: number;
+  ptax_rate?: number;
+  ffo_per_share?: number;
+  affo_per_share?: number;
+  p_ffo?: number;
+  p_affo?: number;
+  ffo_payout_pct?: number;
+  occupancy_rate_pct?: number;
+  gross_dy_pct?: number;
+  net_dy_brl_pct?: number;
+  properties_count?: number;
 }
 
 export async function getREITs(): Promise<REITItem[]> {
@@ -1642,7 +1640,6 @@ export interface AuthUser {
 }
 
 export interface AuthResponse {
-  token: string;
   token_type: string;
   expires_in: number;
   user: AuthUser;
@@ -1653,9 +1650,7 @@ export async function loginUser(credentials: { email: string; password: string }
     method: "POST",
     body: JSON.stringify(credentials),
   });
-  if (typeof window !== "undefined" && res?.token) {
-    localStorage.setItem("fin_token", res.token);
-  }
+  clearLegacyToken();
   return res;
 }
 
@@ -1664,9 +1659,7 @@ export async function registerUser(data: { name: string; email: string; password
     method: "POST",
     body: JSON.stringify(data),
   });
-  if (typeof window !== "undefined" && res?.token) {
-    localStorage.setItem("fin_token", res.token);
-  }
+  clearLegacyToken();
   return res;
 }
 
@@ -1682,10 +1675,7 @@ export async function logoutUser(): Promise<void> {
   try {
     await fetchJson("/auth/logout", { method: "POST" });
   } finally {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("fin_token");
-      document.cookie = "auth_token=; path=/; max-age=0;";
-    }
+    clearLegacyToken();
   }
 }
 

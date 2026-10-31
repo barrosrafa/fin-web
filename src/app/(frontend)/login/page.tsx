@@ -23,8 +23,7 @@ export default function LoginPage() {
 
     try {
       const res = await loginUser({ email, password: senha });
-      if (res.token) {
-        document.cookie = `auth_token=${res.token}; path=/; max-age=604800; SameSite=Lax;`;
+      if (res.user) {
         router.push("/carteira");
       }
     } catch (err: unknown) {

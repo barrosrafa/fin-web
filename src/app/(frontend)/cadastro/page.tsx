@@ -29,8 +29,7 @@ export default function CadastroPage() {
 
     try {
       const res = await registerUser({ name: nome, email, password: senha });
-      if (res.token) {
-        document.cookie = `auth_token=${res.token}; path=/; max-age=604800; SameSite=Lax;`;
+      if (res.user) {
         setSucesso(true);
       }
     } catch (err: unknown) {
@@ -118,7 +117,7 @@ export default function CadastroPage() {
                 <CmsElement feature="ui.app/-frontend-/cadastro/page.Link.9"><Link href="/politica-de-privacidade" className="text-cyan-400 hover:underline"><CmsText>{"Política de Privacidade (LGPD)"}</CmsText></Link></CmsElement><CmsText>{"."}</CmsText></label>
             </div>
 
-            <Button type="submit" variant="primary" className="w-full mt-2"><CmsText>{"Criar Conta Gratuita"}</CmsText></Button>
+            <Button type="submit" variant="primary" className="w-full mt-2" disabled={loading}><CmsText>{"Criar Conta Gratuita"}</CmsText></Button>
           </form></CmsElement>
         )}</CmsText>
 

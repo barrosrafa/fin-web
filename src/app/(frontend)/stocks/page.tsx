@@ -94,7 +94,7 @@ export default function StocksPage() {
                     <td className="py-4 px-4">
                       <Badge variant="indigo"><CmsText>{stock.sector}</CmsText></Badge>
                     </td>
-                    <td className="py-4 px-4 text-right font-mono font-bold text-white"><CmsText>{"$"}</CmsText><CmsText>{stock.price_usd.toFixed(2)}</CmsText>
+                    <td className="py-4 px-4 text-right font-mono font-bold text-white"><CmsText>{"$"}</CmsText><CmsText>{stock.price_usd?.toFixed(2) ?? "—"}</CmsText>
                     </td>
                     <td className="py-4 px-4 text-right font-mono text-[#94a3b8]">
                       <CmsText>{formatCurrency(stock.price_brl)}</CmsText>
