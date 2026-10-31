@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsElement } from "@/components/content/Cms";
 import React, { memo, useId } from "react";
 
 interface SparklineProps {
@@ -21,7 +23,7 @@ export const Sparkline = memo(function Sparkline({
   const gradientId = `sparkline-grad-${rawId.replace(/:/g, "")}`;
 
   if (!data || data.length < 2 || data.some(value => !Number.isFinite(value))) {
-    return <span role="img" aria-label="Histórico indisponível" style={{ display: "inline-block", width, height }} />;
+    return <CmsElement><span role="img" aria-label="Histórico indisponível" style={{ display: "inline-block", width, height }} /></CmsElement>;
   }
 
   const min = Math.min(...data);
@@ -41,7 +43,7 @@ export const Sparkline = memo(function Sparkline({
   const areaD = `${pathD} L ${width},${height} L 0,${height} Z`;
 
   return (
-    <svg
+    <CmsElement><svg
       role="img"
       aria-label={`Histórico de preços: ${data[data.length - 1] > data[0] ? "alta" : data[data.length - 1] < data[0] ? "baixa" : "estável"}`}
       width={width}
@@ -64,7 +66,7 @@ export const Sparkline = memo(function Sparkline({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-    </svg>
+    </svg></CmsElement>
   );
 }, (previous, next) =>
   previous.color === next.color && previous.height === next.height &&

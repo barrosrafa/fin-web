@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -71,92 +73,78 @@ export default function PerfilInvestidorPage() {
       {/* Header */}
       <div className="text-center">
         <div className="inline-flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-indigo">Resolução CVM 30</span>
-          <span className="text-xs text-[#64748b]">Suitability & Score de Risco</span>
+          <span className="badge-neon badge-neon-indigo"><CmsText>{"Resolução CVM 30"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Suitability & Score de Risco"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Descubra seu Perfil de Investidor
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1">
-          Responda ao questionário regulatório para descobrir sua tolerância a risco e receber uma
-          alocação percentual recomendada para sua carteira.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Descubra seu Perfil de Investidor"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1"><CmsText>{"Responda ao questionário regulatório para descobrir sua tolerância a risco e receber uma alocação percentual recomendada para sua carteira."}</CmsText></p>
       </div>
 
-      {loading ? (
-        <Card className="p-12 text-center text-[#64748b]">Carregando questionário...</Card>
+      <CmsText>{loading ? (
+        <CmsElement feature="ui.app/-frontend-/perfil-de-investidor/page.Card.1"><Card className="p-12 text-center text-[#64748b]"><CmsText>{"Carregando questionário..."}</CmsText></Card></CmsElement>
       ) : result ? (
         /* Result View */
-        <Card className="p-8 flex flex-col gap-8 border border-cyan-500/30 bg-[#0f172a]/90">
+        <CmsElement feature="ui.app/-frontend-/perfil-de-investidor/page.Card.2"><Card className="p-8 flex flex-col gap-8 border border-cyan-500/30 bg-[#0f172a]/90">
           <div className="text-center border-b border-white/10 pb-6">
-            <Badge variant="cyan" className="mb-2">
-              Seu Perfil Oficial
-            </Badge>
-            <h2 className="text-3xl font-black text-white">{result.nome_categoria}</h2>
-            <p className="text-sm text-[#94a3b8] mt-2 max-w-xl mx-auto">{result.descricao}</p>
-            <div className="mt-4 text-xs font-mono text-cyan-400">
-              Pontuação de Risco: <span className="font-bold text-lg text-white">{result.score_total}/100</span>
+            <Badge variant="cyan" className="mb-2"><CmsText>{"Seu Perfil Oficial"}</CmsText></Badge>
+            <h2 className="text-3xl font-black text-white"><CmsText>{result.nome_categoria}</CmsText></h2>
+            <p className="text-sm text-[#94a3b8] mt-2 max-w-xl mx-auto"><CmsText>{result.descricao}</CmsText></p>
+            <div className="mt-4 text-xs font-mono text-cyan-400"><CmsText>{"Pontuação de Risco: "}</CmsText><span className="font-bold text-lg text-white"><CmsText>{result.score_total}</CmsText><CmsText>{"/100"}</CmsText></span>
             </div>
           </div>
 
           {/* Allocation Breakdown */}
           <div>
-            <h3 className="text-base font-bold text-white mb-4">Alocação Alvo Recomendada</h3>
+            <h3 className="text-base font-bold text-white mb-4"><CmsText>{"Alocação Alvo Recomendada"}</CmsText></h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 text-center">
-                <span className="text-xs text-[#94a3b8]">Renda Fixa</span>
+                <span className="text-xs text-[#94a3b8]"><CmsText>{"Renda Fixa"}</CmsText></span>
                 <p className="text-2xl font-black font-mono text-white mt-1">
-                  {result.alocacao_alvo.renda_fixa}%
-                </p>
+                  <CmsText>{result.alocacao_alvo.renda_fixa}</CmsText><CmsText>{"%"}</CmsText></p>
               </div>
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 text-center">
-                <span className="text-xs text-[#94a3b8]">Fundos Imobiliários</span>
+                <span className="text-xs text-[#94a3b8]"><CmsText>{"Fundos Imobiliários"}</CmsText></span>
                 <p className="text-2xl font-black font-mono text-emerald-400 mt-1">
-                  {result.alocacao_alvo.fiis}%
-                </p>
+                  <CmsText>{result.alocacao_alvo.fiis}</CmsText><CmsText>{"%"}</CmsText></p>
               </div>
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 text-center">
-                <span className="text-xs text-[#94a3b8]">Ações Nacionais</span>
+                <span className="text-xs text-[#94a3b8]"><CmsText>{"Ações Nacionais"}</CmsText></span>
                 <p className="text-2xl font-black font-mono text-cyan-400 mt-1">
-                  {result.alocacao_alvo.acoes}%
-                </p>
+                  <CmsText>{result.alocacao_alvo.acoes}</CmsText><CmsText>{"%"}</CmsText></p>
               </div>
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/10 text-center">
-                <span className="text-xs text-[#94a3b8]">Internacional (USD)</span>
+                <span className="text-xs text-[#94a3b8]"><CmsText>{"Internacional (USD)"}</CmsText></span>
                 <p className="text-2xl font-black font-mono text-indigo-400 mt-1">
-                  {result.alocacao_alvo.internacional}%
-                </p>
+                  <CmsText>{result.alocacao_alvo.internacional}</CmsText><CmsText>{"%"}</CmsText></p>
               </div>
             </div>
           </div>
 
           {/* Action Recommendations */}
           <div>
-            <h3 className="text-base font-bold text-white mb-3">Diretrizes Práticas</h3>
+            <h3 className="text-base font-bold text-white mb-3"><CmsText>{"Diretrizes Práticas"}</CmsText></h3>
             <ul className="space-y-2">
-              {result.recomendacoes_principais.map((rec, idx) => (
+              <CmsText>{result.recomendacoes_principais.map((rec, idx) => (
                 <li key={idx} className="flex items-start gap-2 text-sm text-[#cbd5e1]">
-                  <span className="text-cyan-400 font-bold">•</span>
-                  {rec}
+                  <span className="text-cyan-400 font-bold"><CmsText>{"•"}</CmsText></span>
+                  <CmsText>{rec}</CmsText>
                 </li>
-              ))}
+              ))}</CmsText>
             </ul>
           </div>
 
           <div className="flex justify-center pt-4">
-            <Button variant="outline" onClick={() => { setResult(null); setCurrentStep(0); setAnswers({}); }}>
-              Refazer Questionário
-            </Button>
+            <Button variant="outline" onClick={() => { setResult(null); setCurrentStep(0); setAnswers({}); }}><CmsText>{"Refazer Questionário"}</CmsText></Button>
           </div>
-        </Card>
+        </Card></CmsElement>
       ) : (
         /* Questionnaire Steps */
-        <Card className="p-8 flex flex-col gap-6 border border-white/10">
+        <CmsElement feature="ui.app/-frontend-/perfil-de-investidor/page.Card.3"><Card className="p-8 flex flex-col gap-6 border border-white/10">
           {/* Progress Bar */}
           <div className="flex flex-col gap-2">
             <div className="flex justify-between text-xs text-[#94a3b8]">
-              <span>Pergunta {currentStep + 1} de {questions.length}</span>
-              <span>{Math.round(progressPct)}% concluído</span>
+              <span><CmsText>{"Pergunta "}</CmsText><CmsText>{currentStep + 1}</CmsText><CmsText>{" de "}</CmsText><CmsText>{questions.length}</CmsText></span>
+              <span><CmsText>{Math.round(progressPct)}</CmsText><CmsText>{"% concluído"}</CmsText></span>
             </div>
             <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
               <div
@@ -167,24 +155,24 @@ export default function PerfilInvestidorPage() {
           </div>
 
           {/* Question Title */}
-          {currentQ && (
+          <CmsText>{currentQ && (
             <div className="flex flex-col gap-4">
               <div>
-                <span className="badge-neon badge-neon-cyan mb-2">Eixo: {currentQ.eixo}</span>
+                <span className="badge-neon badge-neon-cyan mb-2"><CmsText>{"Eixo: "}</CmsText><CmsText>{currentQ.eixo}</CmsText></span>
                 <h2 className="text-xl sm:text-2xl font-bold text-white mt-1">
-                  {currentQ.titulo}
+                  <CmsText>{currentQ.titulo}</CmsText>
                 </h2>
-                {currentQ.descricao && (
-                  <p className="text-sm text-[#94a3b8] mt-1">{currentQ.descricao}</p>
-                )}
+                <CmsText>{currentQ.descricao && (
+                  <p className="text-sm text-[#94a3b8] mt-1"><CmsText>{currentQ.descricao}</CmsText></p>
+                )}</CmsText>
               </div>
 
               {/* Options */}
               <div className="flex flex-col gap-3 mt-2">
-                {currentQ.opcoes.map((opt) => {
+                <CmsText>{currentQ.opcoes.map((opt) => {
                   const isSelected = answers[currentQ.id_pergunta] === opt.id_opcao;
                   return (
-                    <button
+                    <CmsElement feature="ui.app/-frontend-/perfil-de-investidor/page.button.4" key={opt.id_opcao}><button
                       key={opt.id_opcao}
                       onClick={() => handleSelectOption(currentQ.id_pergunta, opt.id_opcao)}
                       className={`text-left p-4 rounded-xl border transition-all ${
@@ -199,13 +187,13 @@ export default function PerfilInvestidorPage() {
                             isSelected ? "border-cyan-400 bg-cyan-400" : "border-[#64748b]"
                           }`}
                         >
-                          {isSelected && <div className="w-2 h-2 rounded-full bg-black" />}
+                          <CmsText>{isSelected && <div className="w-2 h-2 rounded-full bg-black" />}</CmsText>
                         </div>
-                        <span className="text-sm">{opt.texto}</span>
+                        <span className="text-sm"><CmsText>{opt.texto}</CmsText></span>
                       </div>
-                    </button>
+                    </button></CmsElement>
                   );
-                })}
+                })}</CmsText>
               </div>
 
               {/* Navigation Buttons */}
@@ -214,21 +202,19 @@ export default function PerfilInvestidorPage() {
                   variant="outline"
                   onClick={handlePrev}
                   disabled={currentStep === 0}
-                >
-                  Anterior
-                </Button>
+                ><CmsText>{"Anterior"}</CmsText></Button>
                 <Button
                   variant="primary"
                   onClick={handleNext}
                   disabled={!answers[currentQ.id_pergunta]}
                 >
-                  {currentStep === questions.length - 1 ? "Ver Meu Perfil" : "Próxima"}
+                  <CmsText>{currentStep === questions.length - 1 ? "Ver Meu Perfil" : "Próxima"}</CmsText>
                 </Button>
               </div>
             </div>
-          )}
-        </Card>
-      )}
+          )}</CmsText>
+        </Card></CmsElement>
+      )}</CmsText>
     </div>
   );
 }

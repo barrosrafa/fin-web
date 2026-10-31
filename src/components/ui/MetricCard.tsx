@@ -1,3 +1,5 @@
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React from "react";
 import { Card } from "./Card";
 import { Badge } from "./Badge";
@@ -26,38 +28,38 @@ export function MetricCard({
   const isPositive = change !== undefined ? change >= 0 : true;
 
   return (
-    <Card glow={glow}>
+    <CmsElement feature="ui.components/ui/MetricCard.Card.1"><Card glow={glow}>
       <div className="flex items-center justify-between gap-2 mb-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-[#64748b]">
-          {title}
+          <CmsText>{title}</CmsText>
         </span>
-        {badgeText ? (
-          <Badge variant="cyan">{badgeText}</Badge>
+        <CmsText>{badgeText ? (
+          <Badge variant="cyan"><CmsText>{badgeText}</CmsText></Badge>
         ) : change !== undefined ? (
           <Badge variant={isPositive ? "emerald" : "crimson"} dot>
-            {formatPercent(change)}
+            <CmsText>{formatPercent(change)}</CmsText>
           </Badge>
-        ) : null}
+        ) : null}</CmsText>
       </div>
 
       <div className="flex items-baseline justify-between gap-4">
         <div>
           <div className="text-2xl font-bold tracking-tight text-[#f0f4f8] mono-nums">
-            {value}
+            <CmsText>{value}</CmsText>
           </div>
-          {subtitle && (
+          <CmsText>{subtitle && (
             <div className="text-xs text-[#94a3b8] mt-1 font-medium">
-              {subtitle}
+              <CmsText>{subtitle}</CmsText>
             </div>
-          )}
+          )}</CmsText>
         </div>
 
-        {sparkline && (
+        <CmsText>{sparkline && (
           <div className="self-end">
             <Sparkline data={sparkline} positive={isPositive} width={80} height={32} />
           </div>
-        )}
+        )}</CmsText>
       </div>
-    </Card>
+    </Card></CmsElement>
   );
 }

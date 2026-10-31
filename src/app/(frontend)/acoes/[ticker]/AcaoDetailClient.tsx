@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -208,15 +210,11 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
     <div className="flex flex-col gap-8 animate-fade-up pb-16">
       {/* Breadcrumb & Navigation */}
       <div className="flex items-center gap-2 text-xs text-[#94a3b8]">
-        <Link href="/" className="hover:text-white transition-colors">
-          Cockpit
-        </Link>
-        <span>/</span>
-        <Link href="/acoes" className="hover:text-white transition-colors">
-          Ações
-        </Link>
-        <span>/</span>
-        <span className="text-white font-mono font-bold">{ticker}</span>
+        <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Link.1"><Link href="/" className="hover:text-white transition-colors"><CmsText>{"Cockpit"}</CmsText></Link></CmsElement>
+        <span><CmsText>{"/"}</CmsText></span>
+        <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Link.2"><Link href="/acoes" className="hover:text-white transition-colors"><CmsText>{"Ações"}</CmsText></Link></CmsElement>
+        <span><CmsText>{"/"}</CmsText></span>
+        <span className="text-white font-mono font-bold"><CmsText>{ticker}</CmsText></span>
       </div>
 
       {/* Asset Header Banner */}
@@ -225,153 +223,131 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
 
         <div className="flex items-center gap-4 z-10">
           <div className="w-14 h-14 rounded-2xl bg-[#131926] border border-white/10 flex items-center justify-center font-black text-xl text-white shadow-xl">
-            {ticker.slice(0, 2)}
+            <CmsText>{ticker.slice(0, 2)}</CmsText>
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-3xl font-black text-white tracking-tight">
-                {ticker}
+                <CmsText>{ticker}</CmsText>
               </h2>
-              <Badge variant="emerald">{stockInfo?.badge ?? "Listada B3"}</Badge>
+              <Badge variant="emerald"><CmsText>{stockInfo?.badge ?? "Listada B3"}</CmsText></Badge>
             </div>
             <div className="text-sm text-[#94a3b8] font-medium mt-0.5">
-              {stockInfo?.name ?? valuationData?.name ?? ticker}
+              <CmsText>{stockInfo?.name ?? valuationData?.name ?? ticker}</CmsText>
             </div>
             <div className="text-xs text-[#94a3b8] mt-1">
-              {stockInfo?.sector ?? "Mercado de Capitais"} • {stockInfo?.subsector ?? "Empresas Abertas"}
+              <CmsText>{stockInfo?.sector ?? "Mercado de Capitais"}</CmsText><CmsText>{" • "}</CmsText><CmsText>{stockInfo?.subsector ?? "Empresas Abertas"}</CmsText>
             </div>
           </div>
         </div>
 
         <div className="flex items-end md:items-center gap-6 z-10 bg-white/[0.03] p-4 rounded-2xl border border-white/5">
           <div className="text-right">
-            <div className="text-xs text-[#94a3b8] uppercase font-semibold">
-              Último preço disponível
-            </div>
+            <div className="text-xs text-[#94a3b8] uppercase font-semibold"><CmsText>{"Último preço disponível"}</CmsText></div>
             <div className="text-3xl font-black font-mono text-white mt-0.5">
-              {formatCurrency(stockPrice)}
+              <CmsText>{formatCurrency(stockPrice)}</CmsText>
             </div>
             <div
               className={`text-xs font-mono font-bold mt-0.5 ${
                 isPositive ? "text-[var(--positive)]" : "text-[var(--negative)]"
               }`}
             >
-              {formatPercent(stockInfo?.change24h ?? Number.NaN)} Hoje • 12M: {formatPercent(stockInfo?.change12m ?? Number.NaN)}
+              <CmsText>{formatPercent(stockInfo?.change24h ?? Number.NaN)}</CmsText><CmsText>{" Hoje • 12M: "}</CmsText><CmsText>{formatPercent(stockInfo?.change12m ?? Number.NaN)}</CmsText>
             </div>
           </div>
         </div>
       </div>
 
       <DataStatus mode={loading ? "loading" : errors.details && completeDetails ? "stale" : completeDetails ? "periodic" : "missing"} asOf={completeDetails?.details.data_cotacao} />
-      {Object.entries(errors).filter(([key]) => key !== "details").map(([key, error]) => <SectionState key={key} error={error} onRetry={() => setRevision(n => n + 1)} />)}
-      <p className="text-xs text-[#94a3b8]">Valuation é uma estimativa baseada nos parâmetros abaixo, não uma recomendação. DCF usa aproximação de 80% do lucro por ação, não fluxo de caixa reportado. Séries contábeis distintas não foram reconciliadas.</p>
+      <CmsText>{Object.entries(errors).filter(([key]) => key !== "details").map(([key, error]) => <SectionState key={key} error={error} onRetry={() => setRevision(n => n + 1)} />)}</CmsText>
+      <p className="text-xs text-[#94a3b8]"><CmsText>{"Valuation é uma estimativa baseada nos parâmetros abaixo, não uma recomendação. DCF usa aproximação de 80% do lucro por ação, não fluxo de caixa reportado. Séries contábeis distintas não foram reconciliadas."}</CmsText></p>
       {/* KPI Top Bar - Executive Dashboard */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <Card className="text-center p-3 border-emerald-500/20 bg-emerald-500/[0.02]">
-          <span className="text-[10px] uppercase font-bold text-[#94a3b8]">
-            Dividend Yield (12M)
-          </span>
+        <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.3"><Card className="text-center p-3 border-emerald-500/20 bg-emerald-500/[0.02]">
+          <span className="text-[10px] uppercase font-bold text-[#94a3b8]"><CmsText>{"Dividend Yield (12M)"}</CmsText></span>
           <div className="text-xl font-black font-mono text-[var(--positive)] mt-1">
-            {formatPercent(stockInfo?.dividendYield ?? (stockPrice > 0 ? (dpaInput / stockPrice) * 100 : Number.NaN), false)}
+            <CmsText>{formatPercent(stockInfo?.dividendYield ?? (stockPrice > 0 ? (dpaInput / stockPrice) * 100 : Number.NaN), false)}</CmsText>
           </div>
-          <span className="text-[10px] text-[#94a3b8] font-mono">
-            DPA implícito: {formatCurrency(valuationData ? dpaInput : Number.NaN)}
+          <span className="text-[10px] text-[#94a3b8] font-mono"><CmsText>{"DPA implícito: "}</CmsText><CmsText>{formatCurrency(valuationData ? dpaInput : Number.NaN)}</CmsText>
           </span>
-        </Card>
+        </Card></CmsElement>
 
-        <Card className="text-center p-3">
-          <span className="text-[10px] uppercase font-bold text-[#94a3b8]">
-            P/L (Preço / Lucro)
-          </span>
+        <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.4"><Card className="text-center p-3">
+          <span className="text-[10px] uppercase font-bold text-[#94a3b8]"><CmsText>{"P/L (Preço / Lucro)"}</CmsText></span>
           <div className="text-xl font-black font-mono text-white mt-1">
-            {formatMultiple(stockInfo?.pl)}
+            <CmsText>{formatMultiple(stockInfo?.pl)}</CmsText>
           </div>
-          <span className="text-[10px] text-[#94a3b8] font-mono">
-            LPA: {formatCurrency(valuationData ? lpaInput : Number.NaN)}
+          <span className="text-[10px] text-[#94a3b8] font-mono"><CmsText>{"LPA: "}</CmsText><CmsText>{formatCurrency(valuationData ? lpaInput : Number.NaN)}</CmsText>
           </span>
-        </Card>
+        </Card></CmsElement>
 
-        <Card className="text-center p-3">
-          <span className="text-[10px] uppercase font-bold text-[#94a3b8]">
-            P/VP (Preço / Valor Patr.)
-          </span>
+        <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.5"><Card className="text-center p-3">
+          <span className="text-[10px] uppercase font-bold text-[#94a3b8]"><CmsText>{"P/VP (Preço / Valor Patr.)"}</CmsText></span>
           <div className="text-xl font-black font-mono text-white mt-1">
-            {formatMultiple(stockInfo?.pvp)}
+            <CmsText>{formatMultiple(stockInfo?.pvp)}</CmsText>
           </div>
-          <span className="text-[10px] text-[#94a3b8] font-mono">
-            VPA: {formatCurrency(valuationData ? vpaInput : Number.NaN)}
+          <span className="text-[10px] text-[#94a3b8] font-mono"><CmsText>{"VPA: "}</CmsText><CmsText>{formatCurrency(valuationData ? vpaInput : Number.NaN)}</CmsText>
           </span>
-        </Card>
+        </Card></CmsElement>
 
-        <Card className="text-center p-3 border-emerald-500/20">
-          <span className="text-[10px] uppercase font-bold text-[#94a3b8]">
-            Justo Benjamin Graham
-          </span>
+        <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.6"><Card className="text-center p-3 border-emerald-500/20">
+          <span className="text-[10px] uppercase font-bold text-[#94a3b8]"><CmsText>{"Justo Benjamin Graham"}</CmsText></span>
           <div className={`text-xl font-black font-mono mt-1 ${dynamicGrahamUpside >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"}`}>
-            {formatCurrency(dynamicGraham)}
+            <CmsText>{formatCurrency(dynamicGraham)}</CmsText>
           </div>
           <span className={`text-[10px] font-mono font-bold ${dynamicGrahamUpside >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"}`}>
-            {dynamicGrahamUpside >= 0 ? "▲ Upside" : "▼ Ágio"} {formatPercent(dynamicGrahamUpside)}
+            <CmsText>{dynamicGrahamUpside >= 0 ? "▲ Upside" : "▼ Ágio"}</CmsText> <CmsText>{formatPercent(dynamicGrahamUpside)}</CmsText>
           </span>
-        </Card>
+        </Card></CmsElement>
 
-        <Card className="text-center p-3 border-cyan-500/20">
-          <span className="text-[10px] uppercase font-bold text-[#94a3b8]">
-            Teto Décio Bazin
-          </span>
+        <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.7"><Card className="text-center p-3 border-cyan-500/20">
+          <span className="text-[10px] uppercase font-bold text-[#94a3b8]"><CmsText>{"Teto Décio Bazin"}</CmsText></span>
           <div className={`text-xl font-black font-mono mt-1 ${dynamicBazinUpside >= 0 ? "text-[#00d9f5]" : "text-[var(--negative)]"}`}>
-            {formatCurrency(dynamicBazin)}
+            <CmsText>{formatCurrency(dynamicBazin)}</CmsText>
           </div>
-          <span className={`text-[10px] font-mono font-bold ${dynamicBazinUpside >= 0 ? "text-[#00d9f5]" : "text-[var(--negative)]"}`}>
-            Margem: {formatPercent(dynamicBazinMargin)}
+          <span className={`text-[10px] font-mono font-bold ${dynamicBazinUpside >= 0 ? "text-[#00d9f5]" : "text-[var(--negative)]"}`}><CmsText>{"Margem: "}</CmsText><CmsText>{formatPercent(dynamicBazinMargin)}</CmsText>
           </span>
-        </Card>
+        </Card></CmsElement>
 
-        <Card className="text-center p-3">
-          <span className="text-[10px] uppercase font-bold text-[#94a3b8]">
-            Checklist Buy & Hold
-          </span>
+        <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.8"><Card className="text-center p-3">
+          <span className="text-[10px] uppercase font-bold text-[#94a3b8]"><CmsText>{"Checklist Buy & Hold"}</CmsText></span>
           <div className="text-xl font-black font-mono text-[var(--positive)] mt-1">
-            {checklistItems.filter((c) => c.passed).length} / {checklistItems.length}
+            <CmsText>{checklistItems.filter((c) => c.passed).length}</CmsText><CmsText>{" / "}</CmsText><CmsText>{checklistItems.length}</CmsText>
           </div>
           <span className="text-[10px] text-[#94a3b8] font-mono">
-            {checklistItems.filter((c) => c.passed).length === (checklistItems.length) ? "Critérios calculados" : "Critérios disponíveis"}
+            <CmsText>{checklistItems.filter((c) => c.passed).length === (checklistItems.length) ? "Critérios calculados" : "Critérios disponíveis"}</CmsText>
           </span>
-        </Card>
+        </Card></CmsElement>
       </div>
 
       {/* Zero Clicks Sticky Anchor Navigation */}
-      <nav
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.nav.9"><nav
         aria-label="Navegação rápida da ação"
         className="sticky top-[var(--asset-nav-top,5.5rem)] z-40 bg-[#0c1017]/95 backdrop-blur-md p-2 rounded-2xl border border-white/10 shadow-2xl flex items-center gap-1.5 overflow-x-auto scrollbar-none"
       >
-        <span className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider px-3 hidden md:inline">
-          Ir para:
-        </span>
-        {navItems.map((item) => (
-          <button
+        <span className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider px-3 hidden md:inline"><CmsText>{"Ir para:"}</CmsText></span>
+        <CmsText>{navItems.map((item) => (
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.button.10" key={item.id}><button
             key={item.id}
             id={item.testId}
             onClick={() => scrollToSection(item.id)}
             className="px-3 py-1.5 rounded-xl text-xs font-medium text-[#94a3b8] hover:text-white hover:bg-white/10 transition-all whitespace-nowrap active:scale-95 cursor-pointer"
           >
-            {item.label}
-          </button>
-        ))}
-      </nav>
+            <CmsText>{item.label}</CmsText>
+          </button></CmsElement>
+        ))}</CmsText>
+      </nav></CmsElement>
 
       {/* CONTINUOUS VERTICAL CONTENT FLOW (NO TABS, ZERO CLICKS) */}
 
       {/* SECTION 1: Modelos de Valuation */}
-      <section id="valuation" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.11"><section id="valuation" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              1. Modelos de Valuation & Preço Justo (Graham, Bazin, Gordon & DCF)
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"1. Modelos de Valuation & Preço Justo (Graham, Bazin, Gordon & DCF)"}</CmsText></h2>
           </div>
-          <Badge variant="emerald">Modelos Quantitativos</Badge>
+          <Badge variant="emerald"><CmsText>{"Modelos Quantitativos"}</CmsText></Badge>
         </div>
 
         <div
@@ -382,35 +358,27 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
         >
           {/* Benjamin Graham Model */}
           <div className="lg:col-span-6 flex flex-col gap-4">
-            <Card glow="emerald">
+            <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.12"><Card glow="emerald">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <span className="badge-neon badge-neon-emerald mb-2">
-                    Fórmula de Benjamin Graham
-                  </span>
-                  <h3 className="text-lg font-bold text-white tracking-tight">
-                    Preço Justo Intrínseco
-                  </h3>
-                  <p className="text-xs text-[#94a3b8] mt-1">
-                    Baseado na equação clássica: √(22,5 × LPA × VPA)
-                  </p>
+                  <span className="badge-neon badge-neon-emerald mb-2"><CmsText>{"Fórmula de Benjamin Graham"}</CmsText></span>
+                  <h3 className="text-lg font-bold text-white tracking-tight"><CmsText>{"Preço Justo Intrínseco"}</CmsText></h3>
+                  <p className="text-xs text-[#94a3b8] mt-1"><CmsText>{"Baseado na equação clássica: √(22,5 × LPA × VPA)"}</CmsText></p>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-black font-mono text-[var(--positive)]">
-                    {formatCurrency(dynamicGraham)}
+                    <CmsText>{formatCurrency(dynamicGraham)}</CmsText>
                   </div>
                   <div
                     className={`text-xs font-mono font-bold ${
                       dynamicGrahamUpside >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"
                     }`}
-                  >
-                    Upside: {formatPercent(dynamicGrahamUpside)}
+                  ><CmsText>{"Upside: "}</CmsText><CmsText>{formatPercent(dynamicGrahamUpside)}</CmsText>
                   </div>
-                  {dynamicGrahamMargin > 0 && (
-                    <div className="text-[10px] font-mono text-[#94a3b8]">
-                      Margem Segurança: {formatPercent(dynamicGrahamMargin)}
+                  <CmsText>{dynamicGrahamMargin > 0 && (
+                    <div className="text-[10px] font-mono text-[#94a3b8]"><CmsText>{"Margem Segurança: "}</CmsText><CmsText>{formatPercent(dynamicGrahamMargin)}</CmsText>
                     </div>
-                  )}
+                  )}</CmsText>
                 </div>
               </div>
 
@@ -418,12 +386,12 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
               <div className="flex flex-col gap-4 p-4 rounded-2xl bg-[#131926] border border-white/5 my-2">
                 <div>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-[#94a3b8]">Lucro Por Ação (LPA):</span>
+                    <span className="text-[#94a3b8]"><CmsText>{"Lucro Por Ação (LPA):"}</CmsText></span>
                     <span className="font-mono text-white font-bold">
-                      {formatCurrency(valuationData ? lpaInput : Number.NaN)}
+                      <CmsText>{formatCurrency(valuationData ? lpaInput : Number.NaN)}</CmsText>
                     </span>
                   </div>
-                  <input
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.13"><input
                     type="range"
                     min="1.0"
                     max="15.0"
@@ -431,17 +399,17 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={lpaInput}
                     onChange={(e) => setLpaInput(parseFloat(e.target.value))}
                     className="w-full accent-[#00f5a0] bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                  />
+                  /></CmsElement>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-[#94a3b8]">Valor Patrimonial Por Ação (VPA):</span>
+                    <span className="text-[#94a3b8]"><CmsText>{"Valor Patrimonial Por Ação (VPA):"}</CmsText></span>
                     <span className="font-mono text-white font-bold">
-                      {formatCurrency(valuationData ? vpaInput : Number.NaN)}
+                      <CmsText>{formatCurrency(valuationData ? vpaInput : Number.NaN)}</CmsText>
                     </span>
                   </div>
-                  <input
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.14"><input
                     type="range"
                     min="10.0"
                     max="60.0"
@@ -449,47 +417,37 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={vpaInput}
                     onChange={(e) => setVpaInput(parseFloat(e.target.value))}
                     className="w-full accent-[#00f5a0] bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                  />
+                  /></CmsElement>
                 </div>
               </div>
 
-              <div className="text-xs text-[#94a3b8] leading-relaxed mt-2">
-                O modelo de Graham estabelece que o múltiplo P/L × P/VP não deve ultrapassar 22,5 em empresas com estabilidade de lucros e margem de segurança conservadora.
-              </div>
-            </Card>
+              <div className="text-xs text-[#94a3b8] leading-relaxed mt-2"><CmsText>{"O modelo de Graham estabelece que o múltiplo P/L × P/VP não deve ultrapassar 22,5 em empresas com estabilidade de lucros e margem de segurança conservadora."}</CmsText></div>
+            </Card></CmsElement>
           </div>
 
           {/* Décio Bazin Model */}
           <div className="lg:col-span-6 flex flex-col gap-4">
-            <Card glow="cyan">
+            <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.15"><Card glow="cyan">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <span className="badge-neon badge-neon-cyan mb-2">
-                    Método Décio Bazin
-                  </span>
-                  <h3 className="text-lg font-bold text-white tracking-tight">
-                    Preço Teto de Compra
-                  </h3>
-                  <p className="text-xs text-[#94a3b8] mt-1">
-                    Preço Teto = DPA implícito ÷ Yield Mínimo Desejado (6%)
-                  </p>
+                  <span className="badge-neon badge-neon-cyan mb-2"><CmsText>{"Método Décio Bazin"}</CmsText></span>
+                  <h3 className="text-lg font-bold text-white tracking-tight"><CmsText>{"Preço Teto de Compra"}</CmsText></h3>
+                  <p className="text-xs text-[#94a3b8] mt-1"><CmsText>{"Preço Teto = DPA implícito ÷ Yield Mínimo Desejado (6%)"}</CmsText></p>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-black font-mono text-[#00d9f5]">
-                    {formatCurrency(dynamicBazin)}
+                    <CmsText>{formatCurrency(dynamicBazin)}</CmsText>
                   </div>
                   <div
                     className={`text-xs font-mono font-bold ${
                       dynamicBazinUpside >= 0 ? "text-[#00d9f5]" : "text-[var(--negative)]"
                     }`}
-                  >
-                    Upside: {formatPercent(dynamicBazinUpside)}
+                  ><CmsText>{"Upside: "}</CmsText><CmsText>{formatPercent(dynamicBazinUpside)}</CmsText>
                   </div>
-                  {dynamicBazinMargin > 0 && (
-                    <div className="text-[10px] font-mono text-[#94a3b8]">
-                      Desconto s/ Teto: {formatPercent(dynamicBazinMargin)}
+                  <CmsText>{dynamicBazinMargin > 0 && (
+                    <div className="text-[10px] font-mono text-[#94a3b8]"><CmsText>{"Desconto s/ Teto: "}</CmsText><CmsText>{formatPercent(dynamicBazinMargin)}</CmsText>
                     </div>
-                  )}
+                  )}</CmsText>
                 </div>
               </div>
 
@@ -497,12 +455,12 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
               <div className="flex flex-col gap-4 p-4 rounded-2xl bg-[#131926] border border-white/5 my-2">
                 <div>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-[#94a3b8]">Dividendo Médio Por Ação (DPA):</span>
+                    <span className="text-[#94a3b8]"><CmsText>{"Dividendo Médio Por Ação (DPA):"}</CmsText></span>
                     <span className="font-mono text-white font-bold">
-                      {formatCurrency(valuationData ? dpaInput : Number.NaN)}
+                      <CmsText>{formatCurrency(valuationData ? dpaInput : Number.NaN)}</CmsText>
                     </span>
                   </div>
-                  <input
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.16"><input
                     type="range"
                     min="1.0"
                     max="10.0"
@@ -510,17 +468,16 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={dpaInput}
                     onChange={(e) => setDpaInput(parseFloat(e.target.value))}
                     className="w-full accent-[#00d9f5] bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                  />
+                  /></CmsElement>
                 </div>
 
                 <div>
                   <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-[#94a3b8]">Taxa de Yield Mínimo Alvo:</span>
+                    <span className="text-[#94a3b8]"><CmsText>{"Taxa de Yield Mínimo Alvo:"}</CmsText></span>
                     <span className="font-mono text-white font-bold">
-                      {formatNumber(bazinYieldTarget * 100, 1)}% a.a.
-                    </span>
+                      <CmsText>{formatNumber(bazinYieldTarget * 100, 1)}</CmsText><CmsText>{"% a.a."}</CmsText></span>
                   </div>
-                  <input
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.17"><input
                     type="range"
                     min="0.04"
                     max="0.12"
@@ -528,44 +485,35 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={bazinYieldTarget}
                     onChange={(e) => setBazinYieldTarget(parseFloat(e.target.value))}
                     className="w-full accent-[#00d9f5] bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                  />
+                  /></CmsElement>
                 </div>
               </div>
 
-              <div className="text-xs text-[#94a3b8] leading-relaxed mt-2">
-                Décio Bazin preconizava pagar no máximo o valor que garante 6% de dividendo anual líquido, desde que a empresa apresente endividamento saudável e boa liquidez.
-              </div>
-            </Card>
+              <div className="text-xs text-[#94a3b8] leading-relaxed mt-2"><CmsText>{"Décio Bazin preconizava pagar no máximo o valor que garante 6% de dividendo anual líquido, desde que a empresa apresente endividamento saudável e boa liquidez."}</CmsText></div>
+            </Card></CmsElement>
           </div>
 
           {/* Gordon Model */}
           <div className="lg:col-span-6 flex flex-col gap-4">
-            <Card glow="violet">
+            <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.18"><Card glow="violet">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <span className="badge-neon badge-neon-violet mb-2">
-                    Modelo de Gordon (DDM)
-                  </span>
-                  <h3 className="text-lg font-bold text-white tracking-tight">
-                    Crescimento Perpétuo de Dividendos
-                  </h3>
+                  <span className="badge-neon badge-neon-violet mb-2"><CmsText>{"Modelo de Gordon (DDM)"}</CmsText></span>
+                  <h3 className="text-lg font-bold text-white tracking-tight"><CmsText>{"Crescimento Perpétuo de Dividendos"}</CmsText></h3>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-black font-mono text-[#a855f7]">
-                    {formatCurrency(dynamicGordon)}
+                    <CmsText>{formatCurrency(dynamicGordon)}</CmsText>
                   </div>
-                  <div className="text-xs font-mono font-bold text-[#a855f7]">
-                    Margem: {formatPercent(dynamicGordonUpside)}
+                  <div className="text-xs font-mono font-bold text-[#a855f7]"><CmsText>{"Margem: "}</CmsText><CmsText>{formatPercent(dynamicGordonUpside)}</CmsText>
                   </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 p-4 rounded-2xl bg-[#131926] border border-white/5">
                 <div>
-                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1">
-                    Crescimento (g)
-                  </label>
-                  <input
+                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1"><CmsText>{"Crescimento (g)"}</CmsText></label>
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.19"><input
                     type="range"
                     min="0.01"
                     max="0.08"
@@ -573,16 +521,13 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={gordonGrowth}
                     onChange={(e) => setGordonGrowth(parseFloat(e.target.value))}
                     className="w-full accent-[#a855f7] bg-white/10 h-1.5 rounded cursor-pointer"
-                  />
+                  /></CmsElement>
                   <span className="text-xs font-mono text-white block mt-1">
-                    {formatNumber(gordonGrowth * 100, 1)}%
-                  </span>
+                    <CmsText>{formatNumber(gordonGrowth * 100, 1)}</CmsText><CmsText>{"%"}</CmsText></span>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1">
-                    Custo de Capital (Ke)
-                  </label>
-                  <input
+                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1"><CmsText>{"Custo de Capital (Ke)"}</CmsText></label>
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.20"><input
                     type="range"
                     min="0.09"
                     max="0.18"
@@ -590,48 +535,39 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={gordonDiscount}
                     onChange={(e) => setGordonDiscount(parseFloat(e.target.value))}
                     className="w-full accent-[#a855f7] bg-white/10 h-1.5 rounded cursor-pointer"
-                  />
+                  /></CmsElement>
                   <span className="text-xs font-mono text-white block mt-1">
-                    {formatNumber(gordonDiscount * 100, 1)}%
-                  </span>
+                    <CmsText>{formatNumber(gordonDiscount * 100, 1)}</CmsText><CmsText>{"%"}</CmsText></span>
                 </div>
               </div>
-            </Card>
+            </Card></CmsElement>
           </div>
 
           {/* DCF Model */}
           <div className="lg:col-span-6 flex flex-col gap-4">
-            <Card glow="cyan">
+            <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.21"><Card glow="cyan">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <span className="badge-neon badge-neon-cyan mb-2">
-                    Fluxo de Caixa Descontado (DCF)
-                  </span>
-                  <h3 className="text-lg font-bold text-white tracking-tight">
-                    Valor Intrínseco 5 Anos + Perpetuidade
-                  </h3>
+                  <span className="badge-neon badge-neon-cyan mb-2"><CmsText>{"Fluxo de Caixa Descontado (DCF)"}</CmsText></span>
+                  <h3 className="text-lg font-bold text-white tracking-tight"><CmsText>{"Valor Intrínseco 5 Anos + Perpetuidade"}</CmsText></h3>
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-black font-mono text-[#00d9f5]">
-                    {formatCurrency(dynamicDcf)}
+                    <CmsText>{formatCurrency(dynamicDcf)}</CmsText>
                   </div>
-                  <div className={`text-xs font-mono font-bold ${dynamicDcfUpside >= 0 ? "text-[#00d9f5]" : "text-[var(--negative)]"}`}>
-                    Upside: {formatPercent(dynamicDcfUpside)}
+                  <div className={`text-xs font-mono font-bold ${dynamicDcfUpside >= 0 ? "text-[#00d9f5]" : "text-[var(--negative)]"}`}><CmsText>{"Upside: "}</CmsText><CmsText>{formatPercent(dynamicDcfUpside)}</CmsText>
                   </div>
-                  {dynamicDcfMargin > 0 && (
-                    <div className="text-[10px] font-mono text-[#94a3b8]">
-                      Margem Segurança: {formatPercent(dynamicDcfMargin)}
+                  <CmsText>{dynamicDcfMargin > 0 && (
+                    <div className="text-[10px] font-mono text-[#94a3b8]"><CmsText>{"Margem Segurança: "}</CmsText><CmsText>{formatPercent(dynamicDcfMargin)}</CmsText>
                     </div>
-                  )}
+                  )}</CmsText>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-2 p-4 rounded-2xl bg-[#131926] border border-white/5">
                 <div>
-                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1">
-                    Crescimento FCF
-                  </label>
-                  <input
+                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1"><CmsText>{"Crescimento FCF"}</CmsText></label>
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.22"><input
                     type="range"
                     min="0.02"
                     max="0.12"
@@ -639,16 +575,13 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={dcfGrowth5y}
                     onChange={(e) => setDcfGrowth5y(parseFloat(e.target.value))}
                     className="w-full accent-[#00d9f5] bg-white/10 h-1.5 rounded cursor-pointer"
-                  />
+                  /></CmsElement>
                   <span className="text-xs font-mono text-white block mt-1">
-                    {formatNumber(dcfGrowth5y * 100, 0)}%
-                  </span>
+                    <CmsText>{formatNumber(dcfGrowth5y * 100, 0)}</CmsText><CmsText>{"%"}</CmsText></span>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1">
-                    WACC
-                  </label>
-                  <input
+                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1"><CmsText>{"WACC"}</CmsText></label>
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.23"><input
                     type="range"
                     min="0.08"
                     max="0.16"
@@ -656,16 +589,13 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={dcfWacc}
                     onChange={(e) => setDcfWacc(parseFloat(e.target.value))}
                     className="w-full accent-[#00d9f5] bg-white/10 h-1.5 rounded cursor-pointer"
-                  />
+                  /></CmsElement>
                   <span className="text-xs font-mono text-white block mt-1">
-                    {formatNumber(dcfWacc * 100, 1)}%
-                  </span>
+                    <CmsText>{formatNumber(dcfWacc * 100, 1)}</CmsText><CmsText>{"%"}</CmsText></span>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1">
-                    Crescimento Perpétuo
-                  </label>
-                  <input
+                  <label className="text-[10px] text-[#94a3b8] uppercase block mb-1"><CmsText>{"Crescimento Perpétuo"}</CmsText></label>
+                  <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.24"><input
                     type="range"
                     min="0.02"
                     max="0.05"
@@ -673,27 +603,24 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     value={dcfTerminalGrowth}
                     onChange={(e) => setDcfTerminalGrowth(parseFloat(e.target.value))}
                     className="w-full accent-[#00d9f5] bg-white/10 h-1.5 rounded cursor-pointer"
-                  />
+                  /></CmsElement>
                   <span className="text-xs font-mono text-white block mt-1">
-                    {formatNumber(dcfTerminalGrowth * 100, 1)}%
-                  </span>
+                    <CmsText>{formatNumber(dcfTerminalGrowth * 100, 1)}</CmsText><CmsText>{"%"}</CmsText></span>
                 </div>
               </div>
-            </Card>
+            </Card></CmsElement>
           </div>
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 2: Oceans14 10-Year Statement Matrix */}
-      <section id="matriz-10a" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.25"><section id="matriz-10a" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              2. Matriz Contábil Padronizada Oceans14 (Série Histórica 10 Anos)
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"2. Matriz Contábil Padronizada Oceans14 (Série Histórica 10 Anos)"}</CmsText></h2>
           </div>
-          <Badge variant="cyan">Demonstrações disponíveis</Badge>
+          <Badge variant="cyan"><CmsText>{"Demonstrações disponíveis"}</CmsText></Badge>
         </div>
 
         <div
@@ -704,168 +631,152 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
         >
           <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#131926]/40 border border-white/5">
             <div>
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Matriz Contábil Padronizada Oceans14 (10 Anos)
-              </span>
-              <p className="text-[11px] text-[#94a3b8] mt-0.5">
-                Série informada pela fonte. Confira período, unidade e metodologia antes de comparar.
-              </p>
+              <span className="text-xs font-bold text-white uppercase tracking-wider"><CmsText>{"Matriz Contábil Padronizada Oceans14 (10 Anos)"}</CmsText></span>
+              <p className="text-[11px] text-[#94a3b8] mt-0.5"><CmsText>{"Série informada pela fonte. Confira período, unidade e metodologia antes de comparar."}</CmsText></p>
             </div>
             <div className="flex items-center gap-2">
-              <button
+              <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.button.26"><button
                 onClick={() => setMatrixPeriod("ANUAL")}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   matrixPeriod === "ANUAL"
                     ? "bg-[#00f5a0] text-black shadow-[0_0_15px_rgba(0,245,160,0.4)]"
                     : "bg-white/5 text-[#94a3b8] hover:bg-white/10 hover:text-white"
                 }`}
-              >
-                Anual Consolidado
-              </button>
-              <button
+              ><CmsText>{"Anual Consolidado"}</CmsText></button></CmsElement>
+              <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.button.27"><button
                 onClick={() => setMatrixPeriod("TRIMESTRAL")}
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   matrixPeriod === "TRIMESTRAL"
                     ? "bg-[#00f5a0] text-black shadow-[0_0_15px_rgba(0,245,160,0.4)]"
                     : "bg-white/5 text-[#94a3b8] hover:bg-white/10 hover:text-white"
                 }`}
-              >
-                Trimestral
-              </button>
+              ><CmsText>{"Trimestral"}</CmsText></button></CmsElement>
             </div>
           </div>
 
           {/* DRE Matrix */}
-          <Card glow="none" className="p-0 overflow-hidden">
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.28"><Card glow="none" className="p-0 overflow-hidden">
             <div className="p-3.5 bg-[#131926]/70 border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                DRE — Demonstração do Resultado do Exercício (R$ Milhões)
-              </span>
-              <Badge variant="cyan">Regime de Competência</Badge>
+              <span className="text-xs font-bold text-white uppercase tracking-wider"><CmsText>{"DRE — Demonstração do Resultado do Exercício (R$ Milhões)"}</CmsText></span>
+              <Badge variant="cyan"><CmsText>{"Regime de Competência"}</CmsText></Badge>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[11px] font-mono">
                 <thead>
                   <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/90 font-sans">
-                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10">Conta Contábil</th>
-                    {(financialMatrix?.years ?? []).map((y) => (
-                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]">{y}</th>
-                    ))}
+                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10"><CmsText>{"Conta Contábil"}</CmsText></th>
+                    <CmsText>{(financialMatrix?.years ?? []).map((y) => (
+                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]"><CmsText>{y}</CmsText></th>
+                    ))}</CmsText>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {(financialMatrix?.dre ?? []).map((row, idx) => (
+                  <CmsText>{(financialMatrix?.dre ?? []).map((row, idx) => (
                     <tr key={idx} className={`hover:bg-white/[0.02] ${row.is_total ? "font-bold text-white bg-white/[0.01]" : "text-[#94a3b8]"}`}>
                       <td className={`py-2 pl-4 sticky left-0 bg-[#0a0e17] z-10 font-sans ${row.indentation_level ? "pl-8 text-[#94a3b8]" : ""}`}>
-                        {row.account_name}
+                        <CmsText>{row.account_name}</CmsText>
                       </td>
-                      {(financialMatrix?.years ?? []).map((y) => {
+                      <CmsText>{(financialMatrix?.years ?? []).map((y) => {
                         const val = row.values_by_year[y];
                         const isNeg = val !== null && val !== undefined && val < 0;
                         return (
                           <td key={y} className={`py-2 px-3 text-right ${isNeg ? "text-[var(--negative)]" : ""}`}>
-                            {val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}
+                            <CmsText>{val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}</CmsText>
                           </td>
                         );
-                      })}
+                      })}</CmsText>
                     </tr>
-                  ))}
+                  ))}</CmsText>
                 </tbody>
               </table>
             </div>
-          </Card>
+          </Card></CmsElement>
 
           {/* Balance Sheet Matrix */}
-          <Card glow="none" className="p-0 overflow-hidden">
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.29"><Card glow="none" className="p-0 overflow-hidden">
             <div className="p-3.5 bg-[#131926]/70 border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                Balanço Patrimonial — Ativo, Passivo & Patrimônio Líquido (R$ Milhões)
-              </span>
-              <Badge variant="violet">Estrutura de Capital</Badge>
+              <span className="text-xs font-bold text-white uppercase tracking-wider"><CmsText>{"Balanço Patrimonial — Ativo, Passivo & Patrimônio Líquido (R$ Milhões)"}</CmsText></span>
+              <Badge variant="violet"><CmsText>{"Estrutura de Capital"}</CmsText></Badge>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[11px] font-mono">
                 <thead>
                   <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/90 font-sans">
-                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10">Conta Patrimonial</th>
-                    {(financialMatrix?.years ?? []).map((y) => (
-                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]">{y}</th>
-                    ))}
+                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10"><CmsText>{"Conta Patrimonial"}</CmsText></th>
+                    <CmsText>{(financialMatrix?.years ?? []).map((y) => (
+                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]"><CmsText>{y}</CmsText></th>
+                    ))}</CmsText>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {(financialMatrix?.balance_sheet ?? []).map((row, idx) => (
+                  <CmsText>{(financialMatrix?.balance_sheet ?? []).map((row, idx) => (
                     <tr key={idx} className={`hover:bg-white/[0.02] ${row.is_total ? "font-bold text-white bg-white/[0.01]" : "text-[#94a3b8]"}`}>
                       <td className={`py-2 pl-4 sticky left-0 bg-[#0a0e17] z-10 font-sans ${row.indentation_level ? "pl-8 text-[#94a3b8]" : ""}`}>
-                        {row.account_name}
+                        <CmsText>{row.account_name}</CmsText>
                       </td>
-                      {(financialMatrix?.years ?? []).map((y) => {
+                      <CmsText>{(financialMatrix?.years ?? []).map((y) => {
                         const val = row.values_by_year[y];
                         return (
                           <td key={y} className="py-2 px-3 text-right">
-                            {val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}
+                            <CmsText>{val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}</CmsText>
                           </td>
                         );
-                      })}
+                      })}</CmsText>
                     </tr>
-                  ))}
+                  ))}</CmsText>
                 </tbody>
               </table>
             </div>
-          </Card>
+          </Card></CmsElement>
 
           {/* Cash Flow Matrix */}
-          <Card glow="none" className="p-0 overflow-hidden">
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.30"><Card glow="none" className="p-0 overflow-hidden">
             <div className="p-3.5 bg-[#131926]/70 border-b border-white/5 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">
-                DFC — Demonstração do Fluxo de Caixa & Caixa Livre (R$ Milhões)
-              </span>
-              <Badge variant="emerald">Geração de Caixa</Badge>
+              <span className="text-xs font-bold text-white uppercase tracking-wider"><CmsText>{"DFC — Demonstração do Fluxo de Caixa & Caixa Livre (R$ Milhões)"}</CmsText></span>
+              <Badge variant="emerald"><CmsText>{"Geração de Caixa"}</CmsText></Badge>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-[11px] font-mono">
                 <thead>
                   <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/90 font-sans">
-                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10">Fluxo de Caixa</th>
-                    {(financialMatrix?.years ?? []).map((y) => (
-                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]">{y}</th>
-                    ))}
+                    <th className="py-2.5 pl-4 min-w-[240px] sticky left-0 bg-[#131926] z-10"><CmsText>{"Fluxo de Caixa"}</CmsText></th>
+                    <CmsText>{(financialMatrix?.years ?? []).map((y) => (
+                      <th key={y} className="py-2.5 px-3 text-right min-w-[100px]"><CmsText>{y}</CmsText></th>
+                    ))}</CmsText>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {(financialMatrix?.cash_flow ?? []).map((row, idx) => (
+                  <CmsText>{(financialMatrix?.cash_flow ?? []).map((row, idx) => (
                     <tr key={idx} className={`hover:bg-white/[0.02] ${row.is_total ? "font-bold text-[var(--positive)]" : "text-[#94a3b8]"}`}>
                       <td className="py-2 pl-4 sticky left-0 bg-[#0a0e17] z-10 font-sans">
-                        {row.account_name}
+                        <CmsText>{row.account_name}</CmsText>
                       </td>
-                      {(financialMatrix?.years ?? []).map((y) => {
+                      <CmsText>{(financialMatrix?.years ?? []).map((y) => {
                         const val = row.values_by_year[y];
                         const isNeg = val !== null && val !== undefined && val < 0;
                         return (
                           <td key={y} className={`py-2 px-3 text-right ${isNeg ? "text-[var(--negative)]" : ""}`}>
-                            {val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}
+                            <CmsText>{val !== null && val !== undefined ? (val / 1_000_000).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "—"}</CmsText>
                           </td>
                         );
-                      })}
+                      })}</CmsText>
                     </tr>
-                  ))}
+                  ))}</CmsText>
                 </tbody>
               </table>
             </div>
-          </Card>
+          </Card></CmsElement>
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 3: Monthly Dividend Matrix (Jan-Dez) */}
-      <section id="grade-proventos" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.31"><section id="grade-proventos" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#00f5a0]" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              3. Grade Mensal de Proventos & Sazonalidade (Jan a Dez)
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"3. Grade Mensal de Proventos & Sazonalidade (Jan a Dez)"}</CmsText></h2>
           </div>
-          <Badge variant="emerald">Sazonalidade Oceans14</Badge>
+          <Badge variant="emerald"><CmsText>{"Sazonalidade Oceans14"}</CmsText></Badge>
         </div>
 
         <div
@@ -873,78 +784,72 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
           id="panel-GRADE_PROVENTOS"
           aria-labelledby="tab-GRADE_PROVENTOS"
         >
-          <Card glow="emerald" className="p-0 overflow-hidden">
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.32"><Card glow="emerald" className="p-0 overflow-hidden">
             <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#131926]/40">
               <div>
-                <span className="text-xs font-bold text-white uppercase tracking-wider">
-                  Grade Histórica de Proventos por Mês de Pagamento (Jan a Dez)
-                </span>
-                <p className="text-[11px] text-[#94a3b8] mt-0.5">
-                  Valores nominais por ação distribuídos por competência de desembolso financeiro efetivo.
-                </p>
+                <span className="text-xs font-bold text-white uppercase tracking-wider"><CmsText>{"Grade Histórica de Proventos por Mês de Pagamento (Jan a Dez)"}</CmsText></span>
+                <p className="text-[11px] text-[#94a3b8] mt-0.5"><CmsText>{"Valores nominais por ação distribuídos por competência de desembolso financeiro efetivo."}</CmsText></p>
               </div>
-              <Badge variant="emerald">Sazonalidade Oceans14</Badge>
+              <Badge variant="emerald"><CmsText>{"Sazonalidade Oceans14"}</CmsText></Badge>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-mono">
                 <thead>
                   <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
-                    <th className="py-3 pl-4">Ano</th>
-                    <th className="py-3 text-right">Jan</th>
-                    <th className="py-3 text-right">Fev</th>
-                    <th className="py-3 text-right">Mar</th>
-                    <th className="py-3 text-right">Abr</th>
-                    <th className="py-3 text-right">Mai</th>
-                    <th className="py-3 text-right">Jun</th>
-                    <th className="py-3 text-right">Jul</th>
-                    <th className="py-3 text-right">Ago</th>
-                    <th className="py-3 text-right">Set</th>
-                    <th className="py-3 text-right">Out</th>
-                    <th className="py-3 text-right">Nov</th>
-                    <th className="py-3 text-right">Dez</th>
-                    <th className="py-3 text-right font-bold text-white">Total Anual</th>
-                    <th className="py-3 text-right pr-4 text-[#00d9f5]">Yield informado pela fonte</th>
+                    <th className="py-3 pl-4"><CmsText>{"Ano"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Jan"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Fev"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Mar"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Abr"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Mai"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Jun"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Jul"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Ago"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Set"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Out"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Nov"}</CmsText></th>
+                    <th className="py-3 text-right"><CmsText>{"Dez"}</CmsText></th>
+                    <th className="py-3 text-right font-bold text-white"><CmsText>{"Total Anual"}</CmsText></th>
+                    <th className="py-3 text-right pr-4 text-[#00d9f5]"><CmsText>{"Yield informado pela fonte"}</CmsText></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {(dividendMatrix?.matrix ?? []).map((row) => (
+                  <CmsText>{(dividendMatrix?.matrix ?? []).map((row) => (
                     <tr key={row.year} className="hover:bg-white/[0.02]">
-                      <td className="py-2.5 pl-4 font-bold text-white font-sans">{row.year}</td>
-                      {row.months.map((m, mIdx) => (
+                      <td className="py-2.5 pl-4 font-bold text-white font-sans"><CmsText>{row.year}</CmsText></td>
+                      <CmsText>{row.months.map((m, mIdx) => (
                         <td key={mIdx} className="py-2.5 text-right text-white">
-                          {m !== null && m !== undefined ? (
-                            <span className="text-[var(--positive)] font-bold">{formatCurrency(m)}</span>
+                          <CmsText>{m !== null && m !== undefined ? (
+                            <span className="text-[var(--positive)] font-bold"><CmsText>{formatCurrency(m)}</CmsText></span>
                           ) : (
-                            <span className="text-[#94a3b8]">—</span>
-                          )}
+                            <span className="text-[#94a3b8]"><CmsText>{"—"}</CmsText></span>
+                          )}</CmsText>
                         </td>
-                      ))}
+                      ))}</CmsText>
                       <td className="py-2.5 text-right font-bold text-white">
-                        {formatCurrency(row.annual_total)}
+                        <CmsText>{formatCurrency(row.annual_total)}</CmsText>
                       </td>
                       <td className="py-2.5 text-right pr-4 font-bold text-[#00d9f5]">
-                        {row.yield_on_cost_pct > 0 ? formatPercent(row.yield_on_cost_pct, false) : "—"}
+                        <CmsText>{row.yield_on_cost_pct > 0 ? formatPercent(row.yield_on_cost_pct, false) : "—"}</CmsText>
                       </td>
                     </tr>
-                  ))}
+                  ))}</CmsText>
                 </tbody>
               </table>
             </div>
-          </Card>
+          </Card></CmsElement>
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 4: Daily Historical Quotes & Chart */}
-      <section id="cotacao-historica" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.33"><section id="cotacao-historica" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-blue-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              4. Cotações Diárias & Histórico de Negociação B3
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"4. Cotações Diárias & Histórico de Negociação B3"}</CmsText></h2>
           </div>
-          <Badge variant="outline">Série Oficial Diária B3</Badge>
+          <Badge variant="outline"><CmsText>{"Série Oficial Diária B3"}</CmsText></Badge>
         </div>
 
         <div
@@ -952,20 +857,18 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
           id="panel-COTACAO_HISTORICA"
           aria-labelledby="tab-COTACAO_HISTORICA"
         >
-          <StockPriceHistorySection ticker={ticker} />
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.StockPriceHistorySection.34"><StockPriceHistorySection ticker={ticker} /></CmsElement>
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 5: Fundamentus Fundamentals */}
-      <section id="fundamentos" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.35"><section id="fundamentos" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              5. Indicadores Fundamentalistas & Múltiplos de Mercado (Fundamentus)
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"5. Indicadores Fundamentalistas & Múltiplos de Mercado (Fundamentus)"}</CmsText></h2>
           </div>
-          <Badge variant="amber">24 Indicadores Contábeis</Badge>
+          <Badge variant="amber"><CmsText>{"24 Indicadores Contábeis"}</CmsText></Badge>
         </div>
 
         <div
@@ -973,24 +876,21 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
           id="panel-FUNDAMENTOS"
           aria-labelledby="tab-FUNDAMENTOS"
         >
-          {completeDetails ? <StockFundamentalsGrid data={completeDetails} /> :
-            <SectionState loading={loading} error={errors.details || (!loading ? "Fundamentos indisponíveis." : null)} onRetry={() => setRevision(n => n + 1)} />}
+          <CmsText>{completeDetails ? <StockFundamentalsGrid data={completeDetails} /> :
+            <SectionState loading={loading} error={errors.details || (!loading ? "Fundamentos indisponíveis." : null)} onRetry={() => setRevision(n => n + 1)} />}</CmsText>
 
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 6: Checklist */}
-      <section id="checklist" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.36"><section id="checklist" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              6. Checklist Buy & Hold do Investidor
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"6. Checklist Buy & Hold do Investidor"}</CmsText></h2>
           </div>
           <Badge variant="emerald">
-            {checklistItems.filter((c) => c.passed).length} de {checklistItems.length} Aprovados
-          </Badge>
+            <CmsText>{checklistItems.filter((c) => c.passed).length}</CmsText><CmsText>{" de "}</CmsText><CmsText>{checklistItems.length}</CmsText><CmsText>{" Aprovados"}</CmsText></Badge>
         </div>
 
         <div
@@ -998,23 +898,18 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
           id="panel-CHECKLIST"
           aria-labelledby="tab-CHECKLIST"
         >
-          <Card glow="emerald">
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.37"><Card glow="emerald">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <span className="badge-neon badge-neon-emerald mb-2">
-                  Critérios analíticos
-                </span>
-                <h3 className="text-xl font-bold text-white tracking-tight">
-                  Critérios Rigorosos de Elegibilidade Patrimonial
-                </h3>
+                <span className="badge-neon badge-neon-emerald mb-2"><CmsText>{"Critérios analíticos"}</CmsText></span>
+                <h3 className="text-xl font-bold text-white tracking-tight"><CmsText>{"Critérios Rigorosos de Elegibilidade Patrimonial"}</CmsText></h3>
               </div>
               <Badge variant="emerald">
-                {checklistItems.filter((c) => c.passed).length} de {checklistItems.length} Aprovados
-              </Badge>
+                <CmsText>{checklistItems.filter((c) => c.passed).length}</CmsText><CmsText>{" de "}</CmsText><CmsText>{checklistItems.length}</CmsText><CmsText>{" Aprovados"}</CmsText></Badge>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {checklistItems.map((item) => (
+              <CmsText>{checklistItems.map((item) => (
                 <div
                   key={item.id}
                   className="p-4 rounded-2xl bg-[#131926] border border-white/5 flex flex-col justify-between"
@@ -1022,42 +917,38 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-2">
                       <span className="text-xs font-bold text-white">
-                        {item.title}
+                        <CmsText>{item.title}</CmsText>
                       </span>
                       <Badge variant={item.passed ? "emerald" : "crimson"} dot>
-                        {item.passed ? "Aprovado" : "Reprovado"}
+                        <CmsText>{item.passed ? "Aprovado" : "Reprovado"}</CmsText>
                       </Badge>
                     </div>
                     <p className="text-xs text-[#94a3b8] mb-3 leading-relaxed">
-                      {item.explanation}
+                      <CmsText>{item.explanation}</CmsText>
                     </p>
                   </div>
 
                   <div className="flex justify-between items-center pt-3 border-t border-white/5 text-xs font-mono">
-                    <span className="text-[#94a3b8]">
-                      Meta: <span className="text-white">{item.targetValue}</span>
+                    <span className="text-[#94a3b8]"><CmsText>{"Meta: "}</CmsText><span className="text-white"><CmsText>{item.targetValue}</CmsText></span>
                     </span>
-                    <span className="text-[var(--positive)] font-bold">
-                      Apurado: {item.metricValue}
+                    <span className="text-[var(--positive)] font-bold"><CmsText>{"Apurado: "}</CmsText><CmsText>{item.metricValue}</CmsText>
                     </span>
                   </div>
                 </div>
-              ))}
+              ))}</CmsText>
             </div>
-          </Card>
+          </Card></CmsElement>
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 7: DRE */}
-      <section id="dre" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.38"><section id="dre" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              7. Demonstração do Resultado do Exercício (DRE 5 Anos)
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"7. Demonstração do Resultado do Exercício (DRE 5 Anos)"}</CmsText></h2>
           </div>
-          <Badge variant="cyan">Fonte documental não verificada</Badge>
+          <Badge variant="cyan"><CmsText>{"Fonte documental não verificada"}</CmsText></Badge>
         </div>
 
         <div
@@ -1065,121 +956,113 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
           id="panel-DRE"
           aria-labelledby="tab-DRE"
         >
-          <Card glow="cyan">
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.39"><Card glow="cyan">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <span className="badge-neon badge-neon-cyan mb-2">
-                  Demonstração do Resultado do Exercício
-                </span>
-                <h3 className="text-xl font-bold text-white tracking-tight">
-                  Evolução Contábil Consolidada (Últimos 5 Exercícios)
-                </h3>
+                <span className="badge-neon badge-neon-cyan mb-2"><CmsText>{"Demonstração do Resultado do Exercício"}</CmsText></span>
+                <h3 className="text-xl font-bold text-white tracking-tight"><CmsText>{"Evolução Contábil Consolidada (Últimos 5 Exercícios)"}</CmsText></h3>
               </div>
-              <Badge variant="cyan">Fonte documental não verificada</Badge>
+              <Badge variant="cyan"><CmsText>{"Fonte documental não verificada"}</CmsText></Badge>
             </div>
 
-            {dreChartData.length > 0 && (
+            <CmsText>{dreChartData.length > 0 && (
               <div className="mb-6 p-4 rounded-2xl bg-[#131926] border border-white/5">
-                <div className="text-xs font-bold text-[#94a3b8] uppercase tracking-wider mb-2">
-                  Receita Líquida vs. Lucro Líquido (R$ Bilhões)
-                </div>
-                <BarChart
+                <div className="text-xs font-bold text-[#94a3b8] uppercase tracking-wider mb-2"><CmsText>{"Receita Líquida vs. Lucro Líquido (R$ Bilhões)"}</CmsText></div>
+                <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.BarChart.40"><BarChart
                   data={dreChartData.map((d) => ({
                     label: d.label,
                     value: d.value / 1_000_000_000,
                     secondaryValue: (d.secondaryValue ?? 0) / 1_000_000_000,
                   }))}
                   height={160}
-                />
+                /></CmsElement>
               </div>
-            )}
+            )}</CmsText>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px]">
-                    <th className="pb-3 pl-2">Rubrica Contábil</th>
-                    {dreEntries.map((entry) => (
+                    <th className="pb-3 pl-2"><CmsText>{"Rubrica Contábil"}</CmsText></th>
+                    <CmsText>{dreEntries.map((entry) => (
                       <th key={entry.year} className="pb-3 text-right">
-                        {entry.year}
+                        <CmsText>{entry.year}</CmsText>
                       </th>
-                    ))}
+                    ))}</CmsText>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5 mono-nums">
                   <tr>
-                    <td className="py-2.5 pl-2 text-white font-medium">Receita Líquida</td>
-                    {dreEntries.map((e) => (
+                    <td className="py-2.5 pl-2 text-white font-medium"><CmsText>{"Receita Líquida"}</CmsText></td>
+                    <CmsText>{dreEntries.map((e) => (
                       <td key={e.year} className="py-2.5 text-right text-white">
-                        {formatCurrency(e.netRevenue, true)}
+                        <CmsText>{formatCurrency(e.netRevenue, true)}</CmsText>
                       </td>
-                    ))}
+                    ))}</CmsText>
                   </tr>
                   <tr>
-                    <td className="py-2.5 pl-2 text-[#94a3b8]">Custos (CPV)</td>
-                    {dreEntries.map((e) => (
+                    <td className="py-2.5 pl-2 text-[#94a3b8]"><CmsText>{"Custos (CPV)"}</CmsText></td>
+                    <CmsText>{dreEntries.map((e) => (
                       <td key={e.year} className="py-2.5 text-right text-[var(--negative)]">
-                        {formatCurrency(e.cogs, true)}
+                        <CmsText>{formatCurrency(e.cogs, true)}</CmsText>
                       </td>
-                    ))}
+                    ))}</CmsText>
                   </tr>
                   <tr>
-                    <td className="py-2.5 pl-2 text-white font-medium">Lucro Bruto</td>
-                    {dreEntries.map((e) => (
+                    <td className="py-2.5 pl-2 text-white font-medium"><CmsText>{"Lucro Bruto"}</CmsText></td>
+                    <CmsText>{dreEntries.map((e) => (
                       <td key={e.year} className="py-2.5 text-right text-[#00d9f5]">
-                        {formatCurrency(e.grossProfit, true)}
+                        <CmsText>{formatCurrency(e.grossProfit, true)}</CmsText>
                       </td>
-                    ))}
+                    ))}</CmsText>
                   </tr>
                   <tr>
-                    <td className="py-2.5 pl-2 text-white font-semibold">EBITDA</td>
-                    {dreEntries.map((e) => (
+                    <td className="py-2.5 pl-2 text-white font-semibold"><CmsText>{"EBITDA"}</CmsText></td>
+                    <CmsText>{dreEntries.map((e) => (
                       <td key={e.year} className="py-2.5 text-right text-[var(--positive)] font-bold">
-                        {formatCurrency(e.ebitda, true)}
+                        <CmsText>{formatCurrency(e.ebitda, true)}</CmsText>
                       </td>
-                    ))}
+                    ))}</CmsText>
                   </tr>
                   <tr>
-                    <td className="py-2.5 pl-2 text-[#94a3b8]">Resultado Financeiro</td>
-                    {dreEntries.map((e) => (
+                    <td className="py-2.5 pl-2 text-[#94a3b8]"><CmsText>{"Resultado Financeiro"}</CmsText></td>
+                    <CmsText>{dreEntries.map((e) => (
                       <td key={e.year} className="py-2.5 text-right text-[#94a3b8]">
-                        {formatCurrency(e.financialResult, true)}
+                        <CmsText>{formatCurrency(e.financialResult, true)}</CmsText>
                       </td>
-                    ))}
+                    ))}</CmsText>
                   </tr>
                   <tr className="font-bold text-white bg-white/[0.02]">
-                    <td className="py-3 pl-2 text-[var(--positive)]">Lucro Líquido Consolidado</td>
-                    {dreEntries.map((e) => (
+                    <td className="py-3 pl-2 text-[var(--positive)]"><CmsText>{"Lucro Líquido Consolidado"}</CmsText></td>
+                    <CmsText>{dreEntries.map((e) => (
                       <td key={e.year} className="py-3 text-right text-[var(--positive)]">
-                        {formatCurrency(e.netIncome, true)}
+                        <CmsText>{formatCurrency(e.netIncome, true)}</CmsText>
                       </td>
-                    ))}
+                    ))}</CmsText>
                   </tr>
                   <tr>
-                    <td className="py-2.5 pl-2 text-[#94a3b8]">Margem Líquida</td>
-                    {dreEntries.map((e) => (
+                    <td className="py-2.5 pl-2 text-[#94a3b8]"><CmsText>{"Margem Líquida"}</CmsText></td>
+                    <CmsText>{dreEntries.map((e) => (
                       <td key={e.year} className="py-2.5 text-right text-white font-medium">
-                        {formatPercent(e.netMarginPct, false)}
+                        <CmsText>{formatPercent(e.netMarginPct, false)}</CmsText>
                       </td>
-                    ))}
+                    ))}</CmsText>
                   </tr>
                 </tbody>
               </table>
             </div>
-          </Card>
+          </Card></CmsElement>
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 8: Proventos */}
-      <section id="proventos" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.41"><section id="proventos" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#00f5a0]" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              8. Histórico Detalhado de Proventos, Dividendos & JCP
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"8. Histórico Detalhado de Proventos, Dividendos & JCP"}</CmsText></h2>
           </div>
-          <Badge variant="emerald">{dividendEntries.length} Eventos Corporativos</Badge>
+          <Badge variant="emerald"><CmsText>{dividendEntries.length}</CmsText><CmsText>{" Eventos Corporativos"}</CmsText></Badge>
         </div>
 
         <div
@@ -1187,74 +1070,66 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
           id="panel-PROVENTOS"
           aria-labelledby="tab-PROVENTOS"
         >
-          <Card glow="emerald">
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.42"><Card glow="emerald">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <div>
-                <span className="badge-neon badge-neon-emerald mb-2">
-                  Remuneração aos Acionistas
-                </span>
-                <h3 className="text-xl font-bold text-white tracking-tight">
-                  Histórico de Dividendos & JCP
-                </h3>
+                <span className="badge-neon badge-neon-emerald mb-2"><CmsText>{"Remuneração aos Acionistas"}</CmsText></span>
+                <h3 className="text-xl font-bold text-white tracking-tight"><CmsText>{"Histórico de Dividendos & JCP"}</CmsText></h3>
               </div>
-              <button
+              <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.button.43"><button
                 onClick={() => {
                   window.open(`/api/v1/stocks/${ticker}/dividends/export`, "_blank");
                 }}
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition-all cursor-pointer self-start sm:self-auto"
-              >
-                📥 Exportar Histórico CSV
-              </button>
+              ><CmsText>{"📥 Exportar Histórico CSV"}</CmsText></button></CmsElement>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px]">
-                    <th className="pb-3 pl-2">Tipo</th>
-                    <th className="pb-3">Mês Ref.</th>
-                    <th className="pb-3">Data-Com</th>
-                    <th className="pb-3">Pagamento</th>
-                    <th className="pb-3 text-right">Valor por Ação</th>
-                    <th className="pb-3 text-right pr-2">Yield informado pela fonte</th>
+                    <th className="pb-3 pl-2"><CmsText>{"Tipo"}</CmsText></th>
+                    <th className="pb-3"><CmsText>{"Mês Ref."}</CmsText></th>
+                    <th className="pb-3"><CmsText>{"Data-Com"}</CmsText></th>
+                    <th className="pb-3"><CmsText>{"Pagamento"}</CmsText></th>
+                    <th className="pb-3 text-right"><CmsText>{"Valor por Ação"}</CmsText></th>
+                    <th className="pb-3 text-right pr-2"><CmsText>{"Yield informado pela fonte"}</CmsText></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5 mono-nums">
-                  {dividendEntries.map((div) => (
+                  <CmsText>{dividendEntries.map((div) => (
                     <tr key={div.id} className="hover:bg-white/[0.02]">
                       <td className="py-3 pl-2">
                         <Badge variant={div.type === "DIVIDENDO" ? "emerald" : "cyan"}>
-                          {div.type}
+                          <CmsText>{div.type}</CmsText>
                         </Badge>
                       </td>
-                      <td className="py-3 text-white">{div.referenceMonth}</td>
-                      <td className="py-3 text-[#94a3b8]">{div.dateCom}</td>
-                      <td className="py-3 text-[#94a3b8]">{div.paymentDate}</td>
+                      <td className="py-3 text-white"><CmsText>{div.referenceMonth}</CmsText></td>
+                      <td className="py-3 text-[#94a3b8]"><CmsText>{div.dateCom}</CmsText></td>
+                      <td className="py-3 text-[#94a3b8]"><CmsText>{div.paymentDate}</CmsText></td>
                       <td className="py-3 text-right font-bold text-white">
-                        {formatCurrency(div.valuePerShare, false, 4)}
+                        <CmsText>{formatCurrency(div.valuePerShare, false, 4)}</CmsText>
                       </td>
                       <td className="py-3 text-right pr-2 font-bold text-[var(--positive)]">
-                        {formatPercent(div.yieldOnCostPct, false)}
+                        <CmsText>{formatPercent(div.yieldOnCostPct, false)}</CmsText>
                       </td>
                     </tr>
-                  ))}
+                  ))}</CmsText>
                 </tbody>
               </table>
             </div>
-          </Card>
+          </Card></CmsElement>
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 9: Technical Analysis */}
-      <section id="tecnica" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.44"><section id="tecnica" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              9. Análise Técnica, Médias Móveis, Suportes & Pivôs
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"9. Análise Técnica, Médias Móveis, Suportes & Pivôs"}</CmsText></h2>
           </div>
-          <Badge variant="cyan">Timeframe Diário</Badge>
+          <Badge variant="cyan"><CmsText>{"Timeframe Diário"}</CmsText></Badge>
         </div>
 
         <div
@@ -1264,102 +1139,94 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
           className="grid grid-cols-1 lg:grid-cols-12 gap-6"
         >
           <div className="lg:col-span-6">
-            <Card glow="cyan">
+            <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.45"><Card glow="cyan">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-white tracking-tight">
-                  Suportes e Resistências (Pivôs)
-                </h3>
-                <Badge variant="cyan">Timeframe Diário</Badge>
+                <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Suportes e Resistências (Pivôs)"}</CmsText></h3>
+                <Badge variant="cyan"><CmsText>{"Timeframe Diário"}</CmsText></Badge>
               </div>
 
               <div className="flex flex-col gap-2.5 mono-nums text-xs">
                 <div className="flex justify-between p-2 rounded bg-white/[0.02] border border-white/5 text-[var(--negative)]">
-                  <span>Resistência R2</span>
-                  <span className="font-bold">{formatCurrency(technical?.resistance2 ?? Number.NaN)}</span>
+                  <span><CmsText>{"Resistência R2"}</CmsText></span>
+                  <span className="font-bold"><CmsText>{formatCurrency(technical?.resistance2 ?? Number.NaN)}</CmsText></span>
                 </div>
                 <div className="flex justify-between p-2 rounded bg-white/[0.02] border border-white/5 text-[var(--negative)]">
-                  <span>Resistência R1</span>
-                  <span className="font-bold">{formatCurrency(technical?.resistance1 ?? Number.NaN)}</span>
+                  <span><CmsText>{"Resistência R1"}</CmsText></span>
+                  <span className="font-bold"><CmsText>{formatCurrency(technical?.resistance1 ?? Number.NaN)}</CmsText></span>
                 </div>
                 <div className="flex justify-between p-2.5 rounded bg-[rgba(0,217,245,0.08)] border border-[rgba(0,217,245,0.3)] text-white">
-                  <span className="font-bold">Ponto de Pivô Central (PP)</span>
-                  <span className="font-bold text-[#00d9f5]">{formatCurrency(technical?.pivotPoint ?? Number.NaN)}</span>
+                  <span className="font-bold"><CmsText>{"Ponto de Pivô Central (PP)"}</CmsText></span>
+                  <span className="font-bold text-[#00d9f5]"><CmsText>{formatCurrency(technical?.pivotPoint ?? Number.NaN)}</CmsText></span>
                 </div>
                 <div className="flex justify-between p-2 rounded bg-white/[0.02] border border-white/5 text-[var(--positive)]">
-                  <span>Suporte S1</span>
-                  <span className="font-bold">{formatCurrency(technical?.support1 ?? Number.NaN)}</span>
+                  <span><CmsText>{"Suporte S1"}</CmsText></span>
+                  <span className="font-bold"><CmsText>{formatCurrency(technical?.support1 ?? Number.NaN)}</CmsText></span>
                 </div>
                 <div className="flex justify-between p-2 rounded bg-white/[0.02] border border-white/5 text-[var(--positive)]">
-                  <span>Suporte S2</span>
-                  <span className="font-bold">{formatCurrency(technical?.support2 ?? Number.NaN)}</span>
+                  <span><CmsText>{"Suporte S2"}</CmsText></span>
+                  <span className="font-bold"><CmsText>{formatCurrency(technical?.support2 ?? Number.NaN)}</CmsText></span>
                 </div>
               </div>
-            </Card>
+            </Card></CmsElement>
           </div>
 
           <div className="lg:col-span-6">
-            <Card glow="emerald">
+            <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.46"><Card glow="emerald">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-white tracking-tight">
-                  Matriz de Indicadores Técnicos
-                </h3>
+                <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Matriz de Indicadores Técnicos"}</CmsText></h3>
                 <Badge variant="emerald" dot>
-                  {technical?.summarySignal ?? "Indisponível"}
+                  <CmsText>{technical?.summarySignal ?? "Indisponível"}</CmsText>
                 </Badge>
               </div>
 
               <div className="grid grid-cols-3 gap-2 mb-4 text-center">
                 <div className="p-2 rounded bg-[rgba(0,245,160,0.08)] border border-[rgba(0,245,160,0.2)]">
-                  <span className="text-[10px] text-[var(--positive)] uppercase font-bold">Compra</span>
+                  <span className="text-[10px] text-[var(--positive)] uppercase font-bold"><CmsText>{"Compra"}</CmsText></span>
                   <div className="text-lg font-black text-[var(--positive)] font-mono">
-                    {technical?.buySignalsCount ?? "—"}
+                    <CmsText>{technical?.buySignalsCount ?? "—"}</CmsText>
                   </div>
                 </div>
                 <div className="p-2 rounded bg-white/[0.02] border border-white/5">
-                  <span className="text-[10px] text-[#94a3b8] uppercase font-bold">Neutro</span>
+                  <span className="text-[10px] text-[#94a3b8] uppercase font-bold"><CmsText>{"Neutro"}</CmsText></span>
                   <div className="text-lg font-black text-white font-mono">
-                    {technical?.neutralSignalsCount ?? "—"}
+                    <CmsText>{technical?.neutralSignalsCount ?? "—"}</CmsText>
                   </div>
                 </div>
                 <div className="p-2 rounded bg-[rgba(255,59,105,0.08)] border border-[rgba(255,59,105,0.2)]">
-                  <span className="text-[10px] text-[var(--negative)] uppercase font-bold">Venda</span>
+                  <span className="text-[10px] text-[var(--negative)] uppercase font-bold"><CmsText>{"Venda"}</CmsText></span>
                   <div className="text-lg font-black text-[var(--negative)] font-mono">
-                    {technical?.sellSignalsCount ?? "—"}
+                    <CmsText>{technical?.sellSignalsCount ?? "—"}</CmsText>
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-col gap-2 text-xs">
                 <div className="flex justify-between py-1.5 border-b border-white/5">
-                  <span className="text-[#94a3b8]">IFR / RSI (14 períodos):</span>
-                  <span className="font-mono text-white font-bold">{technical?.rsi14 ?? "—"}</span>
+                  <span className="text-[#94a3b8]"><CmsText>{"IFR / RSI (14 períodos):"}</CmsText></span>
+                  <span className="font-mono text-white font-bold"><CmsText>{technical?.rsi14 ?? "—"}</CmsText></span>
                 </div>
                 <div className="flex justify-between py-1.5 border-b border-white/5">
-                  <span className="text-[#94a3b8]">MACD (12, 26, 9):</span>
-                  <span className="font-mono text-[var(--positive)] font-bold">{technical?.macd ?? "Indisponível"}</span>
+                  <span className="text-[#94a3b8]"><CmsText>{"MACD (12, 26, 9):"}</CmsText></span>
+                  <span className="font-mono text-[var(--positive)] font-bold"><CmsText>{technical?.macd ?? "Indisponível"}</CmsText></span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-[#94a3b8]">Estocástico Lento:</span>
-                  <span className="font-mono text-white font-bold">{technical?.stochastic ?? "—"}</span>
+                  <span className="text-[#94a3b8]"><CmsText>{"Estocástico Lento:"}</CmsText></span>
+                  <span className="font-mono text-white font-bold"><CmsText>{technical?.stochastic ?? "—"}</CmsText></span>
                 </div>
               </div>
-            </Card>
+            </Card></CmsElement>
           </div>
         </div>
-      </section>
+      </section></CmsElement>
 
       {/* SECTION 10: AI Committee */}
-      <section id="ia" className="scroll-mt-24 flex flex-col gap-3">
+      <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.47"><section id="ia" className="scroll-mt-24 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-violet-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
-              10. Parecer do Comitê de Inteligência Artificial & Matriz SWOT
-            </h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"10. Parecer do Comitê de Inteligência Artificial & Matriz SWOT"}</CmsText></h2>
           </div>
-          <Badge variant="violet">
-            Confiança: {aiVerdict?.confidenceScore ?? "—"}%
-          </Badge>
+          <Badge variant="violet"><CmsText>{"Confiança: "}</CmsText><CmsText>{aiVerdict?.confidenceScore ?? "—"}</CmsText><CmsText>{"%"}</CmsText></Badge>
         </div>
 
         <div
@@ -1367,55 +1234,47 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
           id="panel-IA"
           aria-labelledby="tab-IA"
         >
-          <Card glow="violet">
+          <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.48"><Card glow="violet">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
                 <span className="w-3 h-3 rounded-full bg-[#a855f7] animate-pulse" />
-                <h3 className="text-lg font-bold text-white tracking-tight">
-                  Parecer do Comitê de Inteligência Artificial
-                </h3>
+                <h3 className="text-lg font-bold text-white tracking-tight"><CmsText>{"Parecer do Comitê de Inteligência Artificial"}</CmsText></h3>
               </div>
-              <Badge variant="violet">
-                Confiança: {aiVerdict?.confidenceScore ?? "—"}%
-              </Badge>
+              <Badge variant="violet"><CmsText>{"Confiança: "}</CmsText><CmsText>{aiVerdict?.confidenceScore ?? "—"}</CmsText><CmsText>{"%"}</CmsText></Badge>
             </div>
 
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 mb-6">
               <p className="text-xs text-[#f0f4f8] leading-relaxed">
-                {aiVerdict?.executiveSummary ?? "Análise indisponível. Não há parecer validado para este instrumento."}
+                <CmsText>{aiVerdict?.executiveSummary ?? "Análise indisponível. Não há parecer validado para este instrumento."}</CmsText>
               </p>
             </div>
 
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#94a3b8] mb-3">
-              Matriz SWOT Sintetizada
-            </h4>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-[#94a3b8] mb-3"><CmsText>{"Matriz SWOT Sintetizada"}</CmsText></h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
                 <span className="text-xs font-bold text-[var(--positive)] flex items-center gap-1.5 mb-2">
-                  <span>✓</span> Forças (Strengths)
-                </span>
+                  <span><CmsText>{"✓"}</CmsText></span><CmsText>{" Forças (Strengths)"}</CmsText></span>
                 <ul className="text-xs text-[#94a3b8] space-y-1.5 list-disc list-inside">
-                  {(aiVerdict?.swot?.strengths ?? []).map((s, i) => (
-                    <li key={i}>{s}</li>
-                  ))}
+                  <CmsText>{(aiVerdict?.swot?.strengths ?? []).map((s, i) => (
+                    <li key={i}><CmsText>{s}</CmsText></li>
+                  ))}</CmsText>
                 </ul>
               </div>
 
               <div className="p-4 rounded-xl bg-white/[0.02] border border-white/5">
                 <span className="text-xs font-bold text-[var(--negative)] flex items-center gap-1.5 mb-2">
-                  <span>⚠</span> Fraquezas (Weaknesses)
-                </span>
+                  <span><CmsText>{"⚠"}</CmsText></span><CmsText>{" Fraquezas (Weaknesses)"}</CmsText></span>
                 <ul className="text-xs text-[#94a3b8] space-y-1.5 list-disc list-inside">
-                  {(aiVerdict?.swot?.weaknesses ?? []).map((w, i) => (
-                    <li key={i}>{w}</li>
-                  ))}
+                  <CmsText>{(aiVerdict?.swot?.weaknesses ?? []).map((w, i) => (
+                    <li key={i}><CmsText>{w}</CmsText></li>
+                  ))}</CmsText>
                 </ul>
               </div>
             </div>
-          </Card>
+          </Card></CmsElement>
         </div>
-      </section>
+      </section></CmsElement>
     </div>
   );
 }

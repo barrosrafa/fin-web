@@ -1,3 +1,5 @@
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React from "react";
 
 export interface SourceComparisonItem {
@@ -43,37 +45,29 @@ export const DivergenceExplainerModal: React.FC<DivergenceExplainerProps> = ({
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
           <div>
             <div className="flex items-center gap-2">
-              <h4 className="text-base font-semibold text-slate-100">
-                Por que meu número não bate?
-              </h4>
+              <h4 className="text-base font-semibold text-slate-100"><CmsText>{"Por que meu número não bate?"}</CmsText></h4>
               <span className="text-xs font-mono font-bold text-cyan-400">
-                {ticker} • {metricName}
+                <CmsText>{ticker}</CmsText><CmsText>{" • "}</CmsText><CmsText>{metricName}</CmsText>
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Reconciliação e Taxonomia de Divergência Multi-Fonte
-            </p>
+            <p className="text-xs text-slate-400 mt-0.5"><CmsText>{"Reconciliação e Taxonomia de Divergência Multi-Fonte"}</CmsText></p>
           </div>
-          <button
+          <CmsElement feature="ui.components/reconciliation/DivergenceExplainerModal.button.1"><button
             type="button"
             onClick={onClose}
             className="text-slate-400 hover:text-slate-200 text-xl leading-none"
-          >
-            &times;
-          </button>
+          ><CmsText>{"×"}</CmsText></button></CmsElement>
         </div>
 
         {/* Taxonomy Badge */}
         <div className="my-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <span className="text-xs font-semibold text-amber-300 uppercase tracking-wider font-mono">
-              Causa Classificada: {taxonomyCode}
+            <span className="text-xs font-semibold text-amber-300 uppercase tracking-wider font-mono"><CmsText>{"Causa Classificada: "}</CmsText><CmsText>{taxonomyCode}</CmsText>
             </span>
           </div>
           <p className="text-xs text-amber-200/90 font-medium">
-            {taxonomyDisplayName} (Discrepância de {deltaPct.toFixed(1)}%)
-          </p>
+            <CmsText>{taxonomyDisplayName}</CmsText><CmsText>{" (Discrepância de "}</CmsText><CmsText>{deltaPct.toFixed(1)}</CmsText><CmsText>{"%)"}</CmsText></p>
         </div>
 
         {/* Side-by-Side Sources Table */}
@@ -81,49 +75,42 @@ export const DivergenceExplainerModal: React.FC<DivergenceExplainerProps> = ({
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-950 text-slate-400 uppercase font-mono text-[10px] border-b border-slate-800">
               <tr>
-                <th className="py-2.5 px-3">Fonte</th>
-                <th className="py-2.5 px-3 text-right">Valor</th>
-                <th className="py-2.5 px-3">Metodologia Declarada</th>
+                <th className="py-2.5 px-3"><CmsText>{"Fonte"}</CmsText></th>
+                <th className="py-2.5 px-3 text-right"><CmsText>{"Valor"}</CmsText></th>
+                <th className="py-2.5 px-3"><CmsText>{"Metodologia Declarada"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-slate-300">
-              {sources.map((s) => (
+              <CmsText>{sources.map((s) => (
                 <tr key={s.source} className={s.isAnchor ? "bg-cyan-950/20" : ""}>
                   <td className="py-2.5 px-3 font-medium flex items-center gap-1.5">
-                    {s.source}
-                    {s.isAnchor && (
-                      <span className="text-[9px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1 rounded font-mono">
-                        ÂNCORA
-                      </span>
-                    )}
+                    <CmsText>{s.source}</CmsText>
+                    <CmsText>{s.isAnchor && (
+                      <span className="text-[9px] bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1 rounded font-mono"><CmsText>{"ÂNCORA"}</CmsText></span>
+                    )}</CmsText>
                   </td>
                   <td className="py-2.5 px-3 text-right font-mono font-semibold text-slate-100">
-                    {s.value.toFixed(2)}%
-                  </td>
-                  <td className="py-2.5 px-3 text-slate-400 text-[11px]">{s.methodology}</td>
+                    <CmsText>{s.value.toFixed(2)}</CmsText><CmsText>{"%"}</CmsText></td>
+                  <td className="py-2.5 px-3 text-slate-400 text-[11px]"><CmsText>{s.methodology}</CmsText></td>
                 </tr>
-              ))}
+              ))}</CmsText>
             </tbody>
           </table>
         </div>
 
         {/* Consensus Interval */}
         <div className="bg-slate-950 p-3 rounded-lg border border-slate-800 flex items-center justify-between text-xs font-mono">
-          <span className="text-slate-400">Intervalo de Consenso:</span>
-          <span className="text-slate-200 font-semibold">
-            [{consensusRange.min.toFixed(2)}% — {consensusRange.max.toFixed(2)}%] (Spread: {consensusRange.iqr.toFixed(2)}%)
-          </span>
+          <span className="text-slate-400"><CmsText>{"Intervalo de Consenso:"}</CmsText></span>
+          <span className="text-slate-200 font-semibold"><CmsText>{"["}</CmsText><CmsText>{consensusRange.min.toFixed(2)}</CmsText><CmsText>{"% — "}</CmsText><CmsText>{consensusRange.max.toFixed(2)}</CmsText><CmsText>{"%] (Spread: "}</CmsText><CmsText>{consensusRange.iqr.toFixed(2)}</CmsText><CmsText>{"%)"}</CmsText></span>
         </div>
 
         {/* Footer */}
         <div className="mt-5 flex justify-end">
-          <button
+          <CmsElement feature="ui.components/reconciliation/DivergenceExplainerModal.button.2"><button
             type="button"
             onClick={onClose}
             className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition"
-          >
-            Entendido
-          </button>
+          ><CmsText>{"Entendido"}</CmsText></button></CmsElement>
         </div>
       </div>
     </div>

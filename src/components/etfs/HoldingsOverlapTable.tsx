@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText } from "@/components/content/Cms";
 import React from "react";
 import { Badge } from "@/components/ui/Badge";
 import { HoldingOverlapItem } from "@/schemas/financial";
@@ -24,21 +26,17 @@ export function HoldingsOverlapTable({
       {/* Header Stat */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#0a0f1d] border border-white/5">
         <div>
-          <div className="text-xs text-[#64748b]">Sobreposição Efetiva de Carteira</div>
+          <div className="text-xs text-[#64748b]"><CmsText>{"Sobreposição Efetiva de Carteira"}</CmsText></div>
           <div className="text-2xl font-black text-white mono-nums mt-0.5">
-            {totalOverlapPct.toFixed(1)}%
-          </div>
-          <p className="text-xs text-[#94a3b8] mt-1">
-            Fração do patrimônio líquido alocada simultaneamente nos mesmos ativos subjacentes.
-          </p>
+            <CmsText>{totalOverlapPct.toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></div>
+          <p className="text-xs text-[#94a3b8] mt-1"><CmsText>{"Fração do patrimônio líquido alocada simultaneamente nos mesmos ativos subjacentes."}</CmsText></p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant={totalOverlapPct > 50 ? "crimson" : "cyan"}>
-            {totalOverlapPct > 50 ? "Alta Redundância" : "Diversificação Eficiente"}
+            <CmsText>{totalOverlapPct > 50 ? "Alta Redundância" : "Diversificação Eficiente"}</CmsText>
           </Badge>
           <span className="text-xs text-[#94a3b8] mono-nums">
-            {commonCount} ativos em comum
-          </span>
+            <CmsText>{commonCount}</CmsText><CmsText>{" ativos em comum"}</CmsText></span>
         </div>
       </div>
 
@@ -47,32 +45,29 @@ export function HoldingsOverlapTable({
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-              <th className="py-3 pl-3">Ativo Subjacente</th>
-              <th className="py-3 text-right font-mono text-[#00f5a0]">{tickerA}</th>
-              <th className="py-3 text-right font-mono text-[#00d9f5]">{tickerB}</th>
-              <th className="py-3 text-right pr-3 text-white">Sobreposição Min</th>
+              <th className="py-3 pl-3"><CmsText>{"Ativo Subjacente"}</CmsText></th>
+              <th className="py-3 text-right font-mono text-[#00f5a0]"><CmsText>{tickerA}</CmsText></th>
+              <th className="py-3 text-right font-mono text-[#00d9f5]"><CmsText>{tickerB}</CmsText></th>
+              <th className="py-3 text-right pr-3 text-white"><CmsText>{"Sobreposição Min"}</CmsText></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5 mono-nums">
-            {items.map((item) => (
+            <CmsText>{items.map((item) => (
               <tr key={item.codigo} className="hover:bg-white/[0.02]">
                 <td className="py-3 pl-3">
-                  <span className="font-bold text-white">{item.codigo}</span>
+                  <span className="font-bold text-white"><CmsText>{item.codigo}</CmsText></span>
                   <span className="text-[11px] text-[#64748b] block font-sans">
-                    {item.nome}
+                    <CmsText>{item.nome}</CmsText>
                   </span>
                 </td>
                 <td className="py-3 text-right font-bold text-white">
-                  {item.peso_a.toFixed(1)}%
-                </td>
+                  <CmsText>{item.peso_a.toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
                 <td className="py-3 text-right font-bold text-white">
-                  {item.peso_b.toFixed(1)}%
-                </td>
+                  <CmsText>{item.peso_b.toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
                 <td className="py-3 text-right pr-3 font-bold text-[#f59e0b]">
-                  {item.overlap_min.toFixed(1)}%
-                </td>
+                  <CmsText>{item.overlap_min.toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
               </tr>
-            ))}
+            ))}</CmsText>
           </tbody>
         </table>
       </div>

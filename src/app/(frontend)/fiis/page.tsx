@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect, useCallback } from "react";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
@@ -77,52 +79,46 @@ export default function FIIsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="badge-neon badge-neon-emerald">Mercado Imobiliário B3</span>
-            <span className="text-xs text-[#94a3b8]">FIIs & Fiagros</span>
+            <span className="badge-neon badge-neon-emerald"><CmsText>{"Mercado Imobiliário B3"}</CmsText></span>
+            <span className="text-xs text-[#94a3b8]"><CmsText>{"FIIs & Fiagros"}</CmsText></span>
             <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
-              {total > 0 ? `${total} Fundos no Banco` : "606 Fundos no Banco"}
+              <CmsText>{total > 0 ? `${total} Fundos no Banco` : "606 Fundos no Banco"}</CmsText>
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-            Fundos de Investimento Imobiliário (FIIs)
-          </h1>
-          <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-            Cockpit imobiliário com dados de ativos físicos SiiLA, radar de vacância física/financeira, Brick Score em 6 eixos e cronograma de contratos de locação.
-          </p>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Fundos de Investimento Imobiliário (FIIs)"}</CmsText></h1>
+          <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Cockpit imobiliário com dados de ativos físicos SiiLA, radar de vacância física/financeira, Brick Score em 6 eixos e cronograma de contratos de locação."}</CmsText></p>
         </div>
 
-        <Button href="/comparador" variant="cyan">
-          Comparar FIIs
-        </Button>
+        <Button href="/comparador" variant="cyan"><CmsText>{"Comparar FIIs"}</CmsText></Button>
       </div>
 
       {/* Top 3 Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/fiis/page.MetricCard.1"><MetricCard
           title="Maior Rendimento Anualizado"
           value={highestDYFII ? `${highestDYFII.ticker} • ${formatPercent(highestDYFII.dividendYield, false)}` : "KEVE11 • 36,2%"}
           subtitle="Rendimentos isentos de IR para pessoa física"
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/fiis/page.MetricCard.2"><MetricCard
           title="Maior Desconto Patrimonial"
           value={lowestPvpFII ? `${lowestPvpFII.ticker} • ${formatMultiple(lowestPvpFII.pvp)}` : "HGLG11 • 0,91x"}
           subtitle="Desconto em relação ao valor patrimonial por cota"
           glow="cyan"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/fiis/page.MetricCard.3"><MetricCard
           title="Benchmark de Mercado"
           value="IFIX • 3.763 pts"
           subtitle="Índice de Fundos de Investimentos Imobiliários"
           glow="violet"
-        />
+        /></CmsElement>
       </div>
 
       {/* Filters & Search */}
-      <Card>
+      <CmsElement feature="ui.app/-frontend-/fiis/page.Card.4"><Card>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="relative flex-1">
-            <input
+            <CmsElement feature="ui.app/-frontend-/fiis/page.input.5"><input
               id="fiis-search"
               name="search"
               aria-label="Buscar FIIs por ticker ou nome"
@@ -131,21 +127,19 @@ export default function FIIsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#94a3b8] focus:outline-none focus:border-[#00f5a0] transition-colors"
-            />
-            {search && (
-              <button
+            /></CmsElement>
+            <CmsText>{search && (
+              <CmsElement feature="ui.app/-frontend-/fiis/page.button.6"><button
                 type="button"
                 onClick={() => setSearch("")}
                 className="absolute right-3 top-2 text-xs text-[#94a3b8] hover:text-white"
-              >
-                ✕
-              </button>
-            )}
+              ><CmsText>{"✕"}</CmsText></button></CmsElement>
+            )}</CmsText>
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            {subsectors.map((sub) => (
-              <button
+            <CmsText>{subsectors.map((sub) => (
+              <CmsElement feature="ui.app/-frontend-/fiis/page.button.7" key={sub}><button
                 key={sub}
                 type="button"
                 onClick={() => setSelectedSubsector(sub)}
@@ -155,98 +149,89 @@ export default function FIIsPage() {
                     : "bg-white/5 text-[#94a3b8] hover:text-white hover:bg-white/10"
                 }`}
               >
-                {sub}
-              </button>
-            ))}
+                <CmsText>{sub}</CmsText>
+              </button></CmsElement>
+            ))}</CmsText>
           </div>
         </div>
 
         {/* Counter feedback */}
         <div className="mt-3 flex items-center justify-between text-[11px] text-[#94a3b8]">
           <span>
-            {loading
+            <CmsText>{loading
               ? "Consultando banco de dados..."
-              : `Exibindo ${fiis.length} de ${total} FIIs ${search ? `para "${search}"` : ""}`}
+              : `Exibindo ${fiis.length} de ${total} FIIs ${search ? `para "${search}"` : ""}`}</CmsText>
           </span>
-          {hasMore && !loading && (
-            <span className="text-[var(--positive)]">Role para carregar mais automaticamente ↓</span>
-          )}
+          <CmsText>{hasMore && !loading && (
+            <span className="text-[var(--positive)]"><CmsText>{"Role para carregar mais automaticamente ↓"}</CmsText></span>
+          )}</CmsText>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {fiis.map((fii) => {
+        <CmsText>{fiis.map((fii) => {
           const isPositive = fii.change24h >= 0;
           return (
-            <Card key={fii.ticker} glow="emerald" className="flex flex-col justify-between">
+            <CmsElement feature="ui.app/-frontend-/fiis/page.Card.8" key={fii.ticker}><Card key={fii.ticker} glow="emerald" className="flex flex-col justify-between">
               <div>
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-xl font-black text-white tracking-tight">
-                        {fii.ticker}
+                        <CmsText>{fii.ticker}</CmsText>
                       </span>
-                      {fii.badge && (
+                      <CmsText>{fii.badge && (
                         <Badge variant="emerald" className="text-[10px]">
-                          {fii.badge}
+                          <CmsText>{fii.badge}</CmsText>
                         </Badge>
-                      )}
+                      )}</CmsText>
                     </div>
                     <div className="text-xs text-[#94a3b8] font-medium truncate max-w-[220px]">
-                      {fii.name}
+                      <CmsText>{fii.name}</CmsText>
                     </div>
                     <div className="text-[11px] text-[#94a3b8] mt-0.5">
-                      {fii.sector} • {fii.subsector}
+                      <CmsText>{fii.sector}</CmsText><CmsText>{" • "}</CmsText><CmsText>{fii.subsector}</CmsText>
                     </div>
                   </div>
 
                   <div className="text-right">
                     <div className="text-lg font-bold font-mono text-white">
-                      {formatCurrency(fii.currentPrice)}
+                      <CmsText>{formatCurrency(fii.currentPrice)}</CmsText>
                     </div>
                     <div
                       className={`text-xs font-mono font-medium ${
                         isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                       }`}
                     >
-                      {formatPercent(fii.change24h)}
+                      <CmsText>{formatPercent(fii.change24h)}</CmsText>
                     </div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 my-4 p-3 rounded-xl bg-[#131926] border border-white/5 text-center">
                   <div>
-                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
-                      D.Y. (12M)
-                    </div>
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold"><CmsText>{"D.Y. (12M)"}</CmsText></div>
                     <div className="text-xs font-bold font-mono text-[var(--positive)] mt-0.5">
-                      {formatPercent(fii.dividendYield, false)}
+                      <CmsText>{formatPercent(fii.dividendYield, false)}</CmsText>
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
-                      P/VP
-                    </div>
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold"><CmsText>{"P/VP"}</CmsText></div>
                     <div className="text-xs font-bold font-mono text-white mt-0.5">
-                      {formatMultiple(fii.pvp)}
+                      <CmsText>{formatMultiple(fii.pvp)}</CmsText>
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
-                      Liquidez
-                    </div>
-                    <div className="text-xs font-bold font-mono text-white mt-0.5">
-                      Alta B3
-                    </div>
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold"><CmsText>{"Liquidez"}</CmsText></div>
+                    <div className="text-xs font-bold font-mono text-white mt-0.5"><CmsText>{"Alta B3"}</CmsText></div>
                   </div>
                 </div>
 
                 <div className="mb-4">
                   <div className="text-[10px] text-[#94a3b8] mb-1 font-semibold flex justify-between">
-                    <span>Tendência 5D</span>
-                    <span className="font-mono text-white">
-                      12M: {formatPercent(fii.change12m)}
+                    <span><CmsText>{"Tendência 5D"}</CmsText></span>
+                    <span className="font-mono text-white"><CmsText>{"12M: "}</CmsText><CmsText>{formatPercent(fii.change12m)}</CmsText>
                     </span>
                   </div>
                   <Sparkline
@@ -261,12 +246,10 @@ export default function FIIsPage() {
                 href={`/fiis/${fii.ticker}`}
                 variant="primary"
                 className="w-full justify-center text-xs mt-2"
-              >
-                Inspecionar Imóveis & Brick Score ↗
-              </Button>
-            </Card>
+              ><CmsText>{"Inspecionar Imóveis & Brick Score ↗"}</CmsText></Button>
+            </Card></CmsElement>
           );
-        })}
+        })}</CmsText>
       </div>
 
       {/* Infinite Scroll Footer / Loader / Sentinel */}

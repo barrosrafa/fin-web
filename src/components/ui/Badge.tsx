@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React from "react";
 
 interface BadgeProps {
@@ -37,12 +39,12 @@ export function Badge({
 
   return (
     <span className={`badge-neon ${variantClasses[variant]} ${className}`}>
-      {dot && (
+      <CmsText>{dot && (
         <span
           className={`w-1.5 h-1.5 rounded-full ${dotColors[variant]} animate-pulse`}
         />
-      )}
-      {children}
+      )}</CmsText>
+      <CmsText>{children}</CmsText>
     </span>
   );
 }

@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React, { Suspense } from "react";
 import { FundDetailClient } from "./FundDetailClient";
 
@@ -20,9 +22,7 @@ export default async function FundDetailPage({
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono">
-          Carregando cockpit analítico CVM 175 do fundo {id}...
-        </div>
+        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono"><CmsText>{"Carregando cockpit analítico CVM 175 do fundo "}</CmsText><CmsText>{id}</CmsText><CmsText>{"..."}</CmsText></div>
       }
     >
       <FundDetailClient fundId={id} />

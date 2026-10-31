@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -198,197 +200,182 @@ export function ComparadorClient() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-emerald">Análise Multiativo B3</span>
-          <span className="text-xs text-[#64748b]">Até 4 Ativos Lado a Lado</span>
+          <span className="badge-neon badge-neon-emerald"><CmsText>{"Análise Multiativo B3"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Até 4 Ativos Lado a Lado"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Comparador Avançado de Ativos
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-          Compare múltiplos fundamentalistas, retorno acumulado, governança e alavancagem com regras estritas de elegibilidade financeira por classe.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Comparador Avançado de Ativos"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Compare múltiplos fundamentalistas, retorno acumulado, governança e alavancagem com regras estritas de elegibilidade financeira por classe."}</CmsText></p>
       </div>
 
       {/* Selectors Card (Up to 4 Assets) */}
-      <Card glow="cyan">
+      <CmsElement feature="ui.app/-frontend-/comparador/ComparadorClient.Card.1"><Card glow="cyan">
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs uppercase font-bold text-[#64748b]">
-              Ativos em Comparação ({selectedTickers.length}/4)
-            </span>
-            {selectedTickers.length < 4 && (
-              <button
+            <span className="text-xs uppercase font-bold text-[#64748b]"><CmsText>{"Ativos em Comparação ("}</CmsText><CmsText>{selectedTickers.length}</CmsText><CmsText>{"/4)"}</CmsText></span>
+            <CmsText>{selectedTickers.length < 4 && (
+              <CmsElement feature="ui.app/-frontend-/comparador/ComparadorClient.button.2"><button
                 type="button"
                 onClick={handleAddAsset}
                 className="text-xs px-3 py-1.5 rounded-lg bg-white/10 hover:bg-[#00f5a0] hover:text-black text-white font-bold transition-all"
-              >
-                + Adicionar Ativo
-              </button>
-            )}
+              ><CmsText>{"+ Adicionar Ativo"}</CmsText></button></CmsElement>
+            )}</CmsText>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {selectedTickers.map((ticker, idx) => (
+            <CmsText>{selectedTickers.map((ticker, idx) => (
               <div key={idx} className="flex flex-col gap-1 relative">
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-[11px] uppercase font-bold text-[#64748b]">
-                    Ativo {String.fromCharCode(65 + idx)}
+                  <label className="text-[11px] uppercase font-bold text-[#64748b]"><CmsText>{"Ativo "}</CmsText><CmsText>{String.fromCharCode(65 + idx)}</CmsText>
                   </label>
-                  {selectedTickers.length > 2 && (
-                    <button
+                  <CmsText>{selectedTickers.length > 2 && (
+                    <CmsElement feature="ui.app/-frontend-/comparador/ComparadorClient.button.3"><button
                       type="button"
                       onClick={() => handleRemoveAsset(idx)}
                       className="text-[11px] text-[#ff3b69] hover:underline"
-                    >
-                      Remover ✕
-                    </button>
-                  )}
+                    ><CmsText>{"Remover ✕"}</CmsText></button></CmsElement>
+                  )}</CmsText>
                 </div>
 
-                <select
+                <CmsElement feature="ui.app/-frontend-/comparador/ComparadorClient.select.4"><select
                   value={ticker}
                   onChange={(e) => handleTickerChange(idx, e.target.value)}
                   className="w-full bg-[#131926] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-bold font-mono focus:outline-none focus:border-[#00f5a0]"
                 >
-                  {assets.map((a) => (
+                  <CmsText>{assets.map((a) => (
                     <option key={a.ticker} value={a.ticker}>
-                      {a.ticker} — {a.name} ({a.type})
-                    </option>
-                  ))}
-                </select>
+                      <CmsText>{a.ticker}</CmsText><CmsText>{" — "}</CmsText><CmsText>{a.name}</CmsText><CmsText>{" ("}</CmsText><CmsText>{a.type}</CmsText><CmsText>{")"}</CmsText></option>
+                  ))}</CmsText>
+                </select></CmsElement>
               </div>
-            ))}
+            ))}</CmsText>
           </div>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Multiples Comparison Table */}
-      <Card>
+      <CmsElement feature="ui.app/-frontend-/comparador/ComparadorClient.Card.5"><Card>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-2">Indicador / Métrica</th>
-                {comparedAssets.map((asset, i) => (
+                <th className="pb-3 pl-2"><CmsText>{"Indicador / Métrica"}</CmsText></th>
+                <CmsText>{comparedAssets.map((asset, i) => (
                   <th
                     key={asset.ticker}
                     className="pb-3 text-right font-bold"
                     style={{ color: colors[i % colors.length] }}
                   >
-                    {asset.ticker}
+                    <CmsText>{asset.ticker}</CmsText>
                   </th>
-                ))}
-                <th className="pb-3 text-center pr-2">Vencedor Relativo</th>
+                ))}</CmsText>
+                <th className="pb-3 text-center pr-2"><CmsText>{"Vencedor Relativo"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 mono-nums">
               {/* Cotação Atual */}
               <tr>
-                <td className="py-3 pl-2 text-white font-medium">Cotação Atual</td>
-                {comparedAssets.map((asset) => (
+                <td className="py-3 pl-2 text-white font-medium"><CmsText>{"Cotação Atual"}</CmsText></td>
+                <CmsText>{comparedAssets.map((asset) => (
                   <td key={asset.ticker} className="py-3 text-right text-white font-bold">
-                    {formatCurrency(asset.currentPrice)}
+                    <CmsText>{formatCurrency(asset.currentPrice)}</CmsText>
                   </td>
-                ))}
-                <td className="py-3 text-center pr-2 text-[#94a3b8]">—</td>
+                ))}</CmsText>
+                <td className="py-3 text-center pr-2 text-[#94a3b8]"><CmsText>{"—"}</CmsText></td>
               </tr>
 
               {/* Dividend Yield */}
               <tr>
-                <td className="py-3 pl-2 text-white font-medium">Dividend Yield (12M)</td>
-                {comparedAssets.map((asset, i) => (
+                <td className="py-3 pl-2 text-white font-medium"><CmsText>{"Dividend Yield (12M)"}</CmsText></td>
+                <CmsText>{comparedAssets.map((asset, i) => (
                   <td
                     key={asset.ticker}
                     className="py-3 text-right font-bold"
                     style={{ color: colors[i % colors.length] }}
                   >
-                    {formatPercentPtBr(asset.dividendYield, false)}
+                    <CmsText>{formatPercentPtBr(asset.dividendYield, false)}</CmsText>
                   </td>
-                ))}
+                ))}</CmsText>
                 <td className="py-3 text-center pr-2">
                   <Badge variant={dyWinner.isComparable ? "emerald" : "neutral"}>
-                    {dyWinner.label}
+                    <CmsText>{dyWinner.label}</CmsText>
                   </Badge>
                 </td>
               </tr>
 
               {/* P/VP */}
               <tr>
-                <td className="py-3 pl-2 text-white font-medium">P/VP (Preço / Valor Patrimonial)</td>
-                {comparedAssets.map((asset) => (
+                <td className="py-3 pl-2 text-white font-medium"><CmsText>{"P/VP (Preço / Valor Patrimonial)"}</CmsText></td>
+                <CmsText>{comparedAssets.map((asset) => (
                   <td key={asset.ticker} className="py-3 text-right text-white">
-                    {formatMultiple(asset.pvp)}
+                    <CmsText>{formatMultiple(asset.pvp)}</CmsText>
                   </td>
-                ))}
+                ))}</CmsText>
                 <td className="py-3 text-center pr-2">
                   <Badge variant={pvpWinner.isComparable ? "emerald" : "neutral"}>
-                    {pvpWinner.label}
+                    <CmsText>{pvpWinner.label}</CmsText>
                   </Badge>
                 </td>
               </tr>
 
               {/* P/L */}
               <tr>
-                <td className="py-3 pl-2 text-white font-medium">
-                  P/L (Preço / Lucro) <span className="text-[10px] text-[#64748b]">(Ações)</span>
+                <td className="py-3 pl-2 text-white font-medium"><CmsText>{"P/L (Preço / Lucro) "}</CmsText><span className="text-[10px] text-[#64748b]"><CmsText>{"(Ações)"}</CmsText></span>
                 </td>
-                {comparedAssets.map((asset) => (
+                <CmsText>{comparedAssets.map((asset) => (
                   <td key={asset.ticker} className="py-3 text-right text-white">
-                    {formatMultiple(asset.pl)}
+                    <CmsText>{formatMultiple(asset.pl)}</CmsText>
                   </td>
-                ))}
+                ))}</CmsText>
                 <td className="py-3 text-center pr-2">
                   <Badge variant={plWinner.isComparable ? "emerald" : "neutral"}>
-                    {plWinner.label}
+                    <CmsText>{plWinner.label}</CmsText>
                   </Badge>
                 </td>
               </tr>
 
               {/* ROE */}
               <tr>
-                <td className="py-3 pl-2 text-white font-medium">
-                  ROE (Rentabilidade sobre PL) <span className="text-[10px] text-[#64748b]">(Ações)</span>
+                <td className="py-3 pl-2 text-white font-medium"><CmsText>{"ROE (Rentabilidade sobre PL) "}</CmsText><span className="text-[10px] text-[#64748b]"><CmsText>{"(Ações)"}</CmsText></span>
                 </td>
-                {comparedAssets.map((asset) => (
+                <CmsText>{comparedAssets.map((asset) => (
                   <td key={asset.ticker} className="py-3 text-right text-white">
-                    {formatPercentPtBr(asset.roe, false)}
+                    <CmsText>{formatPercentPtBr(asset.roe, false)}</CmsText>
                   </td>
-                ))}
+                ))}</CmsText>
                 <td className="py-3 text-center pr-2">
                   <Badge variant={roeWinner.isComparable ? "emerald" : "neutral"}>
-                    {roeWinner.label}
+                    <CmsText>{roeWinner.label}</CmsText>
                   </Badge>
                 </td>
               </tr>
 
               {/* Dívida Líquida / PL */}
               <tr>
-                <td className="py-3 pl-2 text-white font-medium">
-                  Dívida Líquida / PL <span className="text-[10px] text-[#64748b]">(Ações)</span>
+                <td className="py-3 pl-2 text-white font-medium"><CmsText>{"Dívida Líquida / PL "}</CmsText><span className="text-[10px] text-[#64748b]"><CmsText>{"(Ações)"}</CmsText></span>
                 </td>
-                {comparedAssets.map((asset) => (
+                <CmsText>{comparedAssets.map((asset) => (
                   <td key={asset.ticker} className="py-3 text-right text-white">
-                    {formatMultiple(asset.dividaLiquidaPl)}
+                    <CmsText>{formatMultiple(asset.dividaLiquidaPl)}</CmsText>
                   </td>
-                ))}
+                ))}</CmsText>
                 <td className="py-3 text-center pr-2">
                   <Badge variant={dividaWinner.isComparable ? "emerald" : "neutral"}>
-                    {dividaWinner.label}
+                    <CmsText>{dividaWinner.label}</CmsText>
                   </Badge>
                 </td>
               </tr>
 
               {/* Retorno Acumulado 12M */}
               <tr>
-                <td className="py-3 pl-2 text-white font-medium">Retorno Acumulado 12M</td>
-                {comparedAssets.map((asset) => (
+                <td className="py-3 pl-2 text-white font-medium"><CmsText>{"Retorno Acumulado 12M"}</CmsText></td>
+                <CmsText>{comparedAssets.map((asset) => (
                   <td key={asset.ticker} className="py-3 text-right text-white">
-                    {formatPercentPtBr(asset.change12m, true)}
+                    <CmsText>{formatPercentPtBr(asset.change12m, true)}</CmsText>
                   </td>
-                ))}
+                ))}</CmsText>
                 <td className="py-3 text-center pr-2">
                   <Badge variant={ch12mWinner.isComparable ? "emerald" : "neutral"}>
-                    {ch12mWinner.label}
+                    <CmsText>{ch12mWinner.label}</CmsText>
                   </Badge>
                 </td>
               </tr>
@@ -397,14 +384,14 @@ export function ComparadorClient() {
         </div>
 
         <div className="mt-4 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between text-[11px] text-[#64748b]">
-          <span>Metodologia: Múltiplos calculados sobre demonstrações financeiras oficiais padronizadas B3/CVM.</span>
-          <span>Critério: Vencedor declarado apenas quando todos os ativos possuem o indicador aplicável.</span>
+          <span><CmsText>{"Metodologia: Múltiplos calculados sobre demonstrações financeiras oficiais padronizadas B3/CVM."}</CmsText></span>
+          <span><CmsText>{"Critério: Vencedor declarado apenas quando todos os ativos possuem o indicador aplicável."}</CmsText></span>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Spider Radar Charts (Side by Side Grid for 2, 3 or 4 assets) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {comparedAssets.map((asset, i) => {
+        <CmsText>{comparedAssets.map((asset, i) => {
           const radarData: RadarDataPoint[] = [
             { axis: "Dividend Yield", value: Math.min(100, asset.dividendYield * 6.5) },
             { axis: "ROE / Margem", value: asset.roe ? Math.min(100, asset.roe * 4) : 50 },
@@ -417,24 +404,24 @@ export function ComparadorClient() {
           ];
 
           return (
-            <Card key={asset.ticker} glow="cyan" className="flex flex-col items-center p-4">
+            <CmsElement feature="ui.app/-frontend-/comparador/ComparadorClient.Card.6" key={asset.ticker}><Card key={asset.ticker} glow="cyan" className="flex flex-col items-center p-4">
               <div className="flex justify-between w-full mb-3">
                 <span className="text-xs font-bold text-white uppercase">
-                  {asset.ticker}
+                  <CmsText>{asset.ticker}</CmsText>
                 </span>
                 <Badge variant={asset.type === "ACAO" ? "emerald" : asset.type === "FII" ? "cyan" : "violet"}>
-                  {asset.type}
+                  <CmsText>{asset.type}</CmsText>
                 </Badge>
               </div>
-              <RadarChart
+              <CmsElement feature="ui.app/-frontend-/comparador/ComparadorClient.RadarChart.7"><RadarChart
                 data={radarData}
                 size={220}
                 color={colors[i % colors.length]}
                 fillOpacity={0.2}
-              />
-            </Card>
+              /></CmsElement>
+            </Card></CmsElement>
           );
-        })}
+        })}</CmsText>
       </div>
     </div>
   );

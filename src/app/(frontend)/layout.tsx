@@ -1,3 +1,7 @@
+
+import { CmsText, CmsElement, CmsProvider, CmsRoute } from "@/components/content/Cms";
+import { textKey } from "@/lib/content/keys";
+import { getCmsSnapshot } from "@/lib/content/server";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -17,7 +21,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
+const defaultMetadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://fin-web-wheat.vercel.app"),
   title: "FIN·WEB — Terminal Avançado de Análise & Valuation",
   description:
@@ -25,34 +29,44 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-export default function RootLayout({
+export async function generateMetadata(): Promise<Metadata> {
+  const { texts } = await getCmsSnapshot();
+  const title = defaultMetadata.title as string;
+  const description = defaultMetadata.description as string;
+  return { ...defaultMetadata, title: texts[textKey(title)] ?? title, description: texts[textKey(description)] ?? description };
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const snapshot = await getCmsSnapshot();
   return (
     <html
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[#060709] text-[#f0f4f8]">
-        <a href="#main-content" className="sr-only focus:not-sr-only">Ir ao conteúdo</a>
+        <CmsProvider snapshot={snapshot}>
+        <CmsElement feature="ui.app/-frontend-/layout.a.1"><a href="#main-content" className="sr-only focus:not-sr-only"><CmsText>{"Ir ao conteúdo"}</CmsText></a></CmsElement>
         {/* Benchmark references */}
-        <TickerTape />
+        <CmsElement feature="ui.app/-frontend-/layout.TickerTape.2"><TickerTape /></CmsElement>
 
         {/* Floating Glass Island Nav */}
         <Suspense fallback={<div className="h-14" />}>
-          <Navbar />
+          <CmsElement feature="ui.app/-frontend-/layout.Navbar.3"><Navbar /></CmsElement>
         </Suspense>
 
         {/* Main Application Content */}
         <main id="main-content" className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
-          <DisplayPreferences />
-          {children}
+          <CmsElement feature="ui.app/-frontend-/layout.DisplayPreferences.4"><DisplayPreferences /></CmsElement>
+          <Suspense fallback={<p role="status"><CmsText>Carregando…</CmsText></p>}><CmsRoute>{children}</CmsRoute></Suspense>
         </main>
 
         {/* Global Tech Footer */}
-        <Footer />
+        <CmsElement feature="ui.app/-frontend-/layout.Footer.5"><Footer /></CmsElement>
+        </CmsProvider>
       </body>
     </html>
   );

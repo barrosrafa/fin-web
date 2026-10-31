@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -130,111 +132,92 @@ export function CanonicalPairClient({
 
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-[#64748b]">
-        <Link href="/" className="hover:text-white transition-colors">
-          Cockpit
-        </Link>
-        <span>/</span>
-        <Link href="/comparador" className="hover:text-white transition-colors">
-          Comparador
-        </Link>
-        <span>/</span>
+        <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Link.1"><Link href="/" className="hover:text-white transition-colors"><CmsText>{"Cockpit"}</CmsText></Link></CmsElement>
+        <span><CmsText>{"/"}</CmsText></span>
+        <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Link.2"><Link href="/comparador" className="hover:text-white transition-colors"><CmsText>{"Comparador"}</CmsText></Link></CmsElement>
+        <span><CmsText>{"/"}</CmsText></span>
         <span className="text-[#00f5a0] mono-nums">
-          {a} x {b}
+          <CmsText>{a}</CmsText><CmsText>{" x "}</CmsText><CmsText>{b}</CmsText>
         </span>
       </div>
 
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-cyan">
-            Comparação Canônica Head-to-Head
-          </span>
-          <span className="text-xs text-[#64748b]">Análise Par a Par</span>
+          <span className="badge-neon badge-neon-cyan"><CmsText>{"Comparação Canônica Head-to-Head"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Análise Par a Par"}</CmsText></span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          {a} versus {b}: Qual é a melhor opção?
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-          Confronto direto de estrutura de custos (TER primária e secundária),
-          volatilidade histórica, sobreposição de carteira e eficiência
-          tributária.
-        </p>
+          <CmsText>{a}</CmsText><CmsText>{" versus "}</CmsText><CmsText>{b}</CmsText><CmsText>{": Qual é a melhor opção?"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Confronto direto de estrutura de custos (TER primária e secundária), volatilidade histórica, sobreposição de carteira e eficiência tributária."}</CmsText></p>
       </div>
 
       {/* 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.MetricCard.3"><MetricCard
           title="Menor Custo Efetivo (TER)"
           value={`${formatPercent(Math.min(assetA.ter_pct ?? 0.3, assetB.ter_pct ?? 0.3), false)} a.a.`}
           subtitle={`Vencedor: ${(assetA.ter_pct ?? 0.3) <= (assetB.ter_pct ?? 0.3) ? a : b}`}
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.MetricCard.4"><MetricCard
           title="Sobreposição Efetiva"
           value={`${formatPercent(overlap.total_overlap_pct, false)} em comum`}
           subtitle={`${overlap.common_holdings_count} ativos subjacentes coincidentes`}
           glow="cyan"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.MetricCard.5"><MetricCard
           title="Maior Sharpe Ratio"
           value={formatMultiple(Math.max(assetA.sharpe, assetB.sharpe))}
           subtitle={`Vencedor: ${assetA.sharpe >= assetB.sharpe ? a : b}`}
           glow="violet"
-        />
+        /></CmsElement>
       </div>
 
       {/* Tabela Lado a Lado com Destaque de Deltas */}
-      <Card>
+      <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Card.6"><Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-white tracking-tight">
-            Confronto Técnico Multi-Métricas
-          </h3>
-          <span className="text-xs text-[#64748b]">
-            Dados auditados de fechamento
-          </span>
+          <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Confronto Técnico Multi-Métricas"}</CmsText></h3>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Dados auditados de fechamento"}</CmsText></span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-3">Indicador / Métrica</th>
-                <th className="pb-3 text-right font-mono text-[#00f5a0]">{a}</th>
-                <th className="pb-3 text-right font-mono text-[#00d9f5]">{b}</th>
-                <th className="pb-3 text-center pr-3">Diferencial Competitivo</th>
+                <th className="pb-3 pl-3"><CmsText>{"Indicador / Métrica"}</CmsText></th>
+                <th className="pb-3 text-right font-mono text-[#00f5a0]"><CmsText>{a}</CmsText></th>
+                <th className="pb-3 text-right font-mono text-[#00d9f5]"><CmsText>{b}</CmsText></th>
+                <th className="pb-3 text-center pr-3"><CmsText>{"Diferencial Competitivo"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 mono-nums">
               <tr>
-                <td className="py-3 pl-3 text-white font-medium">Gestora Responsável</td>
+                <td className="py-3 pl-3 text-white font-medium"><CmsText>{"Gestora Responsável"}</CmsText></td>
                 <td className="py-3 text-right text-[#94a3b8] font-sans">
-                  {assetA.gestora}
+                  <CmsText>{assetA.gestora}</CmsText>
                 </td>
                 <td className="py-3 text-right text-[#94a3b8] font-sans">
-                  {assetB.gestora}
+                  <CmsText>{assetB.gestora}</CmsText>
                 </td>
-                <td className="py-3 text-center pr-3 text-[#64748b]">—</td>
+                <td className="py-3 text-center pr-3 text-[#64748b]"><CmsText>{"—"}</CmsText></td>
               </tr>
               <tr>
-                <td className="py-3 pl-3 text-white font-medium">Cotação de Mercado</td>
+                <td className="py-3 pl-3 text-white font-medium"><CmsText>{"Cotação de Mercado"}</CmsText></td>
                 <td className="py-3 text-right text-white font-bold">
-                  {formatCurrency(assetA.price)}
+                  <CmsText>{formatCurrency(assetA.price)}</CmsText>
                 </td>
                 <td className="py-3 text-right text-white font-bold">
-                  {formatCurrency(assetB.price)}
+                  <CmsText>{formatCurrency(assetB.price)}</CmsText>
                 </td>
-                <td className="py-3 text-center pr-3 text-[#64748b]">—</td>
+                <td className="py-3 text-center pr-3 text-[#64748b]"><CmsText>{"—"}</CmsText></td>
               </tr>
               <tr>
-                <td className="py-3 pl-3 text-white font-medium">
-                  Taxa de Administração Total (TER)
-                </td>
+                <td className="py-3 pl-3 text-white font-medium"><CmsText>{"Taxa de Administração Total (TER)"}</CmsText></td>
                 <td className="py-3 text-right text-[#00f5a0] font-bold">
-                  {formatPercent(assetA.ter_pct ?? 0.3, false)} a.a.
-                </td>
+                  <CmsText>{formatPercent(assetA.ter_pct ?? 0.3, false)}</CmsText><CmsText>{" a.a."}</CmsText></td>
                 <td className="py-3 text-right text-[#00d9f5] font-bold">
-                  {formatPercent(assetB.ter_pct ?? 0.3, false)} a.a.
-                </td>
+                  <CmsText>{formatPercent(assetB.ter_pct ?? 0.3, false)}</CmsText><CmsText>{" a.a."}</CmsText></td>
                 <td className="py-3 text-center pr-3">
                   <Badge
                     variant={
@@ -243,21 +226,19 @@ export function CanonicalPairClient({
                         : "cyan"
                     }
                   >
-                    {(assetA.ter_pct ?? 0.3) <= (assetB.ter_pct ?? 0.3)
+                    <CmsText>{(assetA.ter_pct ?? 0.3) <= (assetB.ter_pct ?? 0.3)
                       ? `${a} mais barato`
-                      : `${b} mais barato`}
+                      : `${b} mais barato`}</CmsText>
                   </Badge>
                 </td>
               </tr>
               <tr>
-                <td className="py-3 pl-3 text-white font-medium">
-                  Retorno Acumulado 12M
+                <td className="py-3 pl-3 text-white font-medium"><CmsText>{"Retorno Acumulado 12M"}</CmsText></td>
+                <td className="py-3 text-right text-white font-bold">
+                  <CmsText>{formatPercent(assetA.change_12m)}</CmsText>
                 </td>
                 <td className="py-3 text-right text-white font-bold">
-                  {formatPercent(assetA.change_12m)}
-                </td>
-                <td className="py-3 text-right text-white font-bold">
-                  {formatPercent(assetB.change_12m)}
+                  <CmsText>{formatPercent(assetB.change_12m)}</CmsText>
                 </td>
                 <td className="py-3 text-center pr-3">
                   <Badge
@@ -265,19 +246,17 @@ export function CanonicalPairClient({
                       assetA.change_12m >= assetB.change_12m ? "emerald" : "cyan"
                     }
                   >
-                    {assetA.change_12m >= assetB.change_12m ? a : b}
+                    <CmsText>{assetA.change_12m >= assetB.change_12m ? a : b}</CmsText>
                   </Badge>
                 </td>
               </tr>
               <tr>
-                <td className="py-3 pl-3 text-white font-medium">
-                  Volatilidade Anualizada
+                <td className="py-3 pl-3 text-white font-medium"><CmsText>{"Volatilidade Anualizada"}</CmsText></td>
+                <td className="py-3 text-right text-white">
+                  <CmsText>{formatPercent(assetA.volatility_pct, false)}</CmsText>
                 </td>
                 <td className="py-3 text-right text-white">
-                  {formatPercent(assetA.volatility_pct, false)}
-                </td>
-                <td className="py-3 text-right text-white">
-                  {formatPercent(assetB.volatility_pct, false)}
+                  <CmsText>{formatPercent(assetB.volatility_pct, false)}</CmsText>
                 </td>
                 <td className="py-3 text-center pr-3">
                   <Badge
@@ -287,60 +266,54 @@ export function CanonicalPairClient({
                         : "cyan"
                     }
                   >
-                    {assetA.volatility_pct <= assetB.volatility_pct
+                    <CmsText>{assetA.volatility_pct <= assetB.volatility_pct
                       ? `${a} menos volátil`
-                      : `${b} menos volátil`}
+                      : `${b} menos volátil`}</CmsText>
                   </Badge>
                 </td>
               </tr>
               <tr>
-                <td className="py-3 pl-3 text-white font-medium">
-                  Índice Sharpe (Retorno / Risco)
+                <td className="py-3 pl-3 text-white font-medium"><CmsText>{"Índice Sharpe (Retorno / Risco)"}</CmsText></td>
+                <td className="py-3 text-right text-white font-bold">
+                  <CmsText>{formatNumber(assetA.sharpe, 2)}</CmsText>
                 </td>
                 <td className="py-3 text-right text-white font-bold">
-                  {formatNumber(assetA.sharpe, 2)}
-                </td>
-                <td className="py-3 text-right text-white font-bold">
-                  {formatNumber(assetB.sharpe, 2)}
+                  <CmsText>{formatNumber(assetB.sharpe, 2)}</CmsText>
                 </td>
                 <td className="py-3 text-center pr-3">
                   <Badge
                     variant={assetA.sharpe >= assetB.sharpe ? "emerald" : "cyan"}
                   >
-                    {assetA.sharpe >= assetB.sharpe ? a : b}
+                    <CmsText>{assetA.sharpe >= assetB.sharpe ? a : b}</CmsText>
                   </Badge>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Gráfico de Rentabilidade Relativa Base 100 */}
-      <Card glow="cyan">
-        <h3 className="text-base font-bold text-white tracking-tight mb-4">
-          Curva Comparativa Base 100 vs CDI
-        </h3>
-        <RelativePerformanceBase100Chart
+      <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Card.7"><Card glow="cyan">
+        <h3 className="text-base font-bold text-white tracking-tight mb-4"><CmsText>{"Curva Comparativa Base 100 vs CDI"}</CmsText></h3>
+        <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.RelativePerformanceBase100Chart.8"><RelativePerformanceBase100Chart
           series={series}
           tickers={[a, b]}
           height={260}
-        />
-      </Card>
+        /></CmsElement>
+      </Card></CmsElement>
 
       {/* Análise de Sobreposição de Carteira */}
-      <Card glow="emerald">
-        <h3 className="text-base font-bold text-white tracking-tight mb-4">
-          Decomposição da Sobreposição de Ativos Subjacentes (Holdings Overlap)
-        </h3>
-        <HoldingsOverlapTable
+      <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Card.9"><Card glow="emerald">
+        <h3 className="text-base font-bold text-white tracking-tight mb-4"><CmsText>{"Decomposição da Sobreposição de Ativos Subjacentes (Holdings Overlap)"}</CmsText></h3>
+        <CmsElement feature="ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.HoldingsOverlapTable.10"><HoldingsOverlapTable
           tickerA={a}
           tickerB={b}
           totalOverlapPct={overlap.total_overlap_pct}
           commonCount={overlap.common_holdings_count}
           items={overlap.top_shared_holdings}
-        />
-      </Card>
+        /></CmsElement>
+      </Card></CmsElement>
     </div>
   );
 }

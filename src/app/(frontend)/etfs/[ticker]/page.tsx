@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React, { Suspense } from "react";
 import { ETFDetailClient } from "./ETFDetailClient";
 
@@ -20,9 +22,7 @@ export default async function ETFDetailPage({
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono">
-          Carregando cockpit analítico de ETF {ticker}...
-        </div>
+        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono"><CmsText>{"Carregando cockpit analítico de ETF "}</CmsText><CmsText>{ticker}</CmsText><CmsText>{"..."}</CmsText></div>
       }
     >
       <ETFDetailClient ticker={ticker} />

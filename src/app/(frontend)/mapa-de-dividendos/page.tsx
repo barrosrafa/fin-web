@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -35,63 +37,53 @@ export default function MapaDividendosPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-cyan">Sazonalidade Histórica</span>
-          <span className="text-xs text-[#64748b]">Matriz 10 Anos B3 & EUA</span>
+          <span className="badge-neon badge-neon-cyan"><CmsText>{"Sazonalidade Histórica"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Matriz 10 Anos B3 & EUA"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Mapa de Sazonalidade de Dividendos
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-          Visualização em matriz de calor da probabilidade e frequência histórica segregada por{" "}
-          <strong className="text-cyan-300">Data-Com (corte)</strong> e{" "}
-          <strong className="text-emerald-300">Data de Pagamento (crédito em conta)</strong>.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Mapa de Sazonalidade de Dividendos"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Visualização em matriz de calor da probabilidade e frequência histórica segregada por"}</CmsText><CmsText>{" "}</CmsText>
+          <strong className="text-cyan-300"><CmsText>{"Data-Com (corte)"}</CmsText></strong><CmsText>{" e"}</CmsText><CmsText>{" "}</CmsText>
+          <strong className="text-emerald-300"><CmsText>{"Data de Pagamento (crédito em conta)"}</CmsText></strong><CmsText>{"."}</CmsText></p>
       </div>
 
       {/* Controls: Mode & Month Filter */}
-      <Card className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4">
+      <CmsElement feature="ui.app/-frontend-/mapa-de-dividendos/page.Card.1"><Card className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4">
         {/* View Mode Toggle */}
         <div className="flex items-center gap-1 bg-white/5 p-1 rounded-xl border border-white/10">
-          <button
+          <CmsElement feature="ui.app/-frontend-/mapa-de-dividendos/page.button.2"><button
             onClick={() => setViewMode("com")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               viewMode === "com"
                 ? "bg-cyan-500 text-white shadow-lg shadow-cyan-500/20"
                 : "text-[#94a3b8] hover:text-white"
             }`}
-          >
-            📅 Data-Com (Corte)
-          </button>
-          <button
+          ><CmsText>{"📅 Data-Com (Corte)"}</CmsText></button></CmsElement>
+          <CmsElement feature="ui.app/-frontend-/mapa-de-dividendos/page.button.3"><button
             onClick={() => setViewMode("pagamento")}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
               viewMode === "pagamento"
                 ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
                 : "text-[#94a3b8] hover:text-white"
             }`}
-          >
-            💰 Data de Pagamento (Crédito)
-          </button>
+          ><CmsText>{"💰 Data de Pagamento (Crédito)"}</CmsText></button></CmsElement>
         </div>
 
         {/* Month Selector */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs font-semibold text-[#94a3b8] mr-1">Filtrar:</span>
-          <button
+          <span className="text-xs font-semibold text-[#94a3b8] mr-1"><CmsText>{"Filtrar:"}</CmsText></span>
+          <CmsElement feature="ui.app/-frontend-/mapa-de-dividendos/page.button.4"><button
             onClick={() => setSelectedMonth(null)}
             className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
               selectedMonth === null
                 ? "bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"
                 : "bg-white/5 text-[#94a3b8] hover:text-white"
             }`}
-          >
-            Todos
-          </button>
-          {MONTHS.map((m, idx) => {
+          ><CmsText>{"Todos"}</CmsText></button></CmsElement>
+          <CmsText>{MONTHS.map((m, idx) => {
             const monthNum = idx + 1;
             const isActive = selectedMonth === monthNum;
             return (
-              <button
+              <CmsElement feature="ui.app/-frontend-/mapa-de-dividendos/page.button.5" key={m}><button
                 key={m}
                 onClick={() => setSelectedMonth(isActive ? null : monthNum)}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
@@ -100,45 +92,41 @@ export default function MapaDividendosPage() {
                     : "bg-white/5 text-[#94a3b8] hover:text-white"
                 }`}
               >
-                {m}
-              </button>
+                <CmsText>{m}</CmsText>
+              </button></CmsElement>
             );
-          })}
+          })}</CmsText>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Heatmap Grid Table */}
-      <Card className="overflow-hidden p-0 border border-white/10">
+      <CmsElement feature="ui.app/-frontend-/mapa-de-dividendos/page.Card.6"><Card className="overflow-hidden p-0 border border-white/10">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-[#cbd5e1]">
             <thead className="bg-[#0f172a]/80 text-xs font-semibold text-[#94a3b8] uppercase tracking-wider border-b border-white/10">
               <tr>
-                <th className="py-4 px-6 min-w-[140px]">Ticker</th>
-                <th className="py-4 px-4 min-w-[100px]">Classe</th>
-                {MONTHS.map((m, idx) => (
+                <th className="py-4 px-6 min-w-[140px]"><CmsText>{"Ticker"}</CmsText></th>
+                <th className="py-4 px-4 min-w-[100px]"><CmsText>{"Classe"}</CmsText></th>
+                <CmsText>{MONTHS.map((m, idx) => (
                   <th
                     key={m}
                     className={`py-4 px-3 text-center min-w-[55px] ${
                       selectedMonth === idx + 1 ? "bg-cyan-500/10 text-cyan-400 font-bold" : ""
                     }`}
                   >
-                    {m}
+                    <CmsText>{m}</CmsText>
                   </th>
-                ))}
+                ))}</CmsText>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {loading ? (
+              <CmsText>{loading ? (
                 <tr>
-                  <td colSpan={14} className="py-12 text-center text-[#64748b]">
-                    Carregando matriz de sazonalidade...
-                  </td>
+                  <td colSpan={14} className="py-12 text-center text-[#64748b]"><CmsText>{"Carregando matriz de sazonalidade..."}</CmsText></td>
                 </tr>
               ) : mapData.length === 0 ? (
                 <tr>
-                  <td colSpan={14} className="py-12 text-center text-[#64748b]">
-                    Nenhum ativo encontrado para o filtro de mês selecionado.
-                  </td>
+                  <td colSpan={14} className="py-12 text-center text-[#64748b]"><CmsText>{"Nenhum ativo encontrado para o filtro de mês selecionado."}</CmsText></td>
                 </tr>
               ) : (
                 mapData.map((row) => {
@@ -148,7 +136,7 @@ export default function MapaDividendosPage() {
                   return (
                     <tr key={row.ticker} className="hover:bg-white/[0.02] transition-colors">
                       <td className="py-3 px-6 font-bold text-white">
-                        <span className="font-mono text-cyan-400">{row.ticker}</span>
+                        <span className="font-mono text-cyan-400"><CmsText>{row.ticker}</CmsText></span>
                       </td>
                       <td className="py-3 px-4">
                         <Badge
@@ -160,10 +148,10 @@ export default function MapaDividendosPage() {
                               : "cyan"
                           }
                         >
-                          {row.asset_type}
+                          <CmsText>{row.asset_type}</CmsText>
                         </Badge>
                       </td>
-                      {MONTHS.map((_, idx) => {
+                      <CmsText>{MONTHS.map((_, idx) => {
                         const monthNum = idx + 1;
                         const item = heatmapMap.get(monthNum);
                         const comProb = item?.record_date_probability_pct || 0;
@@ -193,23 +181,23 @@ export default function MapaDividendosPage() {
                               isSelected ? "ring-1 ring-cyan-500/50" : ""
                             }`}
                           >
-                            <div
+                            <CmsElement><div
                               className={`mx-auto w-9 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer ${bgClass}`}
                               title={tooltip}
                             >
-                              {prob > 0 ? `${prob.toFixed(0)}%` : "—"}
-                            </div>
+                              <CmsText>{prob > 0 ? `${prob.toFixed(0)}%` : "—"}</CmsText>
+                            </div></CmsElement>
                           </td>
                         );
-                      })}
+                      })}</CmsText>
                     </tr>
                   );
                 })
-              )}
+              )}</CmsText>
             </tbody>
           </table>
         </div>
-      </Card>
+      </Card></CmsElement>
     </div>
   );
 }

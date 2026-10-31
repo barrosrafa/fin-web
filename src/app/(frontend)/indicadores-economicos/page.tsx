@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -62,220 +64,202 @@ export default function IndicadoresEconomicosPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-cyan">Macroeconomia & Sistema Financeiro</span>
-          <span className="text-xs text-[#64748b]">Bacen SGS & Tesouro Transparente</span>
+          <span className="badge-neon badge-neon-cyan"><CmsText>{"Macroeconomia & Sistema Financeiro"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Bacen SGS & Tesouro Transparente"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Indicadores Macroeconômicos & Crédito
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-          Séries oficiais de contas públicas do Governo Central, taxas de inadimplência PF/PJ, captação da caderneta de poupança e câmbio real efetivo (TCR).
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Indicadores Macroeconômicos & Crédito"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Séries oficiais de contas públicas do Governo Central, taxas de inadimplência PF/PJ, captação da caderneta de poupança e câmbio real efetivo (TCR)."}</CmsText></p>
       </div>
 
       {/* 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.MetricCard.1"><MetricCard
           title="Dívida Bruta / PIB"
           value={`${latestGov.divida_bruta_pib_pct ?? 78.1}%`}
           subtitle="Governo Geral (Bacen)"
           glow="violet"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.MetricCard.2"><MetricCard
           title="Saldo Caderneta Poupança"
           value={formatBrlCompact(latestCredit.poupanca_saldo_total ?? 0)}
           subtitle="Estoque no Sistema Financeiro"
           glow="cyan"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.MetricCard.3"><MetricCard
           title="Inadimplência PF (> 90d)"
           value={`${latestCredit.inadimplencia_pf_pct ?? 5.1}%`}
           subtitle="Carteira Total Pessoa Física"
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.MetricCard.4"><MetricCard
           title="Taxa Câmbio Real (TCR)"
           value={`${(latestCredit.tcr_efetiva_indice ?? 96.9).toFixed(2)}`}
           subtitle="Índice Efetivo Real (IPCA)"
           glow="violet"
-        />
+        /></CmsElement>
       </div>
 
       {/* Tabs */}
       <div className="flex border-b border-white/10 gap-2">
-        <button
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.button.5"><button
           onClick={() => setActiveTab("CONTAS_PUBLICAS")}
           className={`pb-3 text-xs font-bold transition-all border-b-2 ${
             activeTab === "CONTAS_PUBLICAS"
               ? "border-[#00f5a0] text-[#00f5a0]"
               : "border-transparent text-[#94a3b8] hover:text-white"
           }`}
-        >
-          Contas Públicas (Receitas & Despesas)
-        </button>
-        <button
+        ><CmsText>{"Contas Públicas (Receitas & Despesas)"}</CmsText></button></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.button.6"><button
           onClick={() => setActiveTab("CREDITO_POUPANCA")}
           className={`pb-3 text-xs font-bold transition-all border-b-2 ${
             activeTab === "CREDITO_POUPANCA"
               ? "border-[#00f5a0] text-[#00f5a0]"
               : "border-transparent text-[#94a3b8] hover:text-white"
           }`}
-        >
-          Crédito SFN & Poupança
-        </button>
-        <button
+        ><CmsText>{"Crédito SFN & Poupança"}</CmsText></button></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.button.7"><button
           onClick={() => setActiveTab("CAMBIO_TCR")}
           className={`pb-3 text-xs font-bold transition-all border-b-2 ${
             activeTab === "CAMBIO_TCR"
               ? "border-[#00f5a0] text-[#00f5a0]"
               : "border-transparent text-[#94a3b8] hover:text-white"
           }`}
-        >
-          Câmbio Real Efetivo (TCR)
-        </button>
+        ><CmsText>{"Câmbio Real Efetivo (TCR)"}</CmsText></button></CmsElement>
       </div>
 
       {/* Section 1: Contas Públicas */}
-      {activeTab === "CONTAS_PUBLICAS" && (
-        <Card glow="none" className="p-0 overflow-hidden">
+      <CmsText>{activeTab === "CONTAS_PUBLICAS" && (
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.Card.8"><Card glow="none" className="p-0 overflow-hidden">
           <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#131926]/40">
-            <span className="text-xs font-bold text-white">
-              Histórico do Resultado Primário do Governo Central
-            </span>
-            <span className="text-[11px] text-[#64748b]">Valores em Milhões de Reais</span>
+            <span className="text-xs font-bold text-white"><CmsText>{"Histórico do Resultado Primário do Governo Central"}</CmsText></span>
+            <span className="text-[11px] text-[#64748b]"><CmsText>{"Valores em Milhões de Reais"}</CmsText></span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
                 <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
-                  <th className="py-3 pl-4">Mês Referência</th>
-                  <th className="py-3 text-right">Receita Líquida</th>
-                  <th className="py-3 text-right">Despesa Total</th>
-                  <th className="py-3 text-right">Resultado Primário</th>
-                  <th className="py-3 text-right">Dívida Bruta (% PIB)</th>
-                  <th className="py-3 text-right pr-4">Resultado Nominal</th>
+                  <th className="py-3 pl-4"><CmsText>{"Mês Referência"}</CmsText></th>
+                  <th className="py-3 text-right"><CmsText>{"Receita Líquida"}</CmsText></th>
+                  <th className="py-3 text-right"><CmsText>{"Despesa Total"}</CmsText></th>
+                  <th className="py-3 text-right"><CmsText>{"Resultado Primário"}</CmsText></th>
+                  <th className="py-3 text-right"><CmsText>{"Dívida Bruta (% PIB)"}</CmsText></th>
+                  <th className="py-3 text-right pr-4"><CmsText>{"Resultado Nominal"}</CmsText></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {govAccounts.map((g) => {
+                <CmsText>{govAccounts.map((g) => {
                   const isPositive = g.resultado_primario >= 0;
                   return (
                     <tr key={g.data_referencia} className="hover:bg-white/[0.02]">
-                      <td className="py-2.5 pl-4 text-white font-sans">{g.data_referencia}</td>
+                      <td className="py-2.5 pl-4 text-white font-sans"><CmsText>{g.data_referencia}</CmsText></td>
                       <td className="py-2.5 text-right text-white">
-                        {formatBrlCompact(g.receita_liquida)}
+                        <CmsText>{formatBrlCompact(g.receita_liquida)}</CmsText>
                       </td>
                       <td className="py-2.5 text-right text-[#94a3b8]">
-                        {formatBrlCompact(g.despesa_total)}
+                        <CmsText>{formatBrlCompact(g.despesa_total)}</CmsText>
                       </td>
                       <td className={`py-2.5 text-right font-bold ${isPositive ? "text-[#00f5a0]" : "text-[#ff3b69]"}`}>
-                        {formatBrlCompact(g.resultado_primario)}
+                        <CmsText>{formatBrlCompact(g.resultado_primario)}</CmsText>
                       </td>
                       <td className="py-2.5 text-right text-[#a855f7] font-bold">
-                        {g.divida_bruta_pib_pct ? `${g.divida_bruta_pib_pct.toFixed(1)}%` : "—"}
+                        <CmsText>{g.divida_bruta_pib_pct ? `${g.divida_bruta_pib_pct.toFixed(1)}%` : "—"}</CmsText>
                       </td>
                       <td className="py-2.5 text-right pr-4 text-[#94a3b8]">
-                        {g.resultado_nominal ? formatBrlCompact(g.resultado_nominal) : "—"}
+                        <CmsText>{g.resultado_nominal ? formatBrlCompact(g.resultado_nominal) : "—"}</CmsText>
                       </td>
                     </tr>
                   );
-                })}
+                })}</CmsText>
               </tbody>
             </table>
           </div>
-        </Card>
-      )}
+        </Card></CmsElement>
+      )}</CmsText>
 
       {/* Section 2: Crédito SFN & Poupança */}
-      {activeTab === "CREDITO_POUPANCA" && (
-        <Card glow="none" className="p-0 overflow-hidden">
+      <CmsText>{activeTab === "CREDITO_POUPANCA" && (
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.Card.9"><Card glow="none" className="p-0 overflow-hidden">
           <div className="p-4 border-b border-white/5 flex justify-between items-center bg-[#131926]/40">
-            <span className="text-xs font-bold text-white">
-              Captação da Poupança e Taxas de Inadimplência
-            </span>
-            <span className="text-[11px] text-[#64748b]">Bacen SGS Séries Oficiais</span>
+            <span className="text-xs font-bold text-white"><CmsText>{"Captação da Poupança e Taxas de Inadimplência"}</CmsText></span>
+            <span className="text-[11px] text-[#64748b]"><CmsText>{"Bacen SGS Séries Oficiais"}</CmsText></span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
                 <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] bg-[#131926]/60 font-sans">
-                  <th className="py-3 pl-4">Mês Referência</th>
-                  <th className="py-3 text-right">Captação Poupança (Mês)</th>
-                  <th className="py-3 text-right">Saldo Poupança</th>
-                  <th className="py-3 text-right">Inadimplência PF</th>
-                  <th className="py-3 text-right">Inadimplência PJ</th>
-                  <th className="py-3 text-right pr-4">Estoque Crédito PJ</th>
+                  <th className="py-3 pl-4"><CmsText>{"Mês Referência"}</CmsText></th>
+                  <th className="py-3 text-right"><CmsText>{"Captação Poupança (Mês)"}</CmsText></th>
+                  <th className="py-3 text-right"><CmsText>{"Saldo Poupança"}</CmsText></th>
+                  <th className="py-3 text-right"><CmsText>{"Inadimplência PF"}</CmsText></th>
+                  <th className="py-3 text-right"><CmsText>{"Inadimplência PJ"}</CmsText></th>
+                  <th className="py-3 text-right pr-4"><CmsText>{"Estoque Crédito PJ"}</CmsText></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {creditData.map((c) => (
+                <CmsText>{creditData.map((c) => (
                   <tr key={c.data_referencia} className="hover:bg-white/[0.02]">
-                    <td className="py-2.5 pl-4 text-white font-sans">{c.data_referencia}</td>
+                    <td className="py-2.5 pl-4 text-white font-sans"><CmsText>{c.data_referencia}</CmsText></td>
                     <td className={`py-2.5 text-right font-bold ${
                       (c.poupanca_captacao_liquida ?? 0) >= 0 ? "text-[#00f5a0]" : "text-[#ff3b69]"
                     }`}>
-                      {c.poupanca_captacao_liquida != null ? formatBrlCompact(c.poupanca_captacao_liquida) : "—"}
+                      <CmsText>{c.poupanca_captacao_liquida != null ? formatBrlCompact(c.poupanca_captacao_liquida) : "—"}</CmsText>
                     </td>
                     <td className="py-2.5 text-right text-white">
-                      {c.poupanca_saldo_total != null ? formatBrlCompact(c.poupanca_saldo_total) : "—"}
+                      <CmsText>{c.poupanca_saldo_total != null ? formatBrlCompact(c.poupanca_saldo_total) : "—"}</CmsText>
                     </td>
                     <td className="py-2.5 text-right text-[#00f5a0] font-bold">
-                      {c.inadimplencia_pf_pct != null ? `${c.inadimplencia_pf_pct.toFixed(2)}%` : "—"}
+                      <CmsText>{c.inadimplencia_pf_pct != null ? `${c.inadimplencia_pf_pct.toFixed(2)}%` : "—"}</CmsText>
                     </td>
                     <td className="py-2.5 text-right text-white">
-                      {c.inadimplencia_pj_pct != null ? `${c.inadimplencia_pj_pct.toFixed(2)}%` : "—"}
+                      <CmsText>{c.inadimplencia_pj_pct != null ? `${c.inadimplencia_pj_pct.toFixed(2)}%` : "—"}</CmsText>
                     </td>
                     <td className="py-2.5 text-right pr-4 text-white">
-                      {c.estoque_credito_pj != null ? formatBrlCompact(c.estoque_credito_pj) : "—"}
+                      <CmsText>{c.estoque_credito_pj != null ? formatBrlCompact(c.estoque_credito_pj) : "—"}</CmsText>
                     </td>
                   </tr>
-                ))}
+                ))}</CmsText>
               </tbody>
             </table>
           </div>
-        </Card>
-      )}
+        </Card></CmsElement>
+      )}</CmsText>
 
       {/* Section 3: Câmbio TCR */}
-      {activeTab === "CAMBIO_TCR" && (
-        <Card glow="cyan">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-[#64748b] mb-4">
-            Evolução da Taxa de Câmbio Real Efetiva (TCR - IPCA)
-          </h3>
-          <p className="text-xs text-[#94a3b8] mb-6">
-            A Taxa de Câmbio Real mede a competitividade das exportações brasileiras ponderada pela inflação relativa dos principais parceiros comerciais.
-          </p>
+      <CmsText>{activeTab === "CAMBIO_TCR" && (
+        <CmsElement feature="ui.app/-frontend-/indicadores-economicos/page.Card.10"><Card glow="cyan">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-[#64748b] mb-4"><CmsText>{"Evolução da Taxa de Câmbio Real Efetiva (TCR - IPCA)"}</CmsText></h3>
+          <p className="text-xs text-[#94a3b8] mb-6"><CmsText>{"A Taxa de Câmbio Real mede a competitividade das exportações brasileiras ponderada pela inflação relativa dos principais parceiros comerciais."}</CmsText></p>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
                 <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px] font-sans">
-                  <th className="py-2.5 pl-2">Mês</th>
-                  <th className="py-2.5 text-right">Índice TCR Efetiva</th>
-                  <th className="py-2.5 text-right pr-2">Competitividade Externa</th>
+                  <th className="py-2.5 pl-2"><CmsText>{"Mês"}</CmsText></th>
+                  <th className="py-2.5 text-right"><CmsText>{"Índice TCR Efetiva"}</CmsText></th>
+                  <th className="py-2.5 text-right pr-2"><CmsText>{"Competitividade Externa"}</CmsText></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {creditData.map((c) => (
+                <CmsText>{creditData.map((c) => (
                   <tr key={c.data_referencia} className="hover:bg-white/[0.02]">
-                    <td className="py-2.5 pl-2 text-white font-sans">{c.data_referencia}</td>
+                    <td className="py-2.5 pl-2 text-white font-sans"><CmsText>{c.data_referencia}</CmsText></td>
                     <td className="py-2.5 text-right font-bold text-[#00d9f5]">
-                      {c.tcr_efetiva_indice != null ? c.tcr_efetiva_indice.toFixed(2) : "—"}
+                      <CmsText>{c.tcr_efetiva_indice != null ? c.tcr_efetiva_indice.toFixed(2) : "—"}</CmsText>
                     </td>
                     <td className="py-2.5 text-right pr-2 font-sans">
                       <Badge variant="cyan">
-                        {(c.tcr_efetiva_indice ?? 100) > 100 ? "Depreciado (Exportador Favorecido)" : "Apreciado"}
+                        <CmsText>{(c.tcr_efetiva_indice ?? 100) > 100 ? "Depreciado (Exportador Favorecido)" : "Apreciado"}</CmsText>
                       </Badge>
                     </td>
                   </tr>
-                ))}
+                ))}</CmsText>
               </tbody>
             </table>
           </div>
-        </Card>
-      )}
+        </Card></CmsElement>
+      )}</CmsText>
     </div>
   );
 }

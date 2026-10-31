@@ -1,0 +1,3350 @@
+[
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Link.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.nav.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "nav"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.button.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.11",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.12",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.13",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.14",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.15",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.16",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.17",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.18",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.19",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.20",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.21",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.22",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.23",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.input.24",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.25",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.button.26",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.button.27",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.28",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.29",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.30",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.31",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.32",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.33",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.StockPriceHistorySection.34",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "StockPriceHistorySection"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.35",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.36",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.37",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.38",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.39",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.BarChart.40",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "BarChart"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.41",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.42",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.button.43",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.44",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.45",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.46",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.section.47",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/AcaoDetailClient.Card.48",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/AcaoDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/-ticker-/page.section.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/[ticker]/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-dividendos/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-dividendos/page.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-dividendos/page.button.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-dividendos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-dividendos/page.button.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-dividendos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-dividendos/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-dividendos/page.Link.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-dividendos/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-resultados/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-resultados/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-resultados/page.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-resultados/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/agenda-resultados/page.a.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/agenda-resultados/page.tsx",
+    "element": "a"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.input.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.input.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.input.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.input.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.select.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "select"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.input.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.button.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.Card.11",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.Link.12",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/busca-avancada/page.Link.13",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/busca-avancada/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/historico-pl-bovespa/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/historico-pl-bovespa/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/historico-pl-bovespa/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/historico-pl-bovespa/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/historico-pl-bovespa/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/historico-pl-bovespa/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/historico-pl-bovespa/page.MetricCard.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/historico-pl-bovespa/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/historico-pl-bovespa/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/historico-pl-bovespa/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/page.input.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/page.button.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/page.button.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/page.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/participacao-investidores-b3/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/participacao-investidores-b3/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/participacao-investidores-b3/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/participacao-investidores-b3/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/participacao-investidores-b3/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/participacao-investidores-b3/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/participacao-investidores-b3/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/participacao-investidores-b3/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/ranking/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/ranking/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/ranking/page.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/ranking/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/ranking/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/ranking/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/ranking/page.button.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/ranking/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/ranking/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/ranking/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/ranking/page.Link.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/ranking/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/ranking/page.Link.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/ranking/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/sem-prejuizo/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/sem-prejuizo/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/sem-prejuizo/page.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/sem-prejuizo/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/sem-prejuizo/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/sem-prejuizo/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/sem-prejuizo/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/sem-prejuizo/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/sem-prejuizo/page.Link.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/sem-prejuizo/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/acoes/sem-prejuizo/page.Link.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/acoes/sem-prejuizo/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/agenda-dividendos/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/agenda-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/agenda-dividendos/page.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/agenda-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/agenda-dividendos/page.button.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/agenda-dividendos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/agenda-dividendos/page.button.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/agenda-dividendos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/agenda-dividendos/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/agenda-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/agenda-dividendos/page.Link.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/agenda-dividendos/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.Link.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.nav.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "nav"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.Link.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.Link.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.header.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "header"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.PaywallGate.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "PaywallGate"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.footer.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "footer"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/-slug-/page.Link.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/[slug]/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/artigos/page.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/artigos/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.form.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "form"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.input.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.input.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.input.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.input.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.Link.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.Link.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cadastro/page.Link.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/cadastro/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/carteira/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/carteira/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/carteira/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/carteira/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/carteira/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/carteira/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/carteira/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/carteira/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/carteira/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/carteira/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/carteira/page.input.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/carteira/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cockpit/debtor-analysis/page.button.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/cockpit/debtor-analysis/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cockpit/debtor-analysis/page.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/cockpit/debtor-analysis/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cockpit/debtor-analysis/page.FalsifiablePhraseCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/cockpit/debtor-analysis/page.tsx",
+    "element": "FalsifiablePhraseCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cockpit/debtor-analysis/page.DebtorConcentrationCard.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/cockpit/debtor-analysis/page.tsx",
+    "element": "DebtorConcentrationCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cockpit/debtor-analysis/page.button.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/cockpit/debtor-analysis/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/cockpit/debtor-analysis/page.button.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/cockpit/debtor-analysis/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/ComparadorClient.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/ComparadorClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/ComparadorClient.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/ComparadorClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/ComparadorClient.button.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/ComparadorClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/ComparadorClient.select.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/ComparadorClient.tsx",
+    "element": "select"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/ComparadorClient.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/ComparadorClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/ComparadorClient.Card.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/ComparadorClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/ComparadorClient.RadarChart.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/ComparadorClient.tsx",
+    "element": "RadarChart"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Link.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.MetricCard.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.MetricCard.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Card.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.RelativePerformanceBase100Chart.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "RelativePerformanceBase100Chart"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.Card.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/comparador/-tickerA-/-tickerB-/CanonicalPairClient.HoldingsOverlapTable.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/comparador/[tickerA]/[tickerB]/CanonicalPairClient.tsx",
+    "element": "HoldingsOverlapTable"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/contato/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/contato/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/contato/page.form.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/contato/page.tsx",
+    "element": "form"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/contato/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/contato/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/contato/page.input.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/contato/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/contato/page.select.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/contato/page.tsx",
+    "element": "select"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/contato/page.textarea.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/contato/page.tsx",
+    "element": "textarea"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/corretoras/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/corretoras/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/corretoras/page.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/corretoras/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/corretoras/page.Card.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/corretoras/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.Link.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.MetricCard.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.MetricCard.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.Tabs.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "Tabs"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.button.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.button.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.Card.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/derivativos/DerivativesClient.Card.11",
+    "enabled": true,
+    "source": "src/app/(frontend)/derivativos/DerivativesClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/-slug-/TermDetail.Link.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/[slug]/TermDetail.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/-slug-/TermDetail.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/[slug]/TermDetail.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/-slug-/TermDetail.Card.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/[slug]/TermDetail.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/-slug-/TermDetail.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/[slug]/TermDetail.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/page.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/page.button.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/page.button.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/page.Link.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/dicionario/page.Card.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/dicionario/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Link.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.MetricCard.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.MetricCard.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.MetricCard.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.nav.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "nav"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.button.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.section.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Card.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.section.11",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Card.12",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.section.13",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Card.14",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.section.15",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Card.16",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.UnderwaterDrawdownChart.17",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/[ticker]/ETFDetailClient.tsx",
+    "element": "UnderwaterDrawdownChart"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/page.input.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/page.button.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/page.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/etfs/page.Link.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/etfs/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Link.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.nav.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "nav"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.button.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.section.11",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.CadastralGovernanceCard.12",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "CadastralGovernanceCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.section.13",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.section.14",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.DividendHistoryTable.15",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "DividendHistoryTable"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.section.16",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.section.17",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.FIIPropertyPortfolioTable.18",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "FIIPropertyPortfolioTable"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.section.19",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.FinancialStatementsTable.20",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "FinancialStatementsTable"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.section.21",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.22",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.RadarChart.23",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "RadarChart"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.section.24",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.25",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.26",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.input.27",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/[ticker]/FIIDetailClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/page.input.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/page.button.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/page.button.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fiis/page.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/fiis/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.Link.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.MetricCard.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.MetricCard.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.MetricCard.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.Tabs.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "Tabs"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.Card.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/-id-/FundDetailClient.Card.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/[id]/FundDetailClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.input.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.select.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "select"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.input.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.button.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.Link.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/busca-avancada/page.Link.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/ranking/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/ranking/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/ranking/page.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/ranking/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/ranking/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/ranking/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/ranking/page.button.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/ranking/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/ranking/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/ranking/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/ranking/page.Link.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/ranking/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/fundos-imobiliarios/ranking/page.Link.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/fundos-imobiliarios/ranking/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.MetricCard.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.button.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.button.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.button.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.Card.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/indicadores-economicos/page.Card.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/indicadores-economicos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/layout.a.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/layout.tsx",
+    "element": "a"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/layout.TickerTape.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/layout.tsx",
+    "element": "TickerTape"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/layout.Navbar.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/layout.tsx",
+    "element": "Navbar"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/layout.DisplayPreferences.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/layout.tsx",
+    "element": "DisplayPreferences"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/layout.Footer.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/layout.tsx",
+    "element": "Footer"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/livros-investimentos/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/livros-investimentos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/page.form.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/page.tsx",
+    "element": "form"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/page.Link.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/page.input.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/page.Link.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/recuperacao/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/recuperacao/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/recuperacao/page.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/recuperacao/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/recuperacao/page.form.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/recuperacao/page.tsx",
+    "element": "form"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/recuperacao/page.input.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/recuperacao/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/login/recuperacao/page.Link.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/login/recuperacao/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/mapa-de-dividendos/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/mapa-de-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/mapa-de-dividendos/page.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/mapa-de-dividendos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/mapa-de-dividendos/page.button.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/mapa-de-dividendos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/mapa-de-dividendos/page.button.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/mapa-de-dividendos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/mapa-de-dividendos/page.button.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/mapa-de-dividendos/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/mapa-de-dividendos/page.Card.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/mapa-de-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/mapa-do-site/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/mapa-do-site/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/mapa-do-site/page.Link.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/mapa-do-site/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/noticias/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/noticias/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/noticias/page.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/noticias/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/noticias/page.button.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/noticias/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/noticias/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/noticias/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/noticias/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/noticias/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/noticias/page.a.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/noticias/page.tsx",
+    "element": "a"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Card.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Tabs.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Tabs"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Link.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Link.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Card.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Link.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Card.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Link.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/page.Card.11",
+    "enabled": true,
+    "source": "src/app/(frontend)/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/perfil-de-investidor/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/perfil-de-investidor/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/perfil-de-investidor/page.Card.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/perfil-de-investidor/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/perfil-de-investidor/page.Card.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/perfil-de-investidor/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/perfil-de-investidor/page.button.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/perfil-de-investidor/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/politica-de-privacidade/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/politica-de-privacidade/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/politica-de-privacidade/page.section.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/politica-de-privacidade/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/politica-de-privacidade/page.section.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/politica-de-privacidade/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/politica-de-privacidade/page.section.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/politica-de-privacidade/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/politica-de-privacidade/page.section.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/politica-de-privacidade/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/premium/page.button.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/premium/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/premium/page.button.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/premium/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/premium/page.Card.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/premium/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/premium/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/premium/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/premium/page.button.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/premium/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/premium/page.Link.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/premium/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/premium/page.Link.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/premium/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/quem-somos/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/quem-somos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/quem-somos/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/quem-somos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/quem-somos/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/quem-somos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/quem-somos/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/quem-somos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/quem-somos/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/quem-somos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/quem-somos/page.Link.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/quem-somos/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/radar-ia/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/radar-ia/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/radar-ia/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/radar-ia/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/radar-ia/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/radar-ia/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/radar-ia/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/radar-ia/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/radar-ia/page.button.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/radar-ia/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/radar-ia/page.Card.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/radar-ia/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/radar-ia/page.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/radar-ia/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/radar-ia/page.Link.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/radar-ia/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.button.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.button.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.button.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.Card.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/rankings/page.Link.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/rankings/page.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/reits/page.input.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/reits/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/reits/page.Card.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/reits/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/renda-fixa/page.MetricCard.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/renda-fixa/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/renda-fixa/page.MetricCard.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/renda-fixa/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/renda-fixa/page.MetricCard.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/renda-fixa/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/renda-fixa/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/renda-fixa/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/renda-fixa/page.Card.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/renda-fixa/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.select.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "select"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.input.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.input.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.button.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.Card.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.Link.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/screener/ScreenerClient.Link.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/screener/ScreenerClient.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.input.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.input.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.input.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.input.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.input.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.input.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.Card.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.MetricCard.11",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.MetricCard.12",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.MetricCard.13",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-dividendos/page.Card.14",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-dividendos/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.input.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.input.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.button.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.button.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.button.6",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.input.7",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.input.8",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.select.9",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "select"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.input.10",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.MetricCard.11",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "MetricCard"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.Card.12",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.RelativePerformanceBase100Chart.13",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "RelativePerformanceBase100Chart"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.Card.14",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.Card.15",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.button.16",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/simulador-de-portfolios/page.UnderwaterDrawdownChart.17",
+    "enabled": true,
+    "source": "src/app/(frontend)/simulador-de-portfolios/page.tsx",
+    "element": "UnderwaterDrawdownChart"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/sobre/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/sobre/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/sobre/page.Card.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/sobre/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/sobre/page.Card.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/sobre/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/sobre/page.Card.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/sobre/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/stocks/page.input.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/stocks/page.tsx",
+    "element": "input"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/stocks/page.Card.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/stocks/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/termos-de-uso/page.Card.1",
+    "enabled": true,
+    "source": "src/app/(frontend)/termos-de-uso/page.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/termos-de-uso/page.section.2",
+    "enabled": true,
+    "source": "src/app/(frontend)/termos-de-uso/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/termos-de-uso/page.section.3",
+    "enabled": true,
+    "source": "src/app/(frontend)/termos-de-uso/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/termos-de-uso/page.section.4",
+    "enabled": true,
+    "source": "src/app/(frontend)/termos-de-uso/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.app/-frontend-/termos-de-uso/page.section.5",
+    "enabled": true,
+    "source": "src/app/(frontend)/termos-de-uso/page.tsx",
+    "element": "section"
+  },
+  {
+    "flag_key": "ui.components/auth/PaywallGate.Link.1",
+    "enabled": true,
+    "source": "src/components/auth/PaywallGate.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/fiis/FIIPropertyPortfolioTable.Card.1",
+    "enabled": true,
+    "source": "src/components/fiis/FIIPropertyPortfolioTable.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/fiis/FIIPropertyPortfolioTable.Card.2",
+    "enabled": true,
+    "source": "src/components/fiis/FIIPropertyPortfolioTable.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/fiis/FIIPropertyPortfolioTable.Card.3",
+    "enabled": true,
+    "source": "src/components/fiis/FIIPropertyPortfolioTable.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/intelligence/FalsifiablePhraseCard.button.1",
+    "enabled": true,
+    "source": "src/components/intelligence/FalsifiablePhraseCard.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/intelligence/FalsifiablePhraseCard.button.2",
+    "enabled": true,
+    "source": "src/components/intelligence/FalsifiablePhraseCard.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/intelligence/FalsifiablePhraseCard.button.3",
+    "enabled": true,
+    "source": "src/components/intelligence/FalsifiablePhraseCard.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/market/VirtualAssetList.button.1",
+    "enabled": true,
+    "source": "src/components/market/VirtualAssetList.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/portfolio/DebtorConcentrationCard.button.1",
+    "enabled": true,
+    "source": "src/components/portfolio/DebtorConcentrationCard.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/portfolio/DebtorConcentrationCard.button.2",
+    "enabled": true,
+    "source": "src/components/portfolio/DebtorConcentrationCard.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/portfolio/DebtorConcentrationCard.button.3",
+    "enabled": true,
+    "source": "src/components/portfolio/DebtorConcentrationCard.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/reconciliation/DivergenceExplainerModal.button.1",
+    "enabled": true,
+    "source": "src/components/reconciliation/DivergenceExplainerModal.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/reconciliation/DivergenceExplainerModal.button.2",
+    "enabled": true,
+    "source": "src/components/reconciliation/DivergenceExplainerModal.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/CadastralGovernanceCard.Card.1",
+    "enabled": true,
+    "source": "src/components/shared/CadastralGovernanceCard.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/shared/CadastralGovernanceCard.a.3",
+    "enabled": true,
+    "source": "src/components/shared/CadastralGovernanceCard.tsx",
+    "element": "a"
+  },
+  {
+    "flag_key": "ui.components/shared/DisplayPreferences.button.2",
+    "enabled": true,
+    "source": "src/components/shared/DisplayPreferences.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/DisplayPreferences.button.3",
+    "enabled": true,
+    "source": "src/components/shared/DisplayPreferences.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/DividendHistoryTable.Card.1",
+    "enabled": true,
+    "source": "src/components/shared/DividendHistoryTable.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/shared/DividendHistoryTable.select.2",
+    "enabled": true,
+    "source": "src/components/shared/DividendHistoryTable.tsx",
+    "element": "select"
+  },
+  {
+    "flag_key": "ui.components/shared/DividendHistoryTable.button.3",
+    "enabled": true,
+    "source": "src/components/shared/DividendHistoryTable.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/DividendHistoryTable.button.4",
+    "enabled": true,
+    "source": "src/components/shared/DividendHistoryTable.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/FinancialStatementsTable.Card.1",
+    "enabled": true,
+    "source": "src/components/shared/FinancialStatementsTable.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/shared/FinancialStatementsTable.Card.6",
+    "enabled": true,
+    "source": "src/components/shared/FinancialStatementsTable.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/shared/FundamentalIndicatorsGrid.Card.1",
+    "enabled": true,
+    "source": "src/components/shared/FundamentalIndicatorsGrid.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/shared/FundamentalIndicatorsGrid.button.2",
+    "enabled": true,
+    "source": "src/components/shared/FundamentalIndicatorsGrid.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/FundamentalIndicatorsGrid.button.3",
+    "enabled": true,
+    "source": "src/components/shared/FundamentalIndicatorsGrid.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/OfficialDisclosuresList.Card.1",
+    "enabled": true,
+    "source": "src/components/shared/OfficialDisclosuresList.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/shared/OfficialDisclosuresList.button.2",
+    "enabled": true,
+    "source": "src/components/shared/OfficialDisclosuresList.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/OfficialDisclosuresList.button.3",
+    "enabled": true,
+    "source": "src/components/shared/OfficialDisclosuresList.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/shared/OfficialDisclosuresList.a.4",
+    "enabled": true,
+    "source": "src/components/shared/OfficialDisclosuresList.tsx",
+    "element": "a"
+  },
+  {
+    "flag_key": "ui.components/shared/SectionState.button.1",
+    "enabled": true,
+    "source": "src/components/shared/SectionState.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockFundamentalsGrid.Card.1",
+    "enabled": true,
+    "source": "src/components/stocks/StockFundamentalsGrid.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockFundamentalsGrid.Card.2",
+    "enabled": true,
+    "source": "src/components/stocks/StockFundamentalsGrid.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockFundamentalsGrid.Card.3",
+    "enabled": true,
+    "source": "src/components/stocks/StockFundamentalsGrid.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockFundamentalsGrid.Card.4",
+    "enabled": true,
+    "source": "src/components/stocks/StockFundamentalsGrid.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockPriceHistorySection.Card.1",
+    "enabled": true,
+    "source": "src/components/stocks/StockPriceHistorySection.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockPriceHistorySection.button.2",
+    "enabled": true,
+    "source": "src/components/stocks/StockPriceHistorySection.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockPriceHistorySection.button.3",
+    "enabled": true,
+    "source": "src/components/stocks/StockPriceHistorySection.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockPriceHistorySection.Card.4",
+    "enabled": true,
+    "source": "src/components/stocks/StockPriceHistorySection.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockPriceHistorySection.Card.5",
+    "enabled": true,
+    "source": "src/components/stocks/StockPriceHistorySection.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockPriceHistorySection.button.6",
+    "enabled": true,
+    "source": "src/components/stocks/StockPriceHistorySection.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/stocks/StockPriceHistorySection.button.7",
+    "enabled": true,
+    "source": "src/components/stocks/StockPriceHistorySection.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/ui/Button.Link.1",
+    "enabled": true,
+    "source": "src/components/ui/Button.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Button.button.2",
+    "enabled": true,
+    "source": "src/components/ui/Button.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.footer.1",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "footer"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.2",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.3",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.4",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.5",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.6",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.7",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.8",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.9",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.10",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.11",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.12",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.13",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.14",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.15",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.16",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.17",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.18",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.19",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.20",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.21",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.22",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.23",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.24",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Footer.Link.25",
+    "enabled": true,
+    "source": "src/components/ui/Footer.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/InfiniteScrollFooter.button.1",
+    "enabled": true,
+    "source": "src/components/ui/InfiniteScrollFooter.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/ui/InfiniteScrollFooter.button.2",
+    "enabled": true,
+    "source": "src/components/ui/InfiniteScrollFooter.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/ui/InfiniteScrollFooter.button.3",
+    "enabled": true,
+    "source": "src/components/ui/InfiniteScrollFooter.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/ui/InfiniteScrollFooter.button.4",
+    "enabled": true,
+    "source": "src/components/ui/InfiniteScrollFooter.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/ui/MetricCard.Card.1",
+    "enabled": true,
+    "source": "src/components/ui/MetricCard.tsx",
+    "element": "Card"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.header.1",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "header"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.nav.2",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "nav"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.Link.3",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.Link.4",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.Link.5",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.Link.6",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.Link.7",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.button.8",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/ui/Navbar.Link.9",
+    "enabled": true,
+    "source": "src/components/ui/Navbar.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "ui.components/ui/Tabs.button.2",
+    "enabled": true,
+    "source": "src/components/ui/Tabs.tsx",
+    "element": "button"
+  },
+  {
+    "flag_key": "ui.components/ui/TickerTape.Link.1",
+    "enabled": true,
+    "source": "src/components/ui/TickerTape.tsx",
+    "element": "Link"
+  },
+  {
+    "flag_key": "route./",
+    "enabled": true,
+    "source": "page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./acoes",
+    "enabled": true,
+    "source": "acoes/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./agenda-dividendos",
+    "enabled": true,
+    "source": "agenda-dividendos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./artigos",
+    "enabled": true,
+    "source": "artigos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./cadastro",
+    "enabled": true,
+    "source": "cadastro/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./carteira",
+    "enabled": true,
+    "source": "carteira/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./comparador",
+    "enabled": true,
+    "source": "comparador/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./contato",
+    "enabled": true,
+    "source": "contato/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./corretoras",
+    "enabled": true,
+    "source": "corretoras/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./derivativos",
+    "enabled": true,
+    "source": "derivativos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./dicionario",
+    "enabled": true,
+    "source": "dicionario/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./etfs",
+    "enabled": true,
+    "source": "etfs/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./fiis",
+    "enabled": true,
+    "source": "fiis/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./fundos",
+    "enabled": true,
+    "source": "fundos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./indicadores-economicos",
+    "enabled": true,
+    "source": "indicadores-economicos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./livros-investimentos",
+    "enabled": true,
+    "source": "livros-investimentos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./login",
+    "enabled": true,
+    "source": "login/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./mapa-de-dividendos",
+    "enabled": true,
+    "source": "mapa-de-dividendos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./mapa-do-site",
+    "enabled": true,
+    "source": "mapa-do-site/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./noticias",
+    "enabled": true,
+    "source": "noticias/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./perfil-de-investidor",
+    "enabled": true,
+    "source": "perfil-de-investidor/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./politica-de-privacidade",
+    "enabled": true,
+    "source": "politica-de-privacidade/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./premium",
+    "enabled": true,
+    "source": "premium/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./quem-somos",
+    "enabled": true,
+    "source": "quem-somos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./radar-ia",
+    "enabled": true,
+    "source": "radar-ia/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./rankings",
+    "enabled": true,
+    "source": "rankings/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./reits",
+    "enabled": true,
+    "source": "reits/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./renda-fixa",
+    "enabled": true,
+    "source": "renda-fixa/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./screener",
+    "enabled": true,
+    "source": "screener/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./simulador-de-dividendos",
+    "enabled": true,
+    "source": "simulador-de-dividendos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./simulador-de-portfolios",
+    "enabled": true,
+    "source": "simulador-de-portfolios/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./sobre",
+    "enabled": true,
+    "source": "sobre/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./stocks",
+    "enabled": true,
+    "source": "stocks/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./termos-de-uso",
+    "enabled": true,
+    "source": "termos-de-uso/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./acoes/agenda-dividendos",
+    "enabled": true,
+    "source": "acoes/agenda-dividendos/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./acoes/agenda-resultados",
+    "enabled": true,
+    "source": "acoes/agenda-resultados/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./acoes/busca-avancada",
+    "enabled": true,
+    "source": "acoes/busca-avancada/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./acoes/historico-pl-bovespa",
+    "enabled": true,
+    "source": "acoes/historico-pl-bovespa/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./acoes/participacao-investidores-b3",
+    "enabled": true,
+    "source": "acoes/participacao-investidores-b3/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./acoes/ranking",
+    "enabled": true,
+    "source": "acoes/ranking/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./acoes/sem-prejuizo",
+    "enabled": true,
+    "source": "acoes/sem-prejuizo/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./cockpit/debtor-analysis",
+    "enabled": true,
+    "source": "cockpit/debtor-analysis/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./fundos-imobiliarios/busca-avancada",
+    "enabled": true,
+    "source": "fundos-imobiliarios/busca-avancada/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./fundos-imobiliarios/ranking",
+    "enabled": true,
+    "source": "fundos-imobiliarios/ranking/page.tsx",
+    "element": "route"
+  },
+  {
+    "flag_key": "route./login/recuperacao",
+    "enabled": true,
+    "source": "login/recuperacao/page.tsx",
+    "element": "route"
+  }
+]

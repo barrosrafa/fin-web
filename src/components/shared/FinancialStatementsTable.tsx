@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -74,68 +76,60 @@ export function FinancialStatementsTable({
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       {/* BALANÇO PATRIMONIAL */}
       <div className="lg:col-span-7 flex flex-col">
-        <Card glow="cyan" className="p-6 h-full flex flex-col justify-between">
+        <CmsElement feature="ui.components/shared/FinancialStatementsTable.Card.1"><Card glow="cyan" className="p-6 h-full flex flex-col justify-between">
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-white/5">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-mono uppercase tracking-wider text-[#00d9f5] font-bold">
-                    Demonstração Contábil
-                  </span>
-                  <Badge variant="cyan">Balanço Patrimonial</Badge>
+                  <span className="text-xs font-mono uppercase tracking-wider text-[#00d9f5] font-bold"><CmsText>{"Demonstração Contábil"}</CmsText></span>
+                  <Badge variant="cyan"><CmsText>{"Balanço Patrimonial"}</CmsText></Badge>
                 </div>
-                <h2 className="text-lg font-bold text-white tracking-tight">
-                  Balanço Patrimonial {ticker}
+                <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"Balanço Patrimonial "}</CmsText><CmsText>{ticker}</CmsText>
                 </h2>
               </div>
-              <span className="text-[11px] font-mono text-[#64748b]">
-                Data-base: {new Date(bs.data_referencia + "T00:00:00").toLocaleDateString("pt-BR")}
+              <span className="text-[11px] font-mono text-[#64748b]"><CmsText>{"Data-base: "}</CmsText><CmsText>{new Date(bs.data_referencia + "T00:00:00").toLocaleDateString("pt-BR")}</CmsText>
               </span>
             </div>
 
             {/* Asset Allocation Bar */}
             <div className="mb-5 p-3 rounded-xl bg-white/[0.02] border border-white/5">
               <div className="flex justify-between text-[11px] text-[#94a3b8] mb-1.5">
-                <span>Composição dos Ativos:</span>
+                <span><CmsText>{"Composição dos Ativos:"}</CmsText></span>
                 <span className="font-mono text-white font-bold">
-                  {formatCurrency(bs.total_assets, true)}
+                  <CmsText>{formatCurrency(bs.total_assets, true)}</CmsText>
                 </span>
               </div>
               <div className="h-2.5 w-full bg-white/10 rounded-full overflow-hidden flex">
-                <div
+                <CmsElement><div
                   style={{ width: `${imovPct}%` }}
                   className="bg-[#00f5a0] h-full"
                   title={`Imóveis: ${imovPct.toFixed(1)}%`}
-                />
-                <div
+                /></CmsElement>
+                <CmsElement><div
                   style={{ width: `${criPct}%` }}
                   className="bg-[#00d9f5] h-full"
                   title={`CRIs: ${criPct.toFixed(1)}%`}
-                />
-                <div
+                /></CmsElement>
+                <CmsElement><div
                   style={{ width: `${caixaPct}%` }}
                   className="bg-[#a855f7] h-full"
                   title={`Disponibilidades / Caixa: ${caixaPct.toFixed(1)}%`}
-                />
-                <div
+                /></CmsElement>
+                <CmsElement><div
                   style={{ width: `${outrosPct}%` }}
                   className="bg-[#f59e0b] h-full"
                   title={`Outros: ${outrosPct.toFixed(1)}%`}
-                />
+                /></CmsElement>
               </div>
               <div className="flex flex-wrap items-center gap-3 mt-2 text-[10px] text-[#94a3b8]">
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-[#00f5a0]" /> Imóveis ({imovPct.toFixed(1)}%)
-                </span>
+                  <span className="w-2 h-2 rounded-full bg-[#00f5a0]" /><CmsText>{" Imóveis ("}</CmsText><CmsText>{imovPct.toFixed(1)}</CmsText><CmsText>{"%)"}</CmsText></span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-[#00d9f5]" /> CRIs / Papel ({criPct.toFixed(1)}%)
-                </span>
+                  <span className="w-2 h-2 rounded-full bg-[#00d9f5]" /><CmsText>{" CRIs / Papel ("}</CmsText><CmsText>{criPct.toFixed(1)}</CmsText><CmsText>{"%)"}</CmsText></span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-[#a855f7]" /> Caixa ({caixaPct.toFixed(1)}%)
-                </span>
+                  <span className="w-2 h-2 rounded-full bg-[#a855f7]" /><CmsText>{" Caixa ("}</CmsText><CmsText>{caixaPct.toFixed(1)}</CmsText><CmsText>{"%)"}</CmsText></span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-[#f59e0b]" /> FIIs / Outros ({outrosPct.toFixed(1)}%)
-                </span>
+                  <span className="w-2 h-2 rounded-full bg-[#f59e0b]" /><CmsText>{" FIIs / Outros ("}</CmsText><CmsText>{outrosPct.toFixed(1)}</CmsText><CmsText>{"%)"}</CmsText></span>
               </div>
             </div>
 
@@ -144,106 +138,104 @@ export function FinancialStatementsTable({
               <table className="w-full text-left text-xs">
                 <thead>
                   <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                    <th className="pb-2.5 pl-2">Conta Contábil</th>
-                    <th className="pb-2.5 text-right pr-2">Valor Auditado</th>
+                    <th className="pb-2.5 pl-2"><CmsText>{"Conta Contábil"}</CmsText></th>
+                    <th className="pb-2.5 text-right pr-2"><CmsText>{"Valor Auditado"}</CmsText></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5 mono-nums">
                   <tr className="bg-white/[0.03] font-bold text-white">
-                    <td className="py-2.5 pl-2">ATIVO TOTAL</td>
+                    <td className="py-2.5 pl-2"><CmsText>{"ATIVO TOTAL"}</CmsText></td>
                     <td className="py-2.5 text-right pr-2 font-mono text-sm text-[#00f5a0]">
-                      {formatCurrency(bs.total_assets, true)}
+                      <CmsText>{formatCurrency(bs.total_assets, true)}</CmsText>
                     </td>
                   </tr>
 
                   <tr className="font-semibold text-white">
-                    <td className="py-2 pl-4 text-[#94a3b8]">↳ Disponibilidades</td>
+                    <td className="py-2 pl-4 text-[#94a3b8]"><CmsText>{"↳ Disponibilidades"}</CmsText></td>
                     <td className="py-2 text-right pr-2 font-mono">
-                      {formatCurrency(bs.liquid_assets.total, true)}
+                      <CmsText>{formatCurrency(bs.liquid_assets.total, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-8">↳ Caixa e Bancos</td>
+                    <td className="py-1.5 pl-8"><CmsText>{"↳ Caixa e Bancos"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono">
-                      {formatCurrency(bs.liquid_assets.caixa, true)}
+                      <CmsText>{formatCurrency(bs.liquid_assets.caixa, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-8">↳ Títulos Públicos (LFT/NTN-B)</td>
+                    <td className="py-1.5 pl-8"><CmsText>{"↳ Títulos Públicos (LFT/NTN-B)"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono">
-                      {formatCurrency(bs.liquid_assets.titulos_publicos, true)}
+                      <CmsText>{formatCurrency(bs.liquid_assets.titulos_publicos, true)}</CmsText>
                     </td>
                   </tr>
 
                   <tr className="font-semibold text-white">
-                    <td className="py-2 pl-4 text-[#94a3b8]">↳ Total Investido</td>
+                    <td className="py-2 pl-4 text-[#94a3b8]"><CmsText>{"↳ Total Investido"}</CmsText></td>
                     <td className="py-2 text-right pr-2 font-mono">
-                      {formatCurrency(bs.investments.total, true)}
+                      <CmsText>{formatCurrency(bs.investments.total, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-8">↳ Imóveis Físicos (Galpões)</td>
+                    <td className="py-1.5 pl-8"><CmsText>{"↳ Imóveis Físicos (Galpões)"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono text-white">
-                      {formatCurrency(bs.investments.imoveis, true)}
+                      <CmsText>{formatCurrency(bs.investments.imoveis, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-8">↳ CRIs e Recebíveis Imobiliários</td>
+                    <td className="py-1.5 pl-8"><CmsText>{"↳ CRIs e Recebíveis Imobiliários"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono">
-                      {formatCurrency(bs.investments.cris, true)}
+                      <CmsText>{formatCurrency(bs.investments.cris, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-8">↳ Cotas de Outros Fundos (FIIs)</td>
+                    <td className="py-1.5 pl-8"><CmsText>{"↳ Cotas de Outros Fundos (FIIs)"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono">
-                      {formatCurrency(bs.investments.fiis, true)}
+                      <CmsText>{formatCurrency(bs.investments.fiis, true)}</CmsText>
                     </td>
                   </tr>
 
                   <tr className="font-semibold text-white">
-                    <td className="py-2 pl-4 text-[#94a3b8]">↳ Valores a Receber</td>
+                    <td className="py-2 pl-4 text-[#94a3b8]"><CmsText>{"↳ Valores a Receber"}</CmsText></td>
                     <td className="py-2 text-right pr-2 font-mono">
-                      {formatCurrency(bs.receivables.total, true)}
+                      <CmsText>{formatCurrency(bs.receivables.total, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-8">↳ Aluguéis a Receber</td>
+                    <td className="py-1.5 pl-8"><CmsText>{"↳ Aluguéis a Receber"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono">
-                      {formatCurrency(bs.receivables.alugueis, true)}
+                      <CmsText>{formatCurrency(bs.receivables.alugueis, true)}</CmsText>
                     </td>
                   </tr>
 
                   <tr className="bg-white/[0.03] font-bold text-white">
-                    <td className="py-2.5 pl-2">PASSIVO TOTAL</td>
+                    <td className="py-2.5 pl-2"><CmsText>{"PASSIVO TOTAL"}</CmsText></td>
                     <td className="py-2.5 text-right pr-2 font-mono text-sm text-[#ff3b69]">
-                      {formatCurrency(bs.total_liabilities.total, true)}
+                      <CmsText>{formatCurrency(bs.total_liabilities.total, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-6">↳ Rendimentos a Distribuir aos Cotistas</td>
+                    <td className="py-1.5 pl-6"><CmsText>{"↳ Rendimentos a Distribuir aos Cotistas"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono text-[#00f5a0]">
-                      {formatCurrency(bs.total_liabilities.rendimentos_distribuir, true)}
+                      <CmsText>{formatCurrency(bs.total_liabilities.rendimentos_distribuir, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-6">↳ Taxa de Administração a Pagar</td>
+                    <td className="py-1.5 pl-6"><CmsText>{"↳ Taxa de Administração a Pagar"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono">
-                      {formatCurrency(bs.total_liabilities.taxa_administracao, true)}
+                      <CmsText>{formatCurrency(bs.total_liabilities.taxa_administracao, true)}</CmsText>
                     </td>
                   </tr>
                   <tr className="text-[#64748b]">
-                    <td className="py-1.5 pl-6">↳ Outros Valores a Pagar / Fornecedores</td>
+                    <td className="py-1.5 pl-6"><CmsText>{"↳ Outros Valores a Pagar / Fornecedores"}</CmsText></td>
                     <td className="py-1.5 text-right pr-2 font-mono">
-                      {formatCurrency(bs.total_liabilities.outros_valores_pagar, true)}
+                      <CmsText>{formatCurrency(bs.total_liabilities.outros_valores_pagar, true)}</CmsText>
                     </td>
                   </tr>
 
                   <tr className="bg-[#00f5a0]/10 font-bold text-white">
-                    <td className="py-3 pl-2 text-base text-[#00f5a0]">
-                      PATRIMÔNIO LÍQUIDO
-                    </td>
+                    <td className="py-3 pl-2 text-base text-[#00f5a0]"><CmsText>{"PATRIMÔNIO LÍQUIDO"}</CmsText></td>
                     <td className="py-3 text-right pr-2 font-black font-mono text-base text-[#00f5a0]">
-                      {formatCurrency(bs.net_worth, true)}
+                      <CmsText>{formatCurrency(bs.net_worth, true)}</CmsText>
                     </td>
                   </tr>
                 </tbody>
@@ -251,89 +243,77 @@ export function FinancialStatementsTable({
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-[#64748b]">
-            * Valores consolidados da escrituração fiduciária CVM / B3
-          </div>
-        </Card>
+          <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-[#64748b]"><CmsText>{"* Valores consolidados da escrituração fiduciária CVM / B3"}</CmsText></div>
+        </Card></CmsElement>
       </div>
 
       {/* DRE / LUCRATIVIDADE */}
       <div className="lg:col-span-5 flex flex-col">
-        <Card glow="emerald" className="p-6 h-full flex flex-col justify-between">
+        <CmsElement feature="ui.components/shared/FinancialStatementsTable.Card.6"><Card glow="emerald" className="p-6 h-full flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-white/5">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-mono uppercase tracking-wider text-[#00f5a0] font-bold">
-                    Demonstrativo de Resultado
-                  </span>
-                  <Badge variant="emerald">DRE Gerencial</Badge>
+                  <span className="text-xs font-mono uppercase tracking-wider text-[#00f5a0] font-bold"><CmsText>{"Demonstrativo de Resultado"}</CmsText></span>
+                  <Badge variant="emerald"><CmsText>{"DRE Gerencial"}</CmsText></Badge>
                 </div>
-                <h2 className="text-lg font-bold text-white tracking-tight">
-                  Lucratividade {ticker}
+                <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"Lucratividade "}</CmsText><CmsText>{ticker}</CmsText>
                 </h2>
               </div>
-              <Badge variant="cyan">Competência</Badge>
+              <Badge variant="cyan"><CmsText>{"Competência"}</CmsText></Badge>
             </div>
 
             <div className="flex flex-col divide-y divide-white/5 mono-nums text-xs">
               <div className="flex justify-between py-2.5 text-white">
-                <span className="font-semibold">(+) Receitas de Locação (Renda)</span>
+                <span className="font-semibold"><CmsText>{"(+) Receitas de Locação (Renda)"}</CmsText></span>
                 <span className="font-black text-[#00f5a0]">
-                  {formatCurrency(luc.rental_income, true)}
+                  <CmsText>{formatCurrency(luc.rental_income, true)}</CmsText>
                 </span>
               </div>
               <div className="flex justify-between py-2 text-[#94a3b8]">
-                <span>(+) Resultado de Venda de Imóveis</span>
-                <span>{formatCurrency(luc.property_sale_income, true)}</span>
+                <span><CmsText>{"(+) Resultado de Venda de Imóveis"}</CmsText></span>
+                <span><CmsText>{formatCurrency(luc.property_sale_income, true)}</CmsText></span>
               </div>
               <div className="flex justify-between py-2 text-[#94a3b8]">
-                <span>(+) Rendimentos de TVM e CRIs</span>
-                <span>{formatCurrency(luc.securities_income, true)}</span>
+                <span><CmsText>{"(+) Rendimentos de TVM e CRIs"}</CmsText></span>
+                <span><CmsText>{formatCurrency(luc.securities_income, true)}</CmsText></span>
               </div>
               <div className="flex justify-between py-2 text-[#94a3b8]">
-                <span>(+) Resultado Financeiro de Caixa</span>
-                <span>{formatCurrency(luc.financial_income, true)}</span>
+                <span><CmsText>{"(+) Resultado Financeiro de Caixa"}</CmsText></span>
+                <span><CmsText>{formatCurrency(luc.financial_income, true)}</CmsText></span>
               </div>
               <div className="flex justify-between py-2 text-[#ff3b69]">
-                <span>(-) Despesas Operacionais e Imóveis</span>
-                <span>{formatCurrency(luc.operating_expenses, true)}</span>
+                <span><CmsText>{"(-) Despesas Operacionais e Imóveis"}</CmsText></span>
+                <span><CmsText>{formatCurrency(luc.operating_expenses, true)}</CmsText></span>
               </div>
               <div className="flex justify-between py-2 text-[#ff3b69]">
-                <span>(-) Taxa de Administração e Gestão</span>
-                <span>{formatCurrency(luc.admin_fee_expense, true)}</span>
+                <span><CmsText>{"(-) Taxa de Administração e Gestão"}</CmsText></span>
+                <span><CmsText>{formatCurrency(luc.admin_fee_expense, true)}</CmsText></span>
               </div>
               <div className="flex justify-between py-2 text-[#ff3b69]">
-                <span>(-) Outras Despesas / Encargos</span>
-                <span>{formatCurrency(luc.other_expenses, true)}</span>
+                <span><CmsText>{"(-) Outras Despesas / Encargos"}</CmsText></span>
+                <span><CmsText>{formatCurrency(luc.other_expenses, true)}</CmsText></span>
               </div>
 
               <div className="flex justify-between py-3.5 bg-white/[0.03] text-white font-bold px-2 rounded-xl mt-2">
-                <span className="text-sm">(=) Lucro Líquido Distribuível</span>
+                <span className="text-sm"><CmsText>{"(=) Lucro Líquido Distribuível"}</CmsText></span>
                 <span className="text-base text-[#00f5a0] font-black">
-                  {formatCurrency(luc.net_profit, true)}
+                  <CmsText>{formatCurrency(luc.net_profit, true)}</CmsText>
                 </span>
               </div>
             </div>
 
             {/* Rendimento por cota badge */}
             <div className="mt-5 p-3.5 rounded-2xl bg-[#131926] border border-white/5 text-center">
-              <span className="text-[10px] text-[#64748b] uppercase font-bold tracking-wider block">
-                Rendimento Distribuído Médio por Cota
-              </span>
+              <span className="text-[10px] text-[#64748b] uppercase font-bold tracking-wider block"><CmsText>{"Rendimento Distribuído Médio por Cota"}</CmsText></span>
               <div className="text-2xl font-black font-mono text-[#00f5a0] mt-1">
-                {formatCurrency(luc.distributed_per_share)} / cota
-              </div>
-              <span className="text-[11px] text-[#94a3b8] mt-1 block">
-                Paga mensalmente sem retenção de IR para investidor pessoa física
-              </span>
+                <CmsText>{formatCurrency(luc.distributed_per_share)}</CmsText><CmsText>{" / cota"}</CmsText></div>
+              <span className="text-[11px] text-[#94a3b8] mt-1 block"><CmsText>{"Paga mensalmente sem retenção de IR para investidor pessoa física"}</CmsText></span>
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-[#64748b]">
-            Demonstração elaborada conforme padrões contábeis vigentes da CVM para FIIs.
-          </div>
-        </Card>
+          <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-[#64748b]"><CmsText>{"Demonstração elaborada conforme padrões contábeis vigentes da CVM para FIIs."}</CmsText></div>
+        </Card></CmsElement>
       </div>
     </div>
   );

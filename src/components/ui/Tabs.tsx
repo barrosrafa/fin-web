@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React from "react";
 
 export interface Tab {
@@ -45,15 +47,15 @@ export function Tabs({
   };
 
   return (
-    <div
+    <CmsElement><div
       role="tablist"
       aria-label={ariaLabel}
       className={`flex items-center gap-1.5 p-1 rounded-full bg-[#0c1017] border border-white/5 w-fit max-w-full overflow-x-auto scrollbar-none ${className}`}
     >
-      {tabs.map((tab, idx) => {
+      <CmsText>{tabs.map((tab, idx) => {
         const isActive = tab.id === activeTab;
         return (
-          <button
+          <CmsElement feature="ui.components/ui/Tabs.button.2" key={tab.id}><button
             key={tab.id}
             id={`tab-${tab.id}`}
             role="tab"
@@ -69,8 +71,8 @@ export function Tabs({
                 : "text-[#64748b] hover:text-[#94a3b8] hover:bg-white/[0.03] border border-transparent"
             }`}
           >
-            {tab.label}
-            {tab.count !== undefined && (
+            <CmsText>{tab.label}</CmsText>
+            <CmsText>{tab.count !== undefined && (
               <span
                 className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
                   isActive
@@ -78,12 +80,12 @@ export function Tabs({
                     : "bg-white/5 text-[#64748b]"
                 }`}
               >
-                {tab.count}
+                <CmsText>{tab.count}</CmsText>
               </span>
-            )}
-          </button>
+            )}</CmsText>
+          </button></CmsElement>
         );
-      })}
-    </div>
+      })}</CmsText>
+    </div></CmsElement>
   );
 }

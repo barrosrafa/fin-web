@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText } from "@/components/content/Cms";
 import React from "react";
 import { formatPercent } from "@/lib/formatters";
 
@@ -20,9 +22,7 @@ export function UnderwaterDrawdownChart({
 }: UnderwaterChartProps) {
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center p-8 text-xs text-[#64748b] bg-[#0a0f1d] rounded-xl border border-white/5">
-        Sem dados de drawdown disponíveis para o período.
-      </div>
+      <div className="flex items-center justify-center p-8 text-xs text-[#64748b] bg-[#0a0f1d] rounded-xl border border-white/5"><CmsText>{"Sem dados de drawdown disponíveis para o período."}</CmsText></div>
     );
   }
 
@@ -52,19 +52,18 @@ export function UnderwaterDrawdownChart({
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-2">
-          <span className="text-white font-bold">Curva de Drawdown Subaquática</span>
-          <span className="text-[#64748b]">• Queda acumulada do pico histórico</span>
+          <span className="text-white font-bold"><CmsText>{"Curva de Drawdown Subaquática"}</CmsText></span>
+          <span className="text-[#64748b]"><CmsText>{"• Queda acumulada do pico histórico"}</CmsText></span>
         </div>
         <div className="flex items-center gap-4 text-[11px] mono-nums">
-          <span className="text-[#ff3b5c] font-bold">
-            Max: {formatPercent(maxDrawdownPct)}
+          <span className="text-[#ff3b5c] font-bold"><CmsText>{"Max: "}</CmsText><CmsText>{formatPercent(maxDrawdownPct)}</CmsText>
           </span>
-          {valleyDate && (
-            <span className="text-[#94a3b8]">Vale: {valleyDate}</span>
-          )}
-          {recoveryDays !== undefined && recoveryDays > 0 && (
-            <span className="text-[#94a3b8]">Recup: {recoveryDays} dias</span>
-          )}
+          <CmsText>{valleyDate && (
+            <span className="text-[#94a3b8]"><CmsText>{"Vale: "}</CmsText><CmsText>{valleyDate}</CmsText></span>
+          )}</CmsText>
+          <CmsText>{recoveryDays !== undefined && recoveryDays > 0 && (
+            <span className="text-[#94a3b8]"><CmsText>{"Recup: "}</CmsText><CmsText>{recoveryDays}</CmsText><CmsText>{" dias"}</CmsText></span>
+          )}</CmsText>
         </div>
       </div>
 
@@ -99,9 +98,7 @@ export function UnderwaterDrawdownChart({
             fontSize="10"
             textAnchor="end"
             className="mono-nums font-mono"
-          >
-            0%
-          </text>
+          ><CmsText>{"0%"}</CmsText></text>
 
           {/* Bottom limit line */}
           <line
@@ -122,8 +119,7 @@ export function UnderwaterDrawdownChart({
             textAnchor="end"
             className="mono-nums font-mono"
           >
-            {minVal.toFixed(0)}%
-          </text>
+            <CmsText>{minVal.toFixed(0)}</CmsText><CmsText>{"%"}</CmsText></text>
 
           {/* Area under waterline */}
           <path d={areaPath} fill="url(#underwaterRedGrad)" />

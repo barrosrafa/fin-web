@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React from "react";
 
 export interface RadarDataPoint {
@@ -50,7 +52,7 @@ export function RadarChart({
         className="overflow-visible"
       >
         {/* Background concentric polygons */}
-        {levels.map((lvl) => {
+        <CmsText>{levels.map((lvl) => {
           const lvlPoints = data
             .map((_, i) => {
               const r = lvl * radius;
@@ -70,10 +72,10 @@ export function RadarChart({
               strokeWidth={1}
             />
           );
-        })}
+        })}</CmsText>
 
         {/* Axis radial spokes */}
-        {data.map((d, i) => {
+        <CmsText>{data.map((d, i) => {
           const angle = i * angleSlice - Math.PI / 2;
           const x = center + radius * Math.cos(angle);
           const y = center + radius * Math.sin(angle);
@@ -103,11 +105,11 @@ export function RadarChart({
                 fontWeight={600}
                 className="tracking-wider uppercase select-none"
               >
-                {d.axis}
+                <CmsText>{d.axis}</CmsText>
               </text>
             </g>
           );
-        })}
+        })}</CmsText>
 
         {/* Data polygon */}
         <polygon
@@ -120,7 +122,7 @@ export function RadarChart({
         />
 
         {/* Data points (Glowing vertices) */}
-        {points.map((p, idx) => (
+        <CmsText>{points.map((p, idx) => (
           <g key={`vertex-${idx}`}>
             <circle cx={p.x} cy={p.y} r={4} fill={color} />
             <circle
@@ -133,7 +135,7 @@ export function RadarChart({
               strokeOpacity={0.4}
             />
           </g>
-        ))}
+        ))}</CmsText>
       </svg>
     </div>
   );

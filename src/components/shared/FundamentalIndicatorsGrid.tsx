@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -179,22 +181,18 @@ export function FundamentalIndicatorsGrid({
   ];
 
   return (
-    <Card glow="emerald" className="p-6">
+    <CmsElement feature="ui.components/shared/FundamentalIndicatorsGrid.Card.1"><Card glow="emerald" className="p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-white/5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-mono uppercase tracking-wider text-[#00f5a0] font-bold">
-              Fundamentos & Mercado
-            </span>
-            <Badge variant="emerald">Quadro de Indicadores {ticker}</Badge>
+            <span className="text-xs font-mono uppercase tracking-wider text-[#00f5a0] font-bold"><CmsText>{"Fundamentos & Mercado"}</CmsText></span>
+            <Badge variant="emerald"><CmsText>{"Quadro de Indicadores "}</CmsText><CmsText>{ticker}</CmsText></Badge>
           </div>
-          <h2 className="text-lg md:text-xl font-bold text-white tracking-tight">
-            Indicadores Fundamentalistas e Operacionais
-          </h2>
+          <h2 className="text-lg md:text-xl font-bold text-white tracking-tight"><CmsText>{"Indicadores Fundamentalistas e Operacionais"}</CmsText></h2>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <CmsElement feature="ui.components/shared/FundamentalIndicatorsGrid.button.2"><button
             type="button"
             onClick={() => setViewMode("grid")}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-colors ${
@@ -202,10 +200,8 @@ export function FundamentalIndicatorsGrid({
                 ? "bg-[#00f5a0]/15 text-[#00f5a0] border border-[#00f5a0]/30"
                 : "bg-white/5 text-[#94a3b8] hover:text-white border border-white/5"
             }`}
-          >
-            Grade
-          </button>
-          <button
+          ><CmsText>{"Grade"}</CmsText></button></CmsElement>
+          <CmsElement feature="ui.components/shared/FundamentalIndicatorsGrid.button.3"><button
             type="button"
             onClick={() => setViewMode("table")}
             className={`px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-colors ${
@@ -213,15 +209,13 @@ export function FundamentalIndicatorsGrid({
                 ? "bg-[#00f5a0]/15 text-[#00f5a0] border border-[#00f5a0]/30"
                 : "bg-white/5 text-[#94a3b8] hover:text-white border border-white/5"
             }`}
-          >
-            Tabela
-          </button>
+          ><CmsText>{"Tabela"}</CmsText></button></CmsElement>
         </div>
       </div>
 
-      {viewMode === "grid" ? (
+      <CmsText>{viewMode === "grid" ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5">
-          {metricList.map((m) => (
+          <CmsText>{metricList.map((m) => (
             <div
               key={m.id}
               className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all flex flex-col justify-between group"
@@ -229,54 +223,54 @@ export function FundamentalIndicatorsGrid({
               <div>
                 <div className="flex items-center justify-between gap-1 mb-1">
                   <span className="text-[11px] font-semibold text-[#94a3b8] uppercase tracking-wider group-hover:text-white transition-colors truncate">
-                    {m.label}
+                    <CmsText>{m.label}</CmsText>
                   </span>
                 </div>
                 <div className="text-xl font-black font-mono text-white mt-0.5 tracking-tight">
-                  {m.value}
+                  <CmsText>{m.value}</CmsText>
                 </div>
               </div>
               <div className="mt-2.5 pt-2 border-t border-white/5 flex items-center justify-between">
-                <Badge variant={m.variant}>{m.badge}</Badge>
+                <Badge variant={m.variant}><CmsText>{m.badge}</CmsText></Badge>
               </div>
             </div>
-          ))}
+          ))}</CmsText>
         </div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-2">Indicador</th>
-                <th className="pb-3 text-right">Valor Atual</th>
-                <th className="pb-3 text-right">Classificação</th>
-                <th className="pb-3 pl-6">Significado e Interpretação</th>
+                <th className="pb-3 pl-2"><CmsText>{"Indicador"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Valor Atual"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Classificação"}</CmsText></th>
+                <th className="pb-3 pl-6"><CmsText>{"Significado e Interpretação"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 mono-nums">
-              {metricList.map((m) => (
+              <CmsText>{metricList.map((m) => (
                 <tr key={m.id} className="hover:bg-white/[0.02]">
-                  <td className="py-2.5 pl-2 font-bold text-white">{m.label}</td>
+                  <td className="py-2.5 pl-2 font-bold text-white"><CmsText>{m.label}</CmsText></td>
                   <td className="py-2.5 text-right font-black font-mono text-white text-sm">
-                    {m.value}
+                    <CmsText>{m.value}</CmsText>
                   </td>
                   <td className="py-2.5 text-right">
-                    <Badge variant={m.variant}>{m.badge}</Badge>
+                    <Badge variant={m.variant}><CmsText>{m.badge}</CmsText></Badge>
                   </td>
                   <td className="py-2.5 pl-6 font-sans text-xs text-[#94a3b8]">
-                    {m.tooltip}
+                    <CmsText>{m.tooltip}</CmsText>
                   </td>
                 </tr>
-              ))}
+              ))}</CmsText>
             </tbody>
           </table>
         </div>
-      )}
+      )}</CmsText>
 
       <div className="mt-4 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between text-[11px] text-[#64748b]">
-        <span>Cálculos automatizados via CVM / B3 • Cotações ajustadas</span>
-        <span>Última atualização: {new Date().toLocaleDateString("pt-BR")} às 16:15</span>
+        <span><CmsText>{"Cálculos automatizados via CVM / B3 • Cotações ajustadas"}</CmsText></span>
+        <span><CmsText>{"Última atualização: "}</CmsText><CmsText>{new Date().toLocaleDateString("pt-BR")}</CmsText><CmsText>{" às 16:15"}</CmsText></span>
       </div>
-    </Card>
+    </Card></CmsElement>
   );
 }

@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React, { Suspense } from "react";
 import { Metadata } from "next";
 import { CanonicalPairClient } from "./CanonicalPairClient";
@@ -42,9 +44,7 @@ export default async function CanonicalPairComparatorPage({
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono">
-          Carregando comparação {a} vs {b}...
-        </div>
+        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono"><CmsText>{"Carregando comparação "}</CmsText><CmsText>{a}</CmsText><CmsText>{" vs "}</CmsText><CmsText>{b}</CmsText><CmsText>{"..."}</CmsText></div>
       }
     >
       <CanonicalPairClient tickerA={a} tickerB={b} />

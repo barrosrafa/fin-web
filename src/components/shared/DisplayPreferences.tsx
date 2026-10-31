@@ -1,4 +1,6 @@
 "use client";
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import { useEffect, useSyncExternalStore } from "react";
 const eventName = "fin-display-preference";
 function snapshot() {
@@ -25,8 +27,8 @@ export function DisplayPreferences() {
       document.documentElement.dataset[key === "fin-density" ? "density" : "palette"] = value;
     }
   };
-  return <div className="flex flex-wrap gap-3 text-xs text-[#94a3b8] mb-4" aria-label="Preferências de exibição">
-    <button type="button" aria-pressed={compact} onClick={() => persist("fin-density", compact ? "detailed" : "compact")} className="underline">Densidade: {compact ? "compacta" : "detalhada"}</button>
-    <button type="button" aria-pressed={accessible} onClick={() => persist("fin-palette", accessible ? "default" : "accessible")} className="underline">Cores: {accessible ? "azul e laranja" : "padrão"}</button>
-  </div>;
+  return <CmsElement><div className="flex flex-wrap gap-3 text-xs text-[#94a3b8] mb-4" aria-label="Preferências de exibição">
+    <CmsElement feature="ui.components/shared/DisplayPreferences.button.2"><button type="button" aria-pressed={compact} onClick={() => persist("fin-density", compact ? "detailed" : "compact")} className="underline"><CmsText>{"Densidade: "}</CmsText><CmsText>{compact ? "compacta" : "detalhada"}</CmsText></button></CmsElement>
+    <CmsElement feature="ui.components/shared/DisplayPreferences.button.3"><button type="button" aria-pressed={accessible} onClick={() => persist("fin-palette", accessible ? "default" : "accessible")} className="underline"><CmsText>{"Cores: "}</CmsText><CmsText>{accessible ? "azul e laranja" : "padrão"}</CmsText></button></CmsElement>
+  </div></CmsElement>;
 }

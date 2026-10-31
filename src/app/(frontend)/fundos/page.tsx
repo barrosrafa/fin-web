@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { MetricCard } from "@/components/ui/MetricCard";
@@ -41,50 +43,44 @@ export default function FundosPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-cyan">Nova Resolução CVM 175</span>
-          <span className="text-xs text-[#64748b]">Fundo • Classe • Subclasse</span>
+          <span className="badge-neon badge-neon-cyan"><CmsText>{"Nova Resolução CVM 175"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Fundo • Classe • Subclasse"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Fundos de Investimento (CVM 175)
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-          Análise quantitativa profunda baseada na metodologia do Mais Retorno: Matriz de Risco 10x10, Composição de Carteira (CDA aberto) e histórico de compras e vendas declaradas.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Fundos de Investimento (CVM 175)"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Análise quantitativa profunda baseada na metodologia do Mais Retorno: Matriz de Risco 10x10, Composição de Carteira (CDA aberto) e histórico de compras e vendas declaradas."}</CmsText></p>
       </div>
 
       {/* Top 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/fundos/page.MetricCard.1"><MetricCard
           title="Fundo Multimercado Destaque"
           value="SPX Nimitz Feeder"
           subtitle="Índice de Sharpe de 1.58 (12M)"
           glow="cyan"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/fundos/page.MetricCard.2"><MetricCard
           title="Fundo Renda Fixa Crédito Privado"
           value="Kinea Rendimentos"
           subtitle="112% do CDI com volatilidade 1.2%"
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/fundos/page.MetricCard.3"><MetricCard
           title="Fundo de Ações Long Bias"
           value="Kapitalo Tarkus FIA"
           subtitle="Alfa de Jensen +3.8% vs IBOV"
           glow="violet"
-        />
+        /></CmsElement>
       </div>
 
       {/* Quant Risk Matrix 10x10 */}
-      <Card glow="cyan">
+      <CmsElement feature="ui.app/-frontend-/fundos/page.Card.4"><Card glow="cyan">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-              <span>Matriz Quantitativa de Risco (10x10)</span>
-              <Badge variant="cyan">Mais Retorno Standard</Badge>
+              <span><CmsText>{"Matriz Quantitativa de Risco (10x10)"}</CmsText></span>
+              <Badge variant="cyan"><CmsText>{"Mais Retorno Standard"}</CmsText></Badge>
             </h3>
-            <p className="text-xs text-[#94a3b8]">
-              Indicadores estatísticos de Sharpe, Sortino, Treynor, Alfa de Jensen e Drawdown calculados em janelas móveis.
-            </p>
+            <p className="text-xs text-[#94a3b8]"><CmsText>{"Indicadores estatísticos de Sharpe, Sortino, Treynor, Alfa de Jensen e Drawdown calculados em janelas móveis."}</CmsText></p>
           </div>
         </div>
 
@@ -92,57 +88,52 @@ export default function FundosPage() {
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-2">Janela Temporal</th>
-                <th className="pb-3 text-right">Sharpe</th>
-                <th className="pb-3 text-right">Sortino</th>
-                <th className="pb-3 text-right">Treynor</th>
-                <th className="pb-3 text-right">Alfa Jensen</th>
-                <th className="pb-3 text-right">Beta</th>
-                <th className="pb-3 text-right">Volatilidade</th>
-                <th className="pb-3 text-right">Max Drawdown</th>
-                <th className="pb-3 text-right">Recup. (Dias)</th>
-                <th className="pb-3 text-right pr-2">Meses Positivos</th>
+                <th className="pb-3 pl-2"><CmsText>{"Janela Temporal"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Sharpe"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Sortino"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Treynor"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Alfa Jensen"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Beta"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Volatilidade"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Max Drawdown"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Recup. (Dias)"}</CmsText></th>
+                <th className="pb-3 text-right pr-2"><CmsText>{"Meses Positivos"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 mono-nums">
-              {matrix.map((m) => (
+              <CmsText>{matrix.map((m) => (
                 <tr key={m.timeframe} className="hover:bg-white/[0.02]">
                   <td className="py-3 pl-2 font-bold text-white font-sans">
-                    {m.timeframe}
+                    <CmsText>{m.timeframe}</CmsText>
                   </td>
                   <td className="py-3 text-right font-bold text-[#00f5a0]">
-                    {m.sharpe.toFixed(2)}
+                    <CmsText>{m.sharpe.toFixed(2)}</CmsText>
                   </td>
                   <td className="py-3 text-right text-white">
-                    {m.sortino.toFixed(2)}
+                    <CmsText>{m.sortino.toFixed(2)}</CmsText>
                   </td>
                   <td className="py-3 text-right text-[#00d9f5]">
-                    {m.treynor.toFixed(2)}
+                    <CmsText>{m.treynor.toFixed(2)}</CmsText>
                   </td>
-                  <td className="py-3 text-right text-[#00f5a0]">
-                    +{m.jensenAlpha.toFixed(2)}%
-                  </td>
+                  <td className="py-3 text-right text-[#00f5a0]"><CmsText>{"+"}</CmsText><CmsText>{m.jensenAlpha.toFixed(2)}</CmsText><CmsText>{"%"}</CmsText></td>
                   <td className="py-3 text-right text-white">
-                    {m.beta.toFixed(2)}
+                    <CmsText>{m.beta.toFixed(2)}</CmsText>
                   </td>
                   <td className="py-3 text-right text-[#94a3b8]">
-                    {m.volatility.toFixed(1)}%
-                  </td>
+                    <CmsText>{m.volatility.toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
                   <td className="py-3 text-right font-bold text-[#ff3b69]">
-                    {formatPercent(m.maxDrawdown, false)}
+                    <CmsText>{formatPercent(m.maxDrawdown, false)}</CmsText>
                   </td>
                   <td className="py-3 text-right text-[#94a3b8]">
-                    {m.recoveryDays} d
-                  </td>
+                    <CmsText>{m.recoveryDays}</CmsText><CmsText>{" d"}</CmsText></td>
                   <td className="py-3 text-right pr-2 text-white">
-                    {m.positiveMonthsPct.toFixed(1)}%
-                  </td>
+                    <CmsText>{m.positiveMonthsPct.toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
                 </tr>
-              ))}
+              ))}</CmsText>
             </tbody>
           </table>
         </div>
-      </Card>
+      </Card></CmsElement>
     </div>
   );
 }

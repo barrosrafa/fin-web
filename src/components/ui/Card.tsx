@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React from "react";
 
 interface CardProps {
@@ -30,13 +32,13 @@ export function Card({
       className={`double-bezel relative transition-all duration-300 ${glowStyles[glow]} ${className}`}
     >
       <div className={`double-bezel-inner ${innerClassName}`}>
-        {title && (
+        <CmsText>{title && (
           <div className="mb-4">
-            <h3 className="text-lg font-bold text-white tracking-tight">{title}</h3>
-            {subtitle && <p className="text-xs text-[#94a3b8] mt-1">{subtitle}</p>}
+            <h3 className="text-lg font-bold text-white tracking-tight"><CmsText>{title}</CmsText></h3>
+            <CmsText>{subtitle && <p className="text-xs text-[#94a3b8] mt-1"><CmsText>{subtitle}</CmsText></p>}</CmsText>
           </div>
-        )}
-        {children}
+        )}</CmsText>
+        <CmsText>{children}</CmsText>
       </div>
     </div>
   );

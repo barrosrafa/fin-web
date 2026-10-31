@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React, { Suspense } from "react";
 import { FIIDetailClient } from "./FIIDetailClient";
 
@@ -20,9 +22,7 @@ export default async function FIIDetailPage({
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono">
-          Carregando cockpit imobiliário de {ticker}...
-        </div>
+        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono"><CmsText>{"Carregando cockpit imobiliário de "}</CmsText><CmsText>{ticker}</CmsText><CmsText>{"..."}</CmsText></div>
       }
     >
       <FIIDetailClient ticker={ticker} />

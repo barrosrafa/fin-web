@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -57,45 +59,37 @@ export default function AgendaDividendosPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="badge-neon badge-neon-emerald">Tracking de Proventos</span>
-            <span className="text-xs text-[#64748b]">Agenda B3 & Exterior</span>
+            <span className="badge-neon badge-neon-emerald"><CmsText>{"Tracking de Proventos"}</CmsText></span>
+            <span className="text-xs text-[#64748b]"><CmsText>{"Agenda B3 & Exterior"}</CmsText></span>
             <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
-              {totalCount} Proventos Mapeados
-            </span>
+              <CmsText>{totalCount}</CmsText><CmsText>{" Proventos Mapeados"}</CmsText></span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-            Agenda de Dividendos & JCP
-          </h1>
-          <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-            Acompanhe datas de corte (Data-Com), data-ex, liquidação financeira (Data de Pagamento),
-            valores brutos/líquidos e status auditado em tempo real.
-          </p>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Agenda de Dividendos & JCP"}</CmsText></h1>
+          <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Acompanhe datas de corte (Data-Com), data-ex, liquidação financeira (Data de Pagamento), valores brutos/líquidos e status auditado em tempo real."}</CmsText></p>
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={handleExportCSV} className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10">
-            📥 Exportar CSV Oficial
-          </Button>
+          <Button variant="outline" onClick={handleExportCSV} className="border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"><CmsText>{"📥 Exportar CSV Oficial"}</CmsText></Button>
         </div>
       </div>
 
       {/* Filters Bar */}
-      <Card className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4">
+      <CmsElement feature="ui.app/-frontend-/agenda-dividendos/page.Card.1"><Card className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4">
         {/* Search */}
         <div className="flex items-center gap-2 w-full lg:w-auto">
-          <input
+          <CmsElement feature="ui.app/-frontend-/agenda-dividendos/page.input.2"><input
             type="text"
             placeholder="Buscar por Ticker (ex: PETR4, VALE3, MXRF11)..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-[#0f172a] border border-white/10 rounded-xl px-4 py-2 text-sm text-white placeholder-[#64748b] focus:outline-none focus:border-cyan-500 w-full lg:w-64"
-          />
+          /></CmsElement>
         </div>
 
         {/* Status Filter (Futuro vs Pago) */}
         <div className="flex items-center gap-1.5 bg-white/5 p-1 rounded-xl border border-white/10">
-          {(["ALL", "FUTURO", "PAGO"] as const).map((st) => (
-            <button
+          <CmsText>{(["ALL", "FUTURO", "PAGO"] as const).map((st) => (
+            <CmsElement feature="ui.app/-frontend-/agenda-dividendos/page.button.3" key={st}><button
               key={st}
               onClick={() => setFilterStatus(st)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
@@ -104,15 +98,15 @@ export default function AgendaDividendosPage() {
                   : "text-[#94a3b8] hover:text-white"
               }`}
             >
-              {st === "ALL" ? "Todos os Status" : st === "FUTURO" ? "🔮 A Pagar (Futuros)" : "✅ Pagos (Histórico)"}
-            </button>
-          ))}
+              <CmsText>{st === "ALL" ? "Todos os Status" : st === "FUTURO" ? "🔮 A Pagar (Futuros)" : "✅ Pagos (Histórico)"}</CmsText>
+            </button></CmsElement>
+          ))}</CmsText>
         </div>
 
         {/* Type Filter */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
-          {(["ALL", "DIVIDENDO", "JCP", "RENDIMENTO"] as const).map((type) => (
-            <button
+          <CmsText>{(["ALL", "DIVIDENDO", "JCP", "RENDIMENTO"] as const).map((type) => (
+            <CmsElement feature="ui.app/-frontend-/agenda-dividendos/page.button.4" key={type}><button
               key={type}
               onClick={() => setFilterType(type)}
               className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
@@ -121,50 +115,46 @@ export default function AgendaDividendosPage() {
                   : "bg-white/5 text-[#94a3b8] hover:text-white"
               }`}
             >
-              {type === "ALL" ? "Todos os Tipos" : type}
-            </button>
-          ))}
+              <CmsText>{type === "ALL" ? "Todos os Tipos" : type}</CmsText>
+            </button></CmsElement>
+          ))}</CmsText>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Table */}
-      <Card className="overflow-hidden p-0 border border-white/10">
+      <CmsElement feature="ui.app/-frontend-/agenda-dividendos/page.Card.5"><Card className="overflow-hidden p-0 border border-white/10">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-[#cbd5e1]">
             <thead className="bg-[#0f172a]/80 text-xs font-semibold text-[#94a3b8] uppercase tracking-wider border-b border-white/10">
               <tr>
-                <th className="py-4 px-6">Ativo</th>
-                <th className="py-4 px-3">Tipo</th>
-                <th className="py-4 px-3">Status</th>
-                <th className="py-4 px-3">Data-Com</th>
-                <th className="py-4 px-3">Data-Ex</th>
-                <th className="py-4 px-3">Pagamento</th>
-                <th className="py-4 px-4 text-right">Valor Bruto</th>
-                <th className="py-4 px-3 text-right">Alíquota IR</th>
-                <th className="py-4 px-4 text-right">Valor Líquido</th>
-                <th className="py-4 px-6 text-right">Yield Evento</th>
+                <th className="py-4 px-6"><CmsText>{"Ativo"}</CmsText></th>
+                <th className="py-4 px-3"><CmsText>{"Tipo"}</CmsText></th>
+                <th className="py-4 px-3"><CmsText>{"Status"}</CmsText></th>
+                <th className="py-4 px-3"><CmsText>{"Data-Com"}</CmsText></th>
+                <th className="py-4 px-3"><CmsText>{"Data-Ex"}</CmsText></th>
+                <th className="py-4 px-3"><CmsText>{"Pagamento"}</CmsText></th>
+                <th className="py-4 px-4 text-right"><CmsText>{"Valor Bruto"}</CmsText></th>
+                <th className="py-4 px-3 text-right"><CmsText>{"Alíquota IR"}</CmsText></th>
+                <th className="py-4 px-4 text-right"><CmsText>{"Valor Líquido"}</CmsText></th>
+                <th className="py-4 px-6 text-right"><CmsText>{"Yield Evento"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {loading ? (
+              <CmsText>{loading ? (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-[#64748b]">
-                    Carregando agenda de proventos...
-                  </td>
+                  <td colSpan={10} className="py-12 text-center text-[#64748b]"><CmsText>{"Carregando agenda de proventos..."}</CmsText></td>
                 </tr>
               ) : events.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-12 text-center text-[#64748b]">
-                    Nenhum provento encontrado para os filtros selecionados.
-                  </td>
+                  <td colSpan={10} className="py-12 text-center text-[#64748b]"><CmsText>{"Nenhum provento encontrado para os filtros selecionados."}</CmsText></td>
                 </tr>
               ) : (
                 events.map((item) => (
                   <tr key={item.id_provento} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-4 px-6 font-bold text-white flex items-center gap-2">
-                      <Link href={`/acoes/${item.ticker}`} className="font-mono text-cyan-400 hover:underline">
-                        {item.ticker}
-                      </Link>
+                      <CmsElement feature="ui.app/-frontend-/agenda-dividendos/page.Link.6"><Link href={`/acoes/${item.ticker}`} className="font-mono text-cyan-400 hover:underline">
+                        <CmsText>{item.ticker}</CmsText>
+                      </Link></CmsElement>
                     </td>
                     <td className="py-4 px-3">
                       <Badge
@@ -176,7 +166,7 @@ export default function AgendaDividendosPage() {
                             : "cyan"
                         }
                       >
-                        {item.tipo}
+                        <CmsText>{item.tipo}</CmsText>
                       </Badge>
                     </td>
                     <td className="py-4 px-3">
@@ -187,29 +177,29 @@ export default function AgendaDividendosPage() {
                             : "bg-white/5 text-[#94a3b8] border-white/10"
                         }`}
                       >
-                        {item.status === "FUTURO" ? "A PAGAR" : "PAGO"}
+                        <CmsText>{item.status === "FUTURO" ? "A PAGAR" : "PAGO"}</CmsText>
                       </span>
                     </td>
-                    <td className="py-4 px-3 font-mono text-xs">{item.data_com || "A definir"}</td>
-                    <td className="py-4 px-3 font-mono text-xs text-[#94a3b8]">{item.data_ex || "—"}</td>
+                    <td className="py-4 px-3 font-mono text-xs"><CmsText>{item.data_com || "A definir"}</CmsText></td>
+                    <td className="py-4 px-3 font-mono text-xs text-[#94a3b8]"><CmsText>{item.data_ex || "—"}</CmsText></td>
                     <td className="py-4 px-3 font-mono text-xs text-emerald-400">
-                      {item.data_pagamento || "A definir"}
+                      <CmsText>{item.data_pagamento || "A definir"}</CmsText>
                     </td>
                     <td className="py-4 px-4 text-right font-mono">
-                      {formatDividendUnit(item.valor_bruto)}
+                      <CmsText>{formatDividendUnit(item.valor_bruto)}</CmsText>
                     </td>
                     <td className="py-4 px-3 text-right font-mono text-xs text-[#94a3b8]">
-                      {item.aliquota_ir_pct > 0 ? `${item.aliquota_ir_pct}%` : "Isento"}
+                      <CmsText>{item.aliquota_ir_pct > 0 ? `${item.aliquota_ir_pct}%` : "Isento"}</CmsText>
                     </td>
                     <td className="py-4 px-4 text-right font-mono font-bold text-white">
-                      {formatDividendUnit(item.valor_liquido)}
+                      <CmsText>{formatDividendUnit(item.valor_liquido)}</CmsText>
                     </td>
                     <td className="py-4 px-6 text-right font-mono text-cyan-400 font-semibold">
-                      {item.yield_evento_pct !== undefined ? formatPercent(item.yield_evento_pct) : "—"}
+                      <CmsText>{item.yield_evento_pct !== undefined ? formatPercent(item.yield_evento_pct) : "—"}</CmsText>
                     </td>
                   </tr>
                 ))
-              )}
+              )}</CmsText>
             </tbody>
           </table>
         </div>
@@ -224,7 +214,7 @@ export default function AgendaDividendosPage() {
           entityName="proventos"
           emptyMessage="Nenhum provento encontrado para os filtros selecionados."
         />
-      </Card>
+      </Card></CmsElement>
     </div>
   );
 }

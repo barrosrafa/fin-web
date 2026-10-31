@@ -1,4 +1,6 @@
 "use client";
+
+import { CmsText } from "@/components/content/Cms";
 import { cloneElement, useEffect, useRef, useState, type ReactElement, type Ref } from "react";
 import { defaultRangeExtractor, useWindowVirtualizer } from "@tanstack/react-virtual";
 
@@ -32,10 +34,10 @@ export function VirtualTableBody<T>({ items, getKey, renderRow, columns, full = 
     })} />;
   });
   return <tbody ref={root} className="divide-y divide-white/5 mono-nums">
-    {full ? items.map(renderRow) : body}
+    <CmsText>{full ? items.map(renderRow) : body}</CmsText>
     <tr aria-hidden="true"><td colSpan={columns} style={{ height: full ? 0 : Math.max(0, virtualizer.getTotalSize() - ((visible.at(-1)?.end ?? margin) - margin)), padding: 0 }} /></tr>
   </tbody>;
 }
 function FragmentRow({ gap, columns, row }: { gap: number; columns: number; row: ReactElement }) {
-  return <>{gap > 0 && <tr aria-hidden="true"><td colSpan={columns} style={{ height: gap, padding: 0 }} /></tr>}{row}</>;
+  return <><CmsText>{gap > 0 && <tr aria-hidden="true"><td colSpan={columns} style={{ height: gap, padding: 0 }} /></tr>}</CmsText><CmsText>{row}</CmsText></>;
 }

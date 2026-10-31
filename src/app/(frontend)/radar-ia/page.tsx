@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -54,54 +56,46 @@ export default function RadarIAPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-violet">Comitê de IA & NLP CVM</span>
-          <span className="text-xs text-[#64748b]">Ingestão Semântica Contínua</span>
+          <span className="badge-neon badge-neon-violet"><CmsText>{"Comitê de IA & NLP CVM"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Ingestão Semântica Contínua"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Central de Inteligência Artificial
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-          Modelos neurais sintetizam relatórios gerenciais, fatos relevantes, DFP e atas da CVM em tempo real, calculando escores de sentimento e identificando anomalias contábeis.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Central de Inteligência Artificial"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Modelos neurais sintetizam relatórios gerenciais, fatos relevantes, DFP e atas da CVM em tempo real, calculando escores de sentimento e identificando anomalias contábeis."}</CmsText></p>
       </div>
 
       {/* Top 3 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/radar-ia/page.MetricCard.1"><MetricCard
           title="Documentos CVM Ingeridos"
           value={loadingAlerts ? "Carregando..." : `${alerts.length} comunicados`}
           subtitle="Taxa de processamento: 1.2s / doc"
           glow="violet"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/radar-ia/page.MetricCard.2"><MetricCard
           title="Sentimento Geral B3"
           value={loadingAlerts ? "Carregando..." : `${bullishPct}% Otimista`}
           subtitle={`${bullishCount} de ${alerts.length} comunicados com viés de alta`}
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/radar-ia/page.MetricCard.3"><MetricCard
           title="Anomalias Críticas Detectadas"
           value={loadingAlerts ? "Carregando..." : `${criticalCount} alertas de atenção`}
           subtitle="Auditoria e monitoramento de passivos"
           glow={criticalCount > 0 ? "crimson" : "cyan"}
-        />
+        /></CmsElement>
       </div>
 
       {/* Deep Dive Ticker Intelligence */}
-      <Card glow="violet">
+      <CmsElement feature="ui.app/-frontend-/radar-ia/page.Card.4"><Card glow="violet">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-4">
             <div>
-              <h3 className="text-lg font-bold text-white tracking-tight">
-                Veredito do Comitê de IA por Ativo
-              </h3>
-              <p className="text-xs text-[#94a3b8]">
-                Selecione uma empresa para inspecionar síntese de NLP, score de confiança e matriz SWOT.
-              </p>
+              <h3 className="text-lg font-bold text-white tracking-tight"><CmsText>{"Veredito do Comitê de IA por Ativo"}</CmsText></h3>
+              <p className="text-xs text-[#94a3b8]"><CmsText>{"Selecione uma empresa para inspecionar síntese de NLP, score de confiança e matriz SWOT."}</CmsText></p>
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {FEATURED_TICKERS.map((t) => (
-                <button
+              <CmsText>{FEATURED_TICKERS.map((t) => (
+                <CmsElement feature="ui.app/-frontend-/radar-ia/page.button.5" key={t}><button
                   key={t}
                   onClick={() => setSelectedTicker(t)}
                   className={`text-xs px-3 py-1.5 rounded-lg font-mono font-bold transition-all ${
@@ -110,22 +104,20 @@ export default function RadarIAPage() {
                       : "bg-white/5 text-[#94a3b8] hover:bg-white/10 hover:text-white"
                   }`}
                 >
-                  {t}
-                </button>
-              ))}
+                  <CmsText>{t}</CmsText>
+                </button></CmsElement>
+              ))}</CmsText>
             </div>
           </div>
 
-          {loadingSentiment ? (
-            <div className="py-8 text-center text-xs text-[#64748b] animate-pulse">
-              Consultando modelo de inteligência para {selectedTicker}...
-            </div>
+          <CmsText>{loadingSentiment ? (
+            <div className="py-8 text-center text-xs text-[#64748b] animate-pulse"><CmsText>{"Consultando modelo de inteligência para "}</CmsText><CmsText>{selectedTicker}</CmsText><CmsText>{"..."}</CmsText></div>
           ) : sentiment ? (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/[0.02] p-4 rounded-xl border border-white/5">
                 <div className="flex items-center gap-3">
                   <span className="text-xl font-bold font-mono text-white">
-                    {sentiment.ticker}
+                    <CmsText>{sentiment.ticker}</CmsText>
                   </span>
                   <Badge
                     variant={
@@ -137,109 +129,93 @@ export default function RadarIAPage() {
                     }
                     dot
                   >
-                    {sentiment.sentiment}
+                    <CmsText>{sentiment.sentiment}</CmsText>
                   </Badge>
-                  <span className="text-xs text-[#64748b]">
-                    Confiança: <span className="text-white font-mono">{sentiment.confidence_score}%</span>
+                  <span className="text-xs text-[#64748b]"><CmsText>{"Confiança: "}</CmsText><span className="text-white font-mono"><CmsText>{sentiment.confidence_score}</CmsText><CmsText>{"%"}</CmsText></span>
                   </span>
                 </div>
-                <div className="text-xs text-[#64748b]">
-                  Último doc: <span className="text-[#94a3b8]">{sentiment.last_analyzed_doc || "Recente"}</span>
+                <div className="text-xs text-[#64748b]"><CmsText>{"Último doc: "}</CmsText><span className="text-[#94a3b8]"><CmsText>{sentiment.last_analyzed_doc || "Recente"}</CmsText></span>
                 </div>
               </div>
 
               <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1">
-                  Resumo Executivo Neural
-                </h4>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748b] mb-1"><CmsText>{"Resumo Executivo Neural"}</CmsText></h4>
                 <p className="text-xs text-[#cbd5e1] leading-relaxed bg-[#0a0d14] p-3 rounded-lg border border-white/5">
-                  {sentiment.executive_summary}
+                  <CmsText>{sentiment.executive_summary}</CmsText>
                 </p>
               </div>
 
               {/* SWOT Matrix */}
-              {sentiment.swot && (
+              <CmsText>{sentiment.swot && (
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748b] mb-2">
-                    Matriz SWOT Sintetizada
-                  </h4>
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#64748b] mb-2"><CmsText>{"Matriz SWOT Sintetizada"}</CmsText></h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="bg-[#00f5a0]/[0.03] border border-[#00f5a0]/20 rounded-xl p-3">
                       <div className="text-xs font-bold text-[#00f5a0] uppercase mb-2 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#00f5a0]" /> Forças (Strengths)
-                      </div>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#00f5a0]" /><CmsText>{" Forças (Strengths)"}</CmsText></div>
                       <ul className="text-[11px] text-[#94a3b8] space-y-1 list-disc list-inside">
-                        {sentiment.swot.strengths.map((s, idx) => (
-                          <li key={idx}>{s}</li>
-                        ))}
+                        <CmsText>{sentiment.swot.strengths.map((s, idx) => (
+                          <li key={idx}><CmsText>{s}</CmsText></li>
+                        ))}</CmsText>
                       </ul>
                     </div>
 
                     <div className="bg-[#ff3b69]/[0.03] border border-[#ff3b69]/20 rounded-xl p-3">
                       <div className="text-xs font-bold text-[#ff3b69] uppercase mb-2 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#ff3b69]" /> Fraquezas (Weaknesses)
-                      </div>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#ff3b69]" /><CmsText>{" Fraquezas (Weaknesses)"}</CmsText></div>
                       <ul className="text-[11px] text-[#94a3b8] space-y-1 list-disc list-inside">
-                        {sentiment.swot.weaknesses.map((w, idx) => (
-                          <li key={idx}>{w}</li>
-                        ))}
+                        <CmsText>{sentiment.swot.weaknesses.map((w, idx) => (
+                          <li key={idx}><CmsText>{w}</CmsText></li>
+                        ))}</CmsText>
                       </ul>
                     </div>
 
                     <div className="bg-[#00d9f5]/[0.03] border border-[#00d9f5]/20 rounded-xl p-3">
                       <div className="text-xs font-bold text-[#00d9f5] uppercase mb-2 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#00d9f5]" /> Oportunidades (Opportunities)
-                      </div>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#00d9f5]" /><CmsText>{" Oportunidades (Opportunities)"}</CmsText></div>
                       <ul className="text-[11px] text-[#94a3b8] space-y-1 list-disc list-inside">
-                        {sentiment.swot.opportunities.map((o, idx) => (
-                          <li key={idx}>{o}</li>
-                        ))}
+                        <CmsText>{sentiment.swot.opportunities.map((o, idx) => (
+                          <li key={idx}><CmsText>{o}</CmsText></li>
+                        ))}</CmsText>
                       </ul>
                     </div>
 
                     <div className="bg-[#f59e0b]/[0.03] border border-[#f59e0b]/20 rounded-xl p-3">
                       <div className="text-xs font-bold text-[#f59e0b] uppercase mb-2 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" /> Ameaças (Threats)
-                      </div>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#f59e0b]" /><CmsText>{" Ameaças (Threats)"}</CmsText></div>
                       <ul className="text-[11px] text-[#94a3b8] space-y-1 list-disc list-inside">
-                        {sentiment.swot.threats.map((t, idx) => (
-                          <li key={idx}>{t}</li>
-                        ))}
+                        <CmsText>{sentiment.swot.threats.map((t, idx) => (
+                          <li key={idx}><CmsText>{t}</CmsText></li>
+                        ))}</CmsText>
                       </ul>
                     </div>
                   </div>
                 </div>
-              )}
+              )}</CmsText>
             </div>
           ) : (
-            <div className="py-6 text-center text-xs text-[#64748b]">
-              Nenhum dado de inteligência disponível no momento.
-            </div>
-          )}
+            <div className="py-6 text-center text-xs text-[#64748b]"><CmsText>{"Nenhum dado de inteligência disponível no momento."}</CmsText></div>
+          )}</CmsText>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Real-time Document Stream */}
       <div className="flex flex-col gap-4">
-        <h3 className="text-base font-bold text-white tracking-tight">
-          Feed em Tempo Real de Análises & Fatos Relevantes CVM
-        </h3>
+        <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Feed em Tempo Real de Análises & Fatos Relevantes CVM"}</CmsText></h3>
 
-        {loadingAlerts ? (
+        <CmsText>{loadingAlerts ? (
           <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
+            <CmsText>{[1, 2, 3].map((i) => (
               <div key={i} className="h-28 rounded-2xl bg-white/[0.02] border border-white/5 animate-pulse" />
-            ))}
+            ))}</CmsText>
           </div>
         ) : alerts.length === 0 ? (
-          <Card>
-            <div className="py-8 text-center text-xs text-[#64748b]">
-              Nenhum fato relevante indexado recentemente no banco de dados.
-            </div>
-          </Card>
+          <CmsElement feature="ui.app/-frontend-/radar-ia/page.Card.6"><Card>
+            <div className="py-8 text-center text-xs text-[#64748b]"><CmsText>{"Nenhum fato relevante indexado recentemente no banco de dados."}</CmsText></div>
+          </Card></CmsElement>
         ) : (
           alerts.map((a) => (
-            <Card
+            <CmsElement feature="ui.app/-frontend-/radar-ia/page.Card.7" key={a.id}><Card
               key={a.id}
               glow={
                 a.sentiment === "BULLISH"
@@ -251,12 +227,12 @@ export default function RadarIAPage() {
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                 <div className="flex items-center gap-3">
-                  <Link
+                  <CmsElement feature="ui.app/-frontend-/radar-ia/page.Link.8"><Link
                     href={`/acoes/${a.ticker}`}
                     className="font-bold text-white font-mono text-sm hover:text-[#00f5a0] transition-colors"
                   >
-                    {a.ticker}
-                  </Link>
+                    <CmsText>{a.ticker}</CmsText>
+                  </Link></CmsElement>
                   <Badge
                     variant={
                       a.sentiment === "BULLISH"
@@ -267,23 +243,22 @@ export default function RadarIAPage() {
                     }
                     dot
                   >
-                    {a.sentiment}
+                    <CmsText>{a.sentiment}</CmsText>
                   </Badge>
-                  <span className="text-xs text-[#64748b]">{a.type}</span>
+                  <span className="text-xs text-[#64748b]"><CmsText>{a.type}</CmsText></span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-[#64748b] font-mono">{a.time}</span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/5 text-[#94a3b8]">
-                    Score: {a.score}
+                  <span className="text-xs text-[#64748b] font-mono"><CmsText>{a.time}</CmsText></span>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-white/5 text-[#94a3b8]"><CmsText>{"Score: "}</CmsText><CmsText>{a.score}</CmsText>
                   </span>
                 </div>
               </div>
 
-              <h4 className="text-sm font-bold text-white mb-2">{a.title}</h4>
-              <p className="text-xs text-[#94a3b8] leading-relaxed">{a.summary}</p>
-            </Card>
+              <h4 className="text-sm font-bold text-white mb-2"><CmsText>{a.title}</CmsText></h4>
+              <p className="text-xs text-[#94a3b8] leading-relaxed"><CmsText>{a.summary}</CmsText></p>
+            </Card></CmsElement>
           ))
-        )}
+        )}</CmsText>
       </div>
     </div>
   );

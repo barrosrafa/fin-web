@@ -1,3 +1,5 @@
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React from "react";
 import Link from "next/link";
 
@@ -51,30 +53,30 @@ export function Button({
 
   const content = (
     <>
-      <span className="tracking-wide">{children}</span>
-      <span className="btn-nested-icon">{icon || defaultIcon}</span>
+      <span className="tracking-wide"><CmsText>{children}</CmsText></span>
+      <span className="btn-nested-icon"><CmsText>{icon || defaultIcon}</CmsText></span>
     </>
   );
 
   if (href) {
     return (
-      <Link
+      <CmsElement feature="ui.components/ui/Button.Link.1"><Link
         href={href}
         className={`btn-nested ${variantStyles[variant]} ${className}`}
       >
-        {content}
-      </Link>
+        <CmsText>{content}</CmsText>
+      </Link></CmsElement>
     );
   }
 
   return (
-    <button
+    <CmsElement feature="ui.components/ui/Button.button.2"><button
       type={type}
       onClick={onClick}
       disabled={disabled}
       className={`btn-nested ${variantStyles[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
     >
-      {content}
-    </button>
+      <CmsText>{content}</CmsText>
+    </button></CmsElement>
   );
 }

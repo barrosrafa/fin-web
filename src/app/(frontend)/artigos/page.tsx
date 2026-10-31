@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -31,9 +33,7 @@ export default function ArtigosPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-12 text-center text-zinc-400">
-        Carregando artigos e análises...
-      </div>
+      <div className="container mx-auto px-4 py-12 text-center text-zinc-400"><CmsText>{"Carregando artigos e análises..."}</CmsText></div>
     );
   }
 
@@ -44,57 +44,51 @@ export default function ArtigosPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-cyan">Conteúdo Educacional</span>
-          <span className="text-xs text-[#64748b]">Estudos & Análises Setoriais</span>
+          <span className="badge-neon badge-neon-cyan"><CmsText>{"Conteúdo Educacional"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Estudos & Análises Setoriais"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Artigos & Relatórios de Mercado
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-          Análises macroeconômicas, guias de valuation, relatórios setoriais aprofundados e estratégias
-          para acumulação de renda passiva com consistência.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Artigos & Relatórios de Mercado"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Análises macroeconômicas, guias de valuation, relatórios setoriais aprofundados e estratégias para acumulação de renda passiva com consistência."}</CmsText></p>
       </div>
 
-      {error && <p role="alert">Não foi possível carregar os artigos. Tente novamente mais tarde.</p>}
-      {meta?.stale && <p role="status">Conteúdo salvo, temporariamente desatualizado. Publicação: {meta.as_of || "data não informada"}.</p>}
-      {!error && articles.length === 0 && <p>Nenhum artigo publicado.</p>}
+      <CmsText>{error && <p role="alert"><CmsText>{"Não foi possível carregar os artigos. Tente novamente mais tarde."}</CmsText></p>}</CmsText>
+      <CmsText>{meta?.stale && <p role="status"><CmsText>{"Conteúdo salvo, temporariamente desatualizado. Publicação: "}</CmsText><CmsText>{meta.as_of || "data não informada"}</CmsText><CmsText>{"."}</CmsText></p>}</CmsText>
+      <CmsText>{!error && articles.length === 0 && <p><CmsText>{"Nenhum artigo publicado."}</CmsText></p>}</CmsText>
       {/* Articles Feed */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayList.map((art) => (
-          <Card key={art.slug} className="p-6 flex flex-col justify-between gap-6 border border-white/10 hover:border-cyan-500/40 transition-all">
+        <CmsText>{displayList.map((art) => (
+          <CmsElement feature="ui.app/-frontend-/artigos/page.Card.1" key={art.slug}><Card key={art.slug} className="p-6 flex flex-col justify-between gap-6 border border-white/10 hover:border-cyan-500/40 transition-all">
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
                 <Badge variant={art.is_premium ? "amber" : "cyan"}>
-                  {art.is_premium ? "Exclusivo Pro" : art.categoria}
+                  <CmsText>{art.is_premium ? "Exclusivo Pro" : art.categoria}</CmsText>
                 </Badge>
-                <span className="text-xs text-[#64748b] font-mono">{art.tempo_leitura_min} min de leitura</span>
+                <span className="text-xs text-[#64748b] font-mono"><CmsText>{art.tempo_leitura_min}</CmsText><CmsText>{" min de leitura"}</CmsText></span>
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">{art.titulo}</h3>
-              {art.subtitulo && (
+              <h3 className="text-lg font-bold text-white mb-2 line-clamp-2"><CmsText>{art.titulo}</CmsText></h3>
+              <CmsText>{art.subtitulo && (
                 <p className="text-xs text-[#94a3b8] leading-relaxed line-clamp-3 mb-4">
-                  {art.subtitulo}
+                  <CmsText>{art.subtitulo}</CmsText>
                 </p>
-              )}
+              )}</CmsText>
 
               <div className="flex flex-wrap gap-1 mb-2">
-                {art.tags.map((tag) => (
-                  <span key={tag} className="px-2 py-0.5 rounded bg-white/5 text-[11px] text-[#cbd5e1]">
-                    #{tag}
+                <CmsText>{art.tags.map((tag) => (
+                  <span key={tag} className="px-2 py-0.5 rounded bg-white/5 text-[11px] text-[#cbd5e1]"><CmsText>{"#"}</CmsText><CmsText>{tag}</CmsText>
                   </span>
-                ))}
+                ))}</CmsText>
               </div>
             </div>
 
             <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-              <span className="text-xs text-[#64748b]">{art.publicado_em || "Recente"}</span>
-              <Link href={`/artigos/${art.slug}`}>
-                <Button variant="outline">Ler Artigo</Button>
-              </Link>
+              <span className="text-xs text-[#64748b]"><CmsText>{art.publicado_em || "Recente"}</CmsText></span>
+              <CmsElement feature="ui.app/-frontend-/artigos/page.Link.2"><Link href={`/artigos/${art.slug}`}>
+                <Button variant="outline"><CmsText>{"Ler Artigo"}</CmsText></Button>
+              </Link></CmsElement>
             </div>
-          </Card>
-        ))}
+          </Card></CmsElement>
+        ))}</CmsText>
       </div>
     </div>
   );

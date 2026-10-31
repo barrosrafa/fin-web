@@ -1,3 +1,5 @@
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -51,38 +53,34 @@ export default function MapaDoSitePage() {
     <div className="flex flex-col gap-8 animate-fade-up">
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-emerald">Arquitetura de Informação</span>
-          <span className="text-xs text-[#64748b]">Sitemap do Portal</span>
+          <span className="badge-neon badge-neon-emerald"><CmsText>{"Arquitetura de Informação"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Sitemap do Portal"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Mapa do Site
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-          Navegue pela estrutura completa de dados abertos, screeners setoriais, ferramentas quantitativas e rotas canônicas.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Mapa do Site"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Navegue pela estrutura completa de dados abertos, screeners setoriais, ferramentas quantitativas e rotas canônicas."}</CmsText></p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {sections.map((sec) => (
-          <Card key={sec.title} glow="cyan">
+        <CmsText>{sections.map((sec) => (
+          <CmsElement feature="ui.app/-frontend-/mapa-do-site/page.Card.1" key={sec.title}><Card key={sec.title} glow="cyan">
             <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 border-b border-white/5 pb-2">
-              {sec.title}
+              <CmsText>{sec.title}</CmsText>
             </h3>
             <ul className="flex flex-col gap-2.5">
-              {sec.links.map((link) => (
+              <CmsText>{sec.links.map((link) => (
                 <li key={link.href}>
-                  <Link
+                  <CmsElement feature="ui.app/-frontend-/mapa-do-site/page.Link.2"><Link
                     href={link.href}
                     className="text-xs text-[#94a3b8] hover:text-[#00f5a0] transition-colors flex items-center justify-between"
                   >
-                    <span>{link.label}</span>
-                    <span className="text-[#64748b] text-[10px]">→</span>
-                  </Link>
+                    <span><CmsText>{link.label}</CmsText></span>
+                    <span className="text-[#64748b] text-[10px]"><CmsText>{"→"}</CmsText></span>
+                  </Link></CmsElement>
                 </li>
-              ))}
+              ))}</CmsText>
             </ul>
-          </Card>
-        ))}
+          </Card></CmsElement>
+        ))}</CmsText>
       </div>
     </div>
   );

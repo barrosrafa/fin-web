@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -88,15 +90,11 @@ export function FundDetailClient({ fundId }: { fundId: string }) {
     <div className="flex flex-col gap-8 animate-fade-up">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-[#64748b]">
-        <Link href="/" className="hover:text-white transition-colors">
-          Cockpit
-        </Link>
-        <span>/</span>
-        <Link href="/fundos" className="hover:text-white transition-colors">
-          Fundos CVM 175
-        </Link>
-        <span>/</span>
-        <span className="text-[#00f5a0] mono-nums">Fundo #{fundId}</span>
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.Link.1"><Link href="/" className="hover:text-white transition-colors"><CmsText>{"Cockpit"}</CmsText></Link></CmsElement>
+        <span><CmsText>{"/"}</CmsText></span>
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.Link.2"><Link href="/fundos" className="hover:text-white transition-colors"><CmsText>{"Fundos CVM 175"}</CmsText></Link></CmsElement>
+        <span><CmsText>{"/"}</CmsText></span>
+        <span className="text-[#00f5a0] mono-nums"><CmsText>{"Fundo #"}</CmsText><CmsText>{fundId}</CmsText></span>
       </div>
 
       {/* Header */}
@@ -104,59 +102,57 @@ export function FundDetailClient({ fundId }: { fundId: string }) {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-black text-white tracking-tight">
-              {fund.name}
+              <CmsText>{fund.name}</CmsText>
             </h1>
-            <Badge variant="cyan">{fund.category_cvm175}</Badge>
-            <Badge variant="emerald">Alta Consistência</Badge>
+            <Badge variant="cyan"><CmsText>{fund.category_cvm175}</CmsText></Badge>
+            <Badge variant="emerald"><CmsText>{"Alta Consistência"}</CmsText></Badge>
           </div>
-          <p className="text-sm text-[#94a3b8] mt-1">
-            CNPJ: {fund.cnpj} • Benchmark: {fund.benchmark} • Cotização Resgate: D+30
-          </p>
+          <p className="text-sm text-[#94a3b8] mt-1"><CmsText>{"CNPJ: "}</CmsText><CmsText>{fund.cnpj}</CmsText><CmsText>{" • Benchmark: "}</CmsText><CmsText>{fund.benchmark}</CmsText><CmsText>{" • Cotização Resgate: D+30"}</CmsText></p>
         </div>
 
         <div className="flex items-center gap-6 bg-[#0a0f1d] p-4 rounded-xl border border-[#1e293b]">
           <div>
-            <div className="text-xs text-[#64748b]">Patrimônio Líquido</div>
-            <div className="text-xl font-bold text-white mono-nums">{formatCurrency(fund.net_worth, true)}</div>
+            <div className="text-xs text-[#64748b]"><CmsText>{"Patrimônio Líquido"}</CmsText></div>
+            <div className="text-xl font-bold text-white mono-nums"><CmsText>{formatCurrency(fund.net_worth, true)}</CmsText></div>
           </div>
           <div className="w-px h-8 bg-[#1e293b]" />
           <div>
-            <div className="text-xs text-[#64748b]">Taxa Adm / Perf</div>
-            <div className="text-xl font-bold text-[#00f5a0] mono-nums">2,0% / 20%</div>
+            <div className="text-xs text-[#64748b]"><CmsText>{"Taxa Adm / Perf"}</CmsText></div>
+            <div className="text-xl font-bold text-[#00f5a0] mono-nums"><CmsText>{"2,0% / 20%"}</CmsText></div>
           </div>
         </div>
       </div>
 
       {/* 4 Cards de Métricas Quant */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.MetricCard.3"><MetricCard
           title="Índice de Sharpe (12M)"
           value="1.58"
           subtitle="Excelente retorno excedente ao CDI"
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.MetricCard.4"><MetricCard
           title="Índice Sortino"
           value="2.10"
           subtitle="Penaliza apenas a volatilidade negativa"
           glow="cyan"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.MetricCard.5"><MetricCard
           title="Alfa de Jensen (12M)"
           value="+0.95% a.a."
           subtitle="Retorno gerado além do risco sistemático"
           glow="violet"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.MetricCard.6"><MetricCard
           title="Drawdown Máximo Histórico"
           value="-5.4%"
           subtitle="Recuperação completa em 34 dias"
           glow="crimson"
-        />
+        /></CmsElement>
       </div>
 
       {/* Tabs */}
-      <Tabs
+      <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.Tabs.7"><Tabs
         tabs={[
           { id: "RISCO_QUANT", label: "Matriz Quantitativa de Risco (10x10)" },
           { id: "CARTEIRA_CDA", label: "Composição da Carteira Aberta (CDA)", count: cdaList.length },
@@ -164,124 +160,111 @@ export function FundDetailClient({ fundId }: { fundId: string }) {
         ]}
         activeTab={activeTab}
         onChange={setActiveTab}
-      />
+      /></CmsElement>
 
       {/* TAB 1: Matriz de Risco Quantitativa */}
-      {activeTab === "RISCO_QUANT" && (
-        <Card glow="cyan">
+      <CmsText>{activeTab === "RISCO_QUANT" && (
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.Card.8"><Card glow="cyan">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-white tracking-tight">
-              Matriz Estatística Multitemporal (Metodologia Mais Retorno)
-            </h3>
-            <span className="text-xs text-[#64748b]">Dados Auditados CVM</span>
+            <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Matriz Estatística Multitemporal (Metodologia Mais Retorno)"}</CmsText></h3>
+            <span className="text-xs text-[#64748b]"><CmsText>{"Dados Auditados CVM"}</CmsText></span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                  <th className="pb-3 pl-2">Janela Temporal</th>
-                  <th className="pb-3 text-right">Sharpe</th>
-                  <th className="pb-3 text-right">Sortino</th>
-                  <th className="pb-3 text-right">Treynor</th>
-                  <th className="pb-3 text-right">Alfa Jensen</th>
-                  <th className="pb-3 text-right">Beta</th>
-                  <th className="pb-3 text-right">Volatilidade</th>
-                  <th className="pb-3 text-right">Max Drawdown</th>
-                  <th className="pb-3 text-right">Recup. (Dias)</th>
-                  <th className="pb-3 text-right pr-2">Meses Positivos</th>
+                  <th className="pb-3 pl-2"><CmsText>{"Janela Temporal"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Sharpe"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Sortino"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Treynor"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Alfa Jensen"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Beta"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Volatilidade"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Max Drawdown"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Recup. (Dias)"}</CmsText></th>
+                  <th className="pb-3 text-right pr-2"><CmsText>{"Meses Positivos"}</CmsText></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 mono-nums">
-                {matrixList.map((row: FundRiskRow) => (
+                <CmsText>{matrixList.map((row: FundRiskRow) => (
                   <tr key={row.timeframe} className="hover:bg-white/[0.02]">
-                    <td className="py-3 pl-2 font-bold text-white font-sans">{row.timeframe}</td>
-                    <td className="py-3 text-right font-bold text-[#00f5a0]">{(row.sharpe ?? row.sharpe_ratio ?? 1.5).toFixed(2)}</td>
-                    <td className="py-3 text-right text-white">{(row.sortino ?? 2.0).toFixed(2)}</td>
-                    <td className="py-3 text-right text-[#00d9f5]">{(row.treynor ?? 0.2).toFixed(2)}</td>
-                    <td className="py-3 text-right text-[#00f5a0]">+{((row.jensenAlpha ?? row.jensen_alpha ?? 0.8)).toFixed(2)}%</td>
-                    <td className="py-3 text-right text-white">{(row.beta ?? 0.95).toFixed(2)}</td>
-                    <td className="py-3 text-right text-[#94a3b8]">{(row.volatility ?? row.volatility_pct ?? 12).toFixed(1)}%</td>
+                    <td className="py-3 pl-2 font-bold text-white font-sans"><CmsText>{row.timeframe}</CmsText></td>
+                    <td className="py-3 text-right font-bold text-[#00f5a0]"><CmsText>{(row.sharpe ?? row.sharpe_ratio ?? 1.5).toFixed(2)}</CmsText></td>
+                    <td className="py-3 text-right text-white"><CmsText>{(row.sortino ?? 2.0).toFixed(2)}</CmsText></td>
+                    <td className="py-3 text-right text-[#00d9f5]"><CmsText>{(row.treynor ?? 0.2).toFixed(2)}</CmsText></td>
+                    <td className="py-3 text-right text-[#00f5a0]"><CmsText>{"+"}</CmsText><CmsText>{((row.jensenAlpha ?? row.jensen_alpha ?? 0.8)).toFixed(2)}</CmsText><CmsText>{"%"}</CmsText></td>
+                    <td className="py-3 text-right text-white"><CmsText>{(row.beta ?? 0.95).toFixed(2)}</CmsText></td>
+                    <td className="py-3 text-right text-[#94a3b8]"><CmsText>{(row.volatility ?? row.volatility_pct ?? 12).toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
                     <td className="py-3 text-right font-bold text-[#ff3b69]">
-                      {formatPercent(row.maxDrawdown ?? row.max_drawdown_pct ?? -4.0, false)}
+                      <CmsText>{formatPercent(row.maxDrawdown ?? row.max_drawdown_pct ?? -4.0, false)}</CmsText>
                     </td>
-                    <td className="py-3 text-right text-[#94a3b8]">{row.recoveryDays ?? row.recovery_days ?? 20} d</td>
-                    <td className="py-3 text-right pr-2 text-white">{(row.positiveMonthsPct ?? row.positive_months_pct ?? 85).toFixed(1)}%</td>
+                    <td className="py-3 text-right text-[#94a3b8]"><CmsText>{row.recoveryDays ?? row.recovery_days ?? 20}</CmsText><CmsText>{" d"}</CmsText></td>
+                    <td className="py-3 text-right pr-2 text-white"><CmsText>{(row.positiveMonthsPct ?? row.positive_months_pct ?? 85).toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
                   </tr>
-                ))}
+                ))}</CmsText>
               </tbody>
             </table>
           </div>
-        </Card>
-      )}
+        </Card></CmsElement>
+      )}</CmsText>
 
       {/* TAB 2: CDA da Carteira */}
-      {activeTab === "CARTEIRA_CDA" && (
-        <Card glow="emerald">
+      <CmsText>{activeTab === "CARTEIRA_CDA" && (
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.Card.9"><Card glow="emerald">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-base font-bold text-white tracking-tight">
-                Composição Discriminada da Carteira (CDA CVM)
-              </h3>
-              <p className="text-xs text-[#94a3b8]">
-                Posições abertas de Títulos Públicos, Crédito Privado, Ações e Derivativos.
-              </p>
+              <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Composição Discriminada da Carteira (CDA CVM)"}</CmsText></h3>
+              <p className="text-xs text-[#94a3b8]"><CmsText>{"Posições abertas de Títulos Públicos, Crédito Privado, Ações e Derivativos."}</CmsText></p>
             </div>
-            <Badge variant="emerald">Auditado D-90 CVM</Badge>
+            <Badge variant="emerald"><CmsText>{"Auditado D-90 CVM"}</CmsText></Badge>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                  <th className="pb-3 pl-2">Ativo Subjacente</th>
-                  <th className="pb-3">Classe de Ativo</th>
-                  <th className="pb-3">Identificador / ISIN</th>
-                  <th className="pb-3 text-right">Peso na Carteira</th>
-                  <th className="pb-3 text-right pr-2">Volume Financeiro</th>
+                  <th className="pb-3 pl-2"><CmsText>{"Ativo Subjacente"}</CmsText></th>
+                  <th className="pb-3"><CmsText>{"Classe de Ativo"}</CmsText></th>
+                  <th className="pb-3"><CmsText>{"Identificador / ISIN"}</CmsText></th>
+                  <th className="pb-3 text-right"><CmsText>{"Peso na Carteira"}</CmsText></th>
+                  <th className="pb-3 text-right pr-2"><CmsText>{"Volume Financeiro"}</CmsText></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 mono-nums">
-                {cdaList.map((item: FundCDARow) => (
+                <CmsText>{cdaList.map((item: FundCDARow) => (
                   <tr key={item.identifier} className="hover:bg-white/[0.02]">
-                    <td className="py-3 pl-2 font-bold text-white">{item.assetName ?? item.asset_name}</td>
+                    <td className="py-3 pl-2 font-bold text-white"><CmsText>{item.assetName ?? item.asset_name}</CmsText></td>
                     <td className="py-3">
-                      <Badge variant="cyan">{item.assetType ?? item.asset_type}</Badge>
+                      <Badge variant="cyan"><CmsText>{item.assetType ?? item.asset_type}</CmsText></Badge>
                     </td>
-                    <td className="py-3 text-[#94a3b8]">{item.identifier}</td>
+                    <td className="py-3 text-[#94a3b8]"><CmsText>{item.identifier}</CmsText></td>
                     <td className="py-3 text-right font-bold text-[#00f5a0]">
-                      {(item.weightPct ?? item.weight_pct ?? 10).toFixed(1)}%
-                    </td>
+                      <CmsText>{(item.weightPct ?? item.weight_pct ?? 10).toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
                     <td className="py-3 text-right pr-2 text-white">
-                      {formatCurrency(item.financialValue ?? item.financial_value ?? 100000000, true)}
+                      <CmsText>{formatCurrency(item.financialValue ?? item.financial_value ?? 100000000, true)}</CmsText>
                     </td>
                   </tr>
-                ))}
+                ))}</CmsText>
               </tbody>
             </table>
           </div>
-        </Card>
-      )}
+        </Card></CmsElement>
+      )}</CmsText>
 
       {/* TAB 3: Fluxo de Cotistas */}
-      {activeTab === "FLUXO_COTISTAS" && (
-        <Card glow="violet">
+      <CmsText>{activeTab === "FLUXO_COTISTAS" && (
+        <CmsElement feature="ui.app/-frontend-/fundos/-id-/FundDetailClient.Card.10"><Card glow="violet">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-white tracking-tight">
-              Evolução do Patrimônio e Captação Líquida Mensal
-            </h3>
-            <Badge variant="violet">Liquidez Saudável</Badge>
+            <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Evolução do Patrimônio e Captação Líquida Mensal"}</CmsText></h3>
+            <Badge variant="violet"><CmsText>{"Liquidez Saudável"}</CmsText></Badge>
           </div>
           <div className="p-4 rounded-xl bg-[#0a0f1d] border border-white/10 space-y-3 text-xs leading-relaxed text-[#94a3b8]">
-            <p>
-              O fundo registrou captação líquida positiva de <strong className="text-[#00f5a0]">R$ +145 Milhões</strong> nos últimos 90 dias, mantendo índice de resgates inferior a 3,2% do Patrimônio Líquido total.
-            </p>
-            <p>
-              O caixa livre atual de 12,5% do PL atende com ampla folga os requisitos de liquidez da nova Resolução CVM 175 para cotização em D+30 e liquidação financeira em D+31.
-            </p>
+            <p><CmsText>{"O fundo registrou captação líquida positiva de "}</CmsText><strong className="text-[#00f5a0]"><CmsText>{"R$ +145 Milhões"}</CmsText></strong><CmsText>{" nos últimos 90 dias, mantendo índice de resgates inferior a 3,2% do Patrimônio Líquido total."}</CmsText></p>
+            <p><CmsText>{"O caixa livre atual de 12,5% do PL atende com ampla folga os requisitos de liquidez da nova Resolução CVM 175 para cotização em D+30 e liquidação financeira em D+31."}</CmsText></p>
           </div>
-        </Card>
-      )}
+        </Card></CmsElement>
+      )}</CmsText>
     </div>
   );
 }

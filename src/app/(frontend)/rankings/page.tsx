@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
@@ -58,50 +60,44 @@ export default function RankingsPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-emerald">ETFs Brasil Leaderboards</span>
-          <span className="text-xs text-[#64748b]">Tabelas Classificatórias</span>
+          <span className="badge-neon badge-neon-emerald"><CmsText>{"ETFs Brasil Leaderboards"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Tabelas Classificatórias"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Rankings de Melhores Ativos de 2026
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-          Consulte as tabelas classificatórias dos melhores ativos do mercado financeiro brasileiro e global, ordenados por rentabilidade, menor custo de administração (TER) e captação líquida.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Rankings de Melhores Ativos de 2026"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Consulte as tabelas classificatórias dos melhores ativos do mercado financeiro brasileiro e global, ordenados por rentabilidade, menor custo de administração (TER) e captação líquida."}</CmsText></p>
       </div>
 
       {/* Top 3 Destaques */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/rankings/page.MetricCard.1"><MetricCard
           title="Líder Rentabilidade 12M"
           value="HASH11 • +112,4%"
           subtitle="Criptoativos Institucionais (NCI Index)"
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/rankings/page.MetricCard.2"><MetricCard
           title="Menor Custo TER do Mercado"
           value="BOVA11 • 0,10% a.a."
           subtitle="Taxa primária BlackRock sem taxa secundária"
           glow="cyan"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/rankings/page.MetricCard.3"><MetricCard
           title="Maior Base de Cotistas"
           value="IVVB11 • 195.430 cotistas"
           subtitle="Patrimônio superior a R$ 6,5 bilhões"
           glow="violet"
-        />
+        /></CmsElement>
       </div>
 
       {/* Painel de Filtros e Seletores */}
-      <Card glow="cyan">
+      <CmsElement feature="ui.app/-frontend-/rankings/page.Card.4"><Card glow="cyan">
         <div className="flex flex-col gap-4">
           {/* Seletor de Classe de Ativo */}
           <div>
-            <span className="text-[10px] uppercase font-bold text-[#64748b] block mb-2 tracking-wider">
-              Classe de Ativo
-            </span>
+            <span className="text-[10px] uppercase font-bold text-[#64748b] block mb-2 tracking-wider"><CmsText>{"Classe de Ativo"}</CmsText></span>
             <div className="flex flex-wrap gap-2">
-              {ASSET_CLASSES.map((c) => (
-                <button
+              <CmsText>{ASSET_CLASSES.map((c) => (
+                <CmsElement feature="ui.app/-frontend-/rankings/page.button.5" key={c.id}><button
                   key={c.id}
                   onClick={() => setSelectedClass(c.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
@@ -110,20 +106,18 @@ export default function RankingsPage() {
                       : "bg-[#131926] text-[#94a3b8] border border-white/5 hover:text-white"
                   }`}
                 >
-                  {c.label}
-                </button>
-              ))}
+                  <CmsText>{c.label}</CmsText>
+                </button></CmsElement>
+              ))}</CmsText>
             </div>
           </div>
 
           {/* Seletor de Critério de Ordenação */}
           <div>
-            <span className="text-[10px] uppercase font-bold text-[#64748b] block mb-2 tracking-wider">
-              Ordenar Por
-            </span>
+            <span className="text-[10px] uppercase font-bold text-[#64748b] block mb-2 tracking-wider"><CmsText>{"Ordenar Por"}</CmsText></span>
             <div className="flex flex-wrap gap-2">
-              {ORDER_CRITERIA.map((o) => (
-                <button
+              <CmsText>{ORDER_CRITERIA.map((o) => (
+                <CmsElement feature="ui.app/-frontend-/rankings/page.button.6" key={o.id}><button
                   key={o.id}
                   onClick={() => setSelectedOrder(o.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
@@ -132,20 +126,18 @@ export default function RankingsPage() {
                       : "bg-[#131926] text-[#94a3b8] border border-white/5 hover:text-white"
                   }`}
                 >
-                  {o.label}
-                </button>
-              ))}
+                  <CmsText>{o.label}</CmsText>
+                </button></CmsElement>
+              ))}</CmsText>
             </div>
           </div>
 
           {/* Categorias */}
           <div>
-            <span className="text-[10px] uppercase font-bold text-[#64748b] block mb-2 tracking-wider">
-              Subcategoria
-            </span>
+            <span className="text-[10px] uppercase font-bold text-[#64748b] block mb-2 tracking-wider"><CmsText>{"Subcategoria"}</CmsText></span>
             <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((cat) => (
-                <button
+              <CmsText>{CATEGORIES.map((cat) => (
+                <CmsElement feature="ui.app/-frontend-/rankings/page.button.7" key={cat}><button
                   key={cat}
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-3 py-1 rounded-md text-[11px] font-semibold transition-all ${
@@ -154,103 +146,96 @@ export default function RankingsPage() {
                       : "text-[#64748b] hover:text-[#94a3b8]"
                   }`}
                 >
-                  {cat}
-                </button>
-              ))}
+                  <CmsText>{cat}</CmsText>
+                </button></CmsElement>
+              ))}</CmsText>
             </div>
           </div>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Tabela de Rankings Top 20 */}
-      <Card>
+      <CmsElement feature="ui.app/-frontend-/rankings/page.Card.8"><Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-white tracking-tight">
-            Classificação Top 20 • {selectedClass} ({selectedCategory})
-          </h3>
+          <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Classificação Top 20 • "}</CmsText><CmsText>{selectedClass}</CmsText><CmsText>{" ("}</CmsText><CmsText>{selectedCategory}</CmsText><CmsText>{")"}</CmsText></h3>
           <span className="text-xs text-[#64748b] mono-nums">
-            {items.length} ativos listados
-          </span>
+            <CmsText>{items.length}</CmsText><CmsText>{" ativos listados"}</CmsText></span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-3 w-10">Pos.</th>
-                <th className="pb-3">Ticker / Fundo</th>
-                <th className="pb-3 text-right">Patrimônio (PL)</th>
-                <th className="pb-3 text-right">Ret. 30 Dias</th>
-                <th className="pb-3 text-right">Ret. no Ano</th>
-                <th className="pb-3 text-right">Ret. 12M</th>
-                <th className="pb-3 text-right">Sharpe 12M</th>
-                <th className="pb-3 text-right">Taxa Total (TER)</th>
-                <th className="pb-3 text-right pr-3">Ação</th>
+                <th className="pb-3 pl-3 w-10"><CmsText>{"Pos."}</CmsText></th>
+                <th className="pb-3"><CmsText>{"Ticker / Fundo"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Patrimônio (PL)"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Ret. 30 Dias"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Ret. no Ano"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Ret. 12M"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Sharpe 12M"}</CmsText></th>
+                <th className="pb-3 text-right"><CmsText>{"Taxa Total (TER)"}</CmsText></th>
+                <th className="pb-3 text-right pr-3"><CmsText>{"Ação"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 mono-nums">
-              {items.map((it) => (
+              <CmsText>{items.map((it) => (
                 <tr key={it.ticker} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="py-3 pl-3 font-bold text-[#64748b]">
-                    #{it.pos}
+                  <td className="py-3 pl-3 font-bold text-[#64748b]"><CmsText>{"#"}</CmsText><CmsText>{it.pos}</CmsText>
                   </td>
                   <td className="py-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-white">{it.ticker}</span>
+                      <span className="font-bold text-white"><CmsText>{it.ticker}</CmsText></span>
                       <Badge variant="cyan" className="text-[10px]">
-                        {it.categoria}
+                        <CmsText>{it.categoria}</CmsText>
                       </Badge>
                     </div>
                     <span className="text-[11px] text-[#64748b] font-sans block mt-0.5">
-                      {it.nome}
+                      <CmsText>{it.nome}</CmsText>
                     </span>
                   </td>
                   <td className="py-3 text-right font-medium text-white">
-                    {formatCurrency(it.patrimonio_liquido_mm * 1e6)}
+                    <CmsText>{formatCurrency(it.patrimonio_liquido_mm * 1e6)}</CmsText>
                   </td>
                   <td
                     className={`py-3 text-right font-bold ${
                       it.retorno_30d >= 0 ? "text-[#00f5a0]" : "text-[#ff3b5c]"
                     }`}
                   >
-                    {formatPercent(it.retorno_30d)}
+                    <CmsText>{formatPercent(it.retorno_30d)}</CmsText>
                   </td>
                   <td
                     className={`py-3 text-right ${
                       it.retorno_ano >= 0 ? "text-[#00f5a0]" : "text-[#ff3b5c]"
                     }`}
                   >
-                    {formatPercent(it.retorno_ano)}
+                    <CmsText>{formatPercent(it.retorno_ano)}</CmsText>
                   </td>
                   <td
                     className={`py-3 text-right font-bold ${
                       it.retorno_12m >= 0 ? "text-[#00f5a0]" : "text-[#ff3b5c]"
                     }`}
                   >
-                    {formatPercent(it.retorno_12m)}
+                    <CmsText>{formatPercent(it.retorno_12m)}</CmsText>
                   </td>
                   <td className="py-3 text-right text-white">
-                    {it.sharpe_12m !== null && it.sharpe_12m !== undefined
+                    <CmsText>{it.sharpe_12m !== null && it.sharpe_12m !== undefined
                       ? it.sharpe_12m.toFixed(2)
-                      : "—"}
+                      : "—"}</CmsText>
                   </td>
                   <td className="py-3 text-right font-medium text-[#f59e0b]">
-                    {it.taxa_adm_total.toFixed(2)}%
-                  </td>
+                    <CmsText>{it.taxa_adm_total.toFixed(2)}</CmsText><CmsText>{"%"}</CmsText></td>
                   <td className="py-3 text-right pr-3">
-                    <Link
+                    <CmsElement feature="ui.app/-frontend-/rankings/page.Link.9"><Link
                       href={`/etfs/${it.ticker.toLowerCase()}`}
                       className="inline-flex items-center justify-center px-3 py-1 rounded-md text-xs font-semibold bg-white/5 hover:bg-white/10 text-white transition-colors"
-                    >
-                      Ver ↗
-                    </Link>
+                    ><CmsText>{"Ver ↗"}</CmsText></Link></CmsElement>
                   </td>
                 </tr>
-              ))}
+              ))}</CmsText>
             </tbody>
           </table>
         </div>
-      </Card>
+      </Card></CmsElement>
     </div>
   );
 }

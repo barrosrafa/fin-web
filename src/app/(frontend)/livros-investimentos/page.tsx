@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -29,25 +31,20 @@ export default function LivrosInvestimentosPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-amber">Literatura Financeira</span>
-          <span className="text-xs text-[#64748b]">Biblioteca Curada</span>
+          <span className="badge-neon badge-neon-amber"><CmsText>{"Literatura Financeira"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Biblioteca Curada"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Livros de Investimentos Recomendados
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-          Seleção rigorosa de clássicos de Valuation, Value Investing, Finanças Comportamentais e
-          Gestão de Risco para acelerar sua formação como investidor.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Livros de Investimentos Recomendados"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Seleção rigorosa de clássicos de Valuation, Value Investing, Finanças Comportamentais e Gestão de Risco para acelerar sua formação como investidor."}</CmsText></p>
       </div>
 
       {/* Books List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {loading ? (
-          <div className="col-span-3 py-12 text-center text-[#64748b]">Carregando livros...</div>
+        <CmsText>{loading ? (
+          <div className="col-span-3 py-12 text-center text-[#64748b]"><CmsText>{"Carregando livros..."}</CmsText></div>
         ) : (
           books.map((book) => (
-            <Card key={book.slug} className="p-6 flex flex-col justify-between gap-6 border border-white/10 hover:border-amber-500/30 transition-all">
+            <CmsElement feature="ui.app/-frontend-/livros-investimentos/page.Card.1" key={book.slug}><Card key={book.slug} className="p-6 flex flex-col justify-between gap-6 border border-white/10 hover:border-amber-500/30 transition-all">
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2">
                   <Badge
@@ -59,49 +56,42 @@ export default function LivrosInvestimentosPage() {
                         : "amber"
                     }
                   >
-                    {book.nivel_dificuldade}
+                    <CmsText>{book.nivel_dificuldade}</CmsText>
                   </Badge>
-                  <div className="text-amber-400 font-mono text-xs font-bold">
-                    ★ {book.avaliacao_media.toFixed(2)}
+                  <div className="text-amber-400 font-mono text-xs font-bold"><CmsText>{"★ "}</CmsText><CmsText>{book.avaliacao_media.toFixed(2)}</CmsText>
                   </div>
                 </div>
 
-                <h3 className="text-xl font-bold text-white mb-1">{book.titulo}</h3>
-                {book.subtitulo && (
-                  <p className="text-xs text-cyan-400/80 mb-2">{book.subtitulo}</p>
-                )}
-                <span className="text-xs text-[#94a3b8] block mb-3 font-semibold">
-                  Por {book.autor} {book.ano_publicacao ? `(${book.ano_publicacao})` : ""}
+                <h3 className="text-xl font-bold text-white mb-1"><CmsText>{book.titulo}</CmsText></h3>
+                <CmsText>{book.subtitulo && (
+                  <p className="text-xs text-cyan-400/80 mb-2"><CmsText>{book.subtitulo}</CmsText></p>
+                )}</CmsText>
+                <span className="text-xs text-[#94a3b8] block mb-3 font-semibold"><CmsText>{"Por "}</CmsText><CmsText>{book.autor}</CmsText> <CmsText>{book.ano_publicacao ? `(${book.ano_publicacao})` : ""}</CmsText>
                 </span>
 
                 <p className="text-xs text-[#cbd5e1] leading-relaxed mb-4 line-clamp-4">
-                  {book.resenha_markdown}
+                  <CmsText>{book.resenha_markdown}</CmsText>
                 </p>
 
-                {book.principais_licoes.length > 0 && (
+                <CmsText>{book.principais_licoes.length > 0 && (
                   <div className="pt-3 border-t border-white/5">
-                    <span className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider block mb-1.5">
-                      Principais Lições:
-                    </span>
+                    <span className="text-[11px] font-bold text-[#94a3b8] uppercase tracking-wider block mb-1.5"><CmsText>{"Principais Lições:"}</CmsText></span>
                     <ul className="space-y-1 text-xs text-[#94a3b8]">
-                      {book.principais_licoes.slice(0, 2).map((licao, idx) => (
-                        <li key={idx} className="line-clamp-2">
-                          • {licao}
+                      <CmsText>{book.principais_licoes.slice(0, 2).map((licao, idx) => (
+                        <li key={idx} className="line-clamp-2"><CmsText>{"• "}</CmsText><CmsText>{licao}</CmsText>
                         </li>
-                      ))}
+                      ))}</CmsText>
                     </ul>
                   </div>
-                )}
+                )}</CmsText>
               </div>
 
               <div className="pt-4 border-t border-white/5">
-                <Button variant="outline" className="w-full">
-                  Ver Fichamento Completo
-                </Button>
+                <Button variant="outline" className="w-full"><CmsText>{"Ver Fichamento Completo"}</CmsText></Button>
               </div>
-            </Card>
+            </Card></CmsElement>
           ))
-        )}
+        )}</CmsText>
       </div>
     </div>
   );

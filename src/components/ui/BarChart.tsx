@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React from "react";
 import { formatNumber } from "@/lib/formatters";
 
@@ -34,7 +36,7 @@ export function BarChart({
         className="w-full flex items-end justify-between gap-3 pt-6 pb-2 border-b border-white/5"
         style={{ height }}
       >
-        {data.map((item, idx) => {
+        <CmsText>{data.map((item, idx) => {
           const primaryHeightPct = maxVal > 0 ? (item.value / maxVal) * 100 : 0;
           const secondaryHeightPct =
             item.secondaryValue && maxVal > 0
@@ -48,7 +50,7 @@ export function BarChart({
             >
               {/* Tooltip on hover */}
               <div className="absolute -top-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none bg-[#131926] border border-white/10 px-2 py-1 rounded text-[10px] text-white whitespace-nowrap shadow-xl z-20 mono-nums">
-                {item.label}: {formatTooltipValue(item.value)}
+                <CmsText>{item.label}</CmsText><CmsText>{": "}</CmsText><CmsText>{formatTooltipValue(item.value)}</CmsText>
               </div>
 
               <div className="w-full flex items-end justify-center gap-1.5 h-full">
@@ -63,7 +65,7 @@ export function BarChart({
                 />
 
                 {/* Secondary Bar (Optional) */}
-                {item.secondaryValue !== undefined && (
+                <CmsText>{item.secondaryValue !== undefined && (
                   <div
                     className="w-full max-w-[20px] rounded-t transition-all duration-500 ease-out group-hover:brightness-125"
                     style={{
@@ -72,16 +74,16 @@ export function BarChart({
                       boxShadow: `0 0 12px ${secondaryColor}33`,
                     }}
                   />
-                )}
+                )}</CmsText>
               </div>
 
               {/* Label */}
               <span className="text-[11px] text-[#64748b] mt-2 select-none font-medium truncate max-w-full">
-                {item.label}
+                <CmsText>{item.label}</CmsText>
               </span>
             </div>
           );
-        })}
+        })}</CmsText>
       </div>
     </div>
   );

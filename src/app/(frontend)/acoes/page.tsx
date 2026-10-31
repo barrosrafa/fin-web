@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Card } from "@/components/ui/Card";
@@ -106,52 +108,46 @@ function AcoesContent() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="badge-neon badge-neon-emerald">Mercado de Ações B3</span>
-            <span className="text-xs text-[#94a3b8]">Empresas Listadas CVM</span>
+            <span className="badge-neon badge-neon-emerald"><CmsText>{"Mercado de Ações B3"}</CmsText></span>
+            <span className="text-xs text-[#94a3b8]"><CmsText>{"Empresas Listadas CVM"}</CmsText></span>
             <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
-              {total > 0 ? `${total} Ações no Banco` : "Quantidade indisponível"}
+              <CmsText>{total > 0 ? `${total} Ações no Banco` : "Quantidade indisponível"}</CmsText>
             </span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-            Ações & Companhias Abertas
-          </h1>
-          <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-            Modelos de valuation automatizados (Graham, Bazin, DCF), histórico contábil e fontes de referência e indicadores fundamentalistas de alta precisão.
-          </p>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Ações & Companhias Abertas"}</CmsText></h1>
+          <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Modelos de valuation automatizados (Graham, Bazin, DCF), histórico contábil e fontes de referência e indicadores fundamentalistas de alta precisão."}</CmsText></p>
         </div>
 
-        <Button href="/comparador" variant="cyan">
-          Comparar Ações
-        </Button>
+        <Button href="/comparador" variant="cyan"><CmsText>{"Comparar Ações"}</CmsText></Button>
       </div>
 
       {/* Top 3 Metric Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/acoes/page.MetricCard.1"><MetricCard
           title="Maior Dividend Yield"
           value={highestDYStock ? `${highestDYStock.ticker} • ${formatPercent(highestDYStock.dividendYield, false)}` : "—"}
           subtitle="Proventos pagos nos últimos 12 meses"
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/acoes/page.MetricCard.2"><MetricCard
           title="Maior Valorização na Lista (12M)"
           value={bestPerformerStock ? `${bestPerformerStock.ticker} • ${formatPercent(bestPerformerStock.change12m)}` : "—"}
           subtitle="Retorno nominal em 12 meses móveis"
           glow="cyan"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/acoes/page.MetricCard.3"><MetricCard
           title="Maior Desconto Patrimonial"
           value={lowestPvpStock ? `${lowestPvpStock.ticker} • ${formatMultiple(lowestPvpStock.pvp)}` : "—"}
           subtitle="Relação Preço sobre Valor Patrimonial"
           glow="violet"
-        />
+        /></CmsElement>
       </div>
 
       {/* Filters & Search */}
-      <Card>
+      <CmsElement feature="ui.app/-frontend-/acoes/page.Card.4"><Card>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="relative flex-1">
-            <input
+            <CmsElement feature="ui.app/-frontend-/acoes/page.input.5"><input
               id="acoes-search"
               name="search"
               aria-label="Buscar ações por ticker ou nome"
@@ -160,21 +156,19 @@ function AcoesContent() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-[#131926] border border-white/10 rounded-full px-4 py-2 text-xs text-white placeholder-[#94a3b8] focus:outline-none focus:border-[#00f5a0] transition-colors"
-            />
-            {search && (
-              <button
+            /></CmsElement>
+            <CmsText>{search && (
+              <CmsElement feature="ui.app/-frontend-/acoes/page.button.6"><button
                 type="button"
                 onClick={() => setSearch("")}
                 className="absolute right-3 top-2 text-xs text-[#94a3b8] hover:text-white"
-              >
-                ✕
-              </button>
-            )}
+              ><CmsText>{"✕"}</CmsText></button></CmsElement>
+            )}</CmsText>
           </div>
 
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            {sectors.slice(0, 15).map((sec) => (
-              <button
+            <CmsText>{sectors.slice(0, 15).map((sec) => (
+              <CmsElement feature="ui.app/-frontend-/acoes/page.button.7" key={sec}><button
                 key={sec}
                 type="button"
                 onClick={() => setSelectedSector(sec)}
@@ -184,39 +178,39 @@ function AcoesContent() {
                     : "bg-white/5 text-[#94a3b8] hover:text-white hover:bg-white/10"
                 }`}
               >
-                {sec}
-              </button>
-            ))}
+                <CmsText>{sec}</CmsText>
+              </button></CmsElement>
+            ))}</CmsText>
           </div>
         </div>
 
         {/* Counter feedback */}
         <div className="mt-3 flex items-center justify-between text-[11px] text-[#94a3b8]">
           <span>
-            {loading
+            <CmsText>{loading
               ? "Consultando banco de dados..."
-              : `Exibindo ${stocks.length} de ${total} Ações ${search ? `para "${search}"` : ""}`}
+              : `Exibindo ${stocks.length} de ${total} Ações ${search ? `para "${search}"` : ""}`}</CmsText>
           </span>
-          {hasMore && !loading && (
-            <span className="text-[var(--positive)]">Role para carregar mais automaticamente ↓</span>
-          )}
+          <CmsText>{hasMore && !loading && (
+            <span className="text-[var(--positive)]"><CmsText>{"Role para carregar mais automaticamente ↓"}</CmsText></span>
+          )}</CmsText>
         </div>
-      </Card>
+      </Card></CmsElement>
 
       {/* Stocks Cards Grid */}
       <VirtualAssetList key={`${windowStart}:${debouncedSearch}:${selectedSector}`} items={stocks} getKey={stock => `B3:${stock.ticker}`} renderItem={(stock) => {
           const isPositive = stock.change24h >= 0;
           return (
-            <Card key={stock.ticker} glow="cyan" className="flex flex-col justify-between">
+            <CmsElement feature="ui.app/-frontend-/acoes/page.Card.8" key={stock.ticker}><Card key={stock.ticker} glow="cyan" className="flex flex-col justify-between">
               <div>
                 {/* Header */}
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-xl font-black text-white tracking-tight">
-                        {stock.ticker}
+                        <CmsText>{stock.ticker}</CmsText>
                       </span>
-                      {stock.badge && (
+                      <CmsText>{stock.badge && (
                         <Badge
                           variant={
                             stock.badge.includes("Renda")
@@ -227,28 +221,28 @@ function AcoesContent() {
                           }
                           className="text-[10px]"
                         >
-                          {stock.badge}
+                          <CmsText>{stock.badge}</CmsText>
                         </Badge>
-                      )}
+                      )}</CmsText>
                     </div>
                     <div className="text-xs text-[#94a3b8] font-medium truncate max-w-[220px]">
-                      {stock.name}
+                      <CmsText>{stock.name}</CmsText>
                     </div>
                     <div className="text-[11px] text-[#94a3b8] mt-0.5">
-                      {stock.sector} • {stock.subsector}
+                      <CmsText>{stock.sector}</CmsText><CmsText>{" • "}</CmsText><CmsText>{stock.subsector}</CmsText>
                     </div>
                   </div>
 
                   <div className="text-right">
                     <div className="text-lg font-bold font-mono text-white">
-                      {formatCurrency(stock.currentPrice)}
+                      <CmsText>{formatCurrency(stock.currentPrice)}</CmsText>
                     </div>
                     <div
                       className={`text-xs font-mono font-medium ${
                         isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                       }`}
                     >
-                      {formatPercent(stock.change24h)}
+                      <CmsText>{formatPercent(stock.change24h)}</CmsText>
                     </div>
                   </div>
                 </div>
@@ -256,27 +250,21 @@ function AcoesContent() {
                 {/* Key Fundamental Multiples */}
                 <div className="grid grid-cols-3 gap-2 my-4 p-3 rounded-xl bg-[#131926] border border-white/5 text-center">
                   <div>
-                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
-                      D.Y. (12M)
-                    </div>
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold"><CmsText>{"D.Y. (12M)"}</CmsText></div>
                     <div className="text-xs font-bold font-mono text-[var(--positive)] mt-0.5">
-                      {formatPercent(stock.dividendYield, false)}
+                      <CmsText>{formatPercent(stock.dividendYield, false)}</CmsText>
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
-                      P/VP
-                    </div>
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold"><CmsText>{"P/VP"}</CmsText></div>
                     <div className="text-xs font-bold font-mono text-white mt-0.5">
-                      {formatMultiple(stock.pvp)}
+                      <CmsText>{formatMultiple(stock.pvp)}</CmsText>
                     </div>
                   </div>
                   <div>
-                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold">
-                      P/L
-                    </div>
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold"><CmsText>{"P/L"}</CmsText></div>
                     <div className="text-xs font-bold font-mono text-white mt-0.5">
-                      {stock.pl !== undefined && stock.pl !== 0 ? formatMultiple(stock.pl, 1) : "—"}
+                      <CmsText>{stock.pl !== undefined && stock.pl !== 0 ? formatMultiple(stock.pl, 1) : "—"}</CmsText>
                     </div>
                   </div>
                 </div>
@@ -284,9 +272,8 @@ function AcoesContent() {
                 {/* Sparkline */}
                 <div className="mb-4">
                   <div className="text-[10px] text-[#94a3b8] mb-1 font-semibold flex justify-between">
-                    <span>Desempenho 5D</span>
-                    <span className="font-mono text-white">
-                      12M: {formatPercent(stock.change12m)}
+                    <span><CmsText>{"Desempenho 5D"}</CmsText></span>
+                    <span className="font-mono text-white"><CmsText>{"12M: "}</CmsText><CmsText>{formatPercent(stock.change12m)}</CmsText>
                     </span>
                   </div>
                   <Sparkline
@@ -302,10 +289,8 @@ function AcoesContent() {
                 href={`/acoes/${stock.ticker}`}
                 variant="primary"
                 className="w-full justify-center text-xs mt-2"
-              >
-                Ver Valuation Completo ↗
-              </Button>
-            </Card>
+              ><CmsText>{"Ver Valuation Completo ↗"}</CmsText></Button>
+            </Card></CmsElement>
           );
         }} />
 
@@ -332,9 +317,7 @@ export default function AcoesPage() {
   return (
     <React.Suspense
       fallback={
-        <div className="container mx-auto px-4 py-12 text-center text-zinc-400">
-          Carregando mercado de ações...
-        </div>
+        <div className="container mx-auto px-4 py-12 text-center text-zinc-400"><CmsText>{"Carregando mercado de ações..."}</CmsText></div>
       }
     >
       <AcoesContent />

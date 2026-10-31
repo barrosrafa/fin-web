@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -38,93 +40,79 @@ export default function REITsPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <span className="badge-neon badge-neon-indigo">Real Estate dos EUA</span>
-            <span className="text-xs text-[#64748b]">Nareit Accounting & IRS 30%</span>
+            <span className="badge-neon badge-neon-indigo"><CmsText>{"Real Estate dos EUA"}</CmsText></span>
+            <span className="text-xs text-[#64748b]"><CmsText>{"Nareit Accounting & IRS 30%"}</CmsText></span>
             <span className="text-xs font-mono text-[#00f5a0] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
-              {reits.length} REITs Listados
-            </span>
+              <CmsText>{reits.length}</CmsText><CmsText>{" REITs Listados"}</CmsText></span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-            REITs (Real Estate Investment Trusts)
-          </h1>
-          <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl">
-            Catálogo especializado de Fundos Imobiliários norte-americanos com múltiplos Nareit
-            (FFO, AFFO, P/FFO) e cálculo do Dividend Yield Líquido já descontados os 30% de imposto retido na fonte pelo IRS.
-          </p>
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"REITs (Real Estate Investment Trusts)"}</CmsText></h1>
+          <p className="text-sm text-[#94a3b8] mt-1 max-w-2xl"><CmsText>{"Catálogo especializado de Fundos Imobiliários norte-americanos com múltiplos Nareit (FFO, AFFO, P/FFO) e cálculo do Dividend Yield Líquido já descontados os 30% de imposto retido na fonte pelo IRS."}</CmsText></p>
         </div>
 
         <div className="flex items-center gap-2">
-          <input
+          <CmsElement feature="ui.app/-frontend-/reits/page.input.1"><input
             type="text"
             placeholder="Buscar por Ticker ou Subtipo..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="bg-[#0f172a] border border-white/10 rounded-xl px-4 py-2 text-sm text-white placeholder-[#64748b] focus:outline-none focus:border-cyan-500 w-full sm:w-64"
-          />
+          /></CmsElement>
         </div>
       </div>
 
       {/* REITs Table */}
-      <Card className="overflow-hidden p-0 border border-white/10">
+      <CmsElement feature="ui.app/-frontend-/reits/page.Card.2"><Card className="overflow-hidden p-0 border border-white/10">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-[#cbd5e1]">
             <thead className="bg-[#0f172a]/80 text-xs font-semibold text-[#94a3b8] uppercase tracking-wider border-b border-white/10">
               <tr>
-                <th className="py-4 px-6">Ticker</th>
-                <th className="py-4 px-4">Nome do REIT</th>
-                <th className="py-4 px-4">Segmento</th>
-                <th className="py-4 px-4 text-right">Preço (USD)</th>
-                <th className="py-4 px-4 text-right">P/FFO</th>
-                <th className="py-4 px-4 text-right">P/AFFO</th>
-                <th className="py-4 px-4 text-right">Ocupação</th>
-                <th className="py-4 px-4 text-right">DY Bruto USD</th>
-                <th className="py-4 px-6 text-right">DY Líquido (-30%)</th>
+                <th className="py-4 px-6"><CmsText>{"Ticker"}</CmsText></th>
+                <th className="py-4 px-4"><CmsText>{"Nome do REIT"}</CmsText></th>
+                <th className="py-4 px-4"><CmsText>{"Segmento"}</CmsText></th>
+                <th className="py-4 px-4 text-right"><CmsText>{"Preço (USD)"}</CmsText></th>
+                <th className="py-4 px-4 text-right"><CmsText>{"P/FFO"}</CmsText></th>
+                <th className="py-4 px-4 text-right"><CmsText>{"P/AFFO"}</CmsText></th>
+                <th className="py-4 px-4 text-right"><CmsText>{"Ocupação"}</CmsText></th>
+                <th className="py-4 px-4 text-right"><CmsText>{"DY Bruto USD"}</CmsText></th>
+                <th className="py-4 px-6 text-right"><CmsText>{"DY Líquido (-30%)"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {loading ? (
+              <CmsText>{loading ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-[#64748b]">
-                    Carregando REITs americanos...
-                  </td>
+                  <td colSpan={9} className="py-12 text-center text-[#64748b]"><CmsText>{"Carregando REITs americanos..."}</CmsText></td>
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-[#64748b]">
-                    Nenhum REIT encontrado para a busca.
-                  </td>
+                  <td colSpan={9} className="py-12 text-center text-[#64748b]"><CmsText>{"Nenhum REIT encontrado para a busca."}</CmsText></td>
                 </tr>
               ) : (
                 filtered.map((reit) => (
                   <tr key={reit.ticker} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-4 px-6 font-bold text-white">
-                      <span className="font-mono text-cyan-400">{reit.ticker}</span>
+                      <span className="font-mono text-cyan-400"><CmsText>{reit.ticker}</CmsText></span>
                     </td>
-                    <td className="py-4 px-4 font-semibold text-white">{reit.name}</td>
+                    <td className="py-4 px-4 font-semibold text-white"><CmsText>{reit.name}</CmsText></td>
                     <td className="py-4 px-4">
-                      <Badge variant="indigo">{reit.subtipo_reit}</Badge>
+                      <Badge variant="indigo"><CmsText>{reit.subtipo_reit}</CmsText></Badge>
                     </td>
-                    <td className="py-4 px-4 text-right font-mono font-bold text-white">
-                      ${reit.price_usd.toFixed(2)}
+                    <td className="py-4 px-4 text-right font-mono font-bold text-white"><CmsText>{"$"}</CmsText><CmsText>{reit.price_usd.toFixed(2)}</CmsText>
                     </td>
                     <td className="py-4 px-4 text-right font-mono text-cyan-400">
-                      {reit.p_ffo.toFixed(1)}x
-                    </td>
+                      <CmsText>{reit.p_ffo.toFixed(1)}</CmsText><CmsText>{"x"}</CmsText></td>
                     <td className="py-4 px-4 text-right font-mono text-amber-400">
-                      {reit.p_affo.toFixed(1)}x
-                    </td>
+                      <CmsText>{reit.p_affo.toFixed(1)}</CmsText><CmsText>{"x"}</CmsText></td>
                     <td className="py-4 px-4 text-right font-mono text-[#94a3b8]">
-                      {reit.occupancy_rate_pct.toFixed(1)}%
-                    </td>
+                      <CmsText>{reit.occupancy_rate_pct.toFixed(1)}</CmsText><CmsText>{"%"}</CmsText></td>
                     <td className="py-4 px-4 text-right font-mono text-[#94a3b8]">
-                      {formatPercent(reit.gross_dy_pct)}
+                      <CmsText>{formatPercent(reit.gross_dy_pct)}</CmsText>
                     </td>
                     <td className="py-4 px-6 text-right font-mono text-emerald-400 font-bold">
-                      {formatPercent(reit.net_dy_brl_pct)}
+                      <CmsText>{formatPercent(reit.net_dy_brl_pct)}</CmsText>
                     </td>
                   </tr>
                 ))
-              )}
+              )}</CmsText>
             </tbody>
           </table>
         </div>
@@ -139,7 +127,7 @@ export default function REITsPage() {
           entityName="REITs"
           emptyMessage="Nenhum REIT encontrado para a busca."
         />
-      </Card>
+      </Card></CmsElement>
     </div>
   );
 }

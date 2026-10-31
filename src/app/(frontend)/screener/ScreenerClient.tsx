@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect, useCallback, useTransition } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -155,58 +157,50 @@ export function ScreenerClient() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-cyan">Fundamentus + Status Invest Engine</span>
-          <span className="text-xs text-[#94a3b8]">Filtro Multiativo em Tempo Real</span>
+          <span className="badge-neon badge-neon-cyan"><CmsText>{"Fundamentus + Status Invest Engine"}</CmsText></span>
+          <span className="text-xs text-[#94a3b8]"><CmsText>{"Filtro Multiativo em Tempo Real"}</CmsText></span>
           <span className="text-xs font-mono text-[var(--positive)] bg-[#00f5a0]/10 px-2 py-0.5 rounded-full border border-[#00f5a0]/20">
-            {total > 0 ? `${total} Ativos no Universo B3` : "Universo B3"}
+            <CmsText>{total > 0 ? `${total} Ativos no Universo B3` : "Universo B3"}</CmsText>
           </span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Super Screener Universal
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-          Filtre e ordene centenas de ativos da bolsa em milissegundos com regras combinadas de valuation, proventos, endividamento e liquidez.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Super Screener Universal"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Filtre e ordene centenas de ativos da bolsa em milissegundos com regras combinadas de valuation, proventos, endividamento e liquidez."}</CmsText></p>
       </div>
 
       {/* Filter Control Box */}
-      <Card glow="cyan">
+      <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.Card.1"><Card glow="cyan">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="text-[11px] uppercase font-bold text-[#94a3b8] block mb-1">
-              Buscar Ticker / Nome
-            </label>
-            <input
+            <label className="text-[11px] uppercase font-bold text-[#94a3b8] block mb-1"><CmsText>{"Buscar Ticker / Nome"}</CmsText></label>
+            <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.input.2"><input
               type="text"
               placeholder="Ex: PETR4, HGLG11, MXRF11..."
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
               className="w-full bg-[#131926] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#00f5a0]"
-            />
+            /></CmsElement>
           </div>
 
           <div>
-            <label className="text-[11px] uppercase font-bold text-[#94a3b8] block mb-1">
-              Tipo de Ativo
-            </label>
-            <select
+            <label className="text-[11px] uppercase font-bold text-[#94a3b8] block mb-1"><CmsText>{"Tipo de Ativo"}</CmsText></label>
+            <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.select.3"><select
               value={assetType}
               onChange={(e) => handleTypeChange(e.target.value)}
               className="w-full bg-[#131926] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-[#00f5a0] cursor-pointer"
             >
-              <option value="TODOS">Todos os Ativos</option>
-              <option value="ACAO">Ações</option>
-              <option value="FII">Fundos Imobiliários</option>
-              <option value="ETF">ETFs</option>
-            </select>
+              <option value="TODOS"><CmsText>{"Todos os Ativos"}</CmsText></option>
+              <option value="ACAO"><CmsText>{"Ações"}</CmsText></option>
+              <option value="FII"><CmsText>{"Fundos Imobiliários"}</CmsText></option>
+              <option value="ETF"><CmsText>{"ETFs"}</CmsText></option>
+            </select></CmsElement>
           </div>
 
           <div>
             <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
-              <span>Dividend Yield Mínimo</span>
-              <span className="text-[#00d9f5] font-mono">{formatPercent(minDY, false)}</span>
+              <span><CmsText>{"Dividend Yield Mínimo"}</CmsText></span>
+              <span className="text-[#00d9f5] font-mono"><CmsText>{formatPercent(minDY, false)}</CmsText></span>
             </div>
-            <input
+            <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.input.4"><input
               type="range"
               min="0"
               max="15"
@@ -214,15 +208,15 @@ export function ScreenerClient() {
               value={minDY}
               onChange={(e) => handleMinDYChange(parseFloat(e.target.value))}
               className="w-full accent-[#00d9f5] cursor-pointer"
-            />
+            /></CmsElement>
           </div>
 
           <div>
             <div className="flex justify-between text-[11px] uppercase font-bold text-[#94a3b8] mb-1">
-              <span>P/VP Máximo</span>
-              <span className="text-[var(--positive)] font-mono">{formatMultiple(maxPVP, 1)}</span>
+              <span><CmsText>{"P/VP Máximo"}</CmsText></span>
+              <span className="text-[var(--positive)] font-mono"><CmsText>{formatMultiple(maxPVP, 1)}</CmsText></span>
             </div>
-            <input
+            <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.input.5"><input
               type="range"
               min="0.5"
               max="5.0"
@@ -230,61 +224,55 @@ export function ScreenerClient() {
               value={maxPVP}
               onChange={(e) => handleMaxPVPChange(parseFloat(e.target.value))}
               className="w-full accent-[#00f5a0] cursor-pointer"
-            />
+            /></CmsElement>
           </div>
         </div>
-      </Card>
+      </Card></CmsElement>
 
-      <p className="text-xs text-[#94a3b8]">Os filtros numéricos e a ordenação visual se aplicam ao bloco carregado.</p>
-      <button type="button" aria-pressed={fullTable} onClick={() => setFullTable(value => !value)} className="text-xs underline">{fullTable ? "Usar janela de tabela" : "Exibir todo o bloco da tabela (acesso por teclado)"}</button>
+      <p className="text-xs text-[#94a3b8]"><CmsText>{"Os filtros numéricos e a ordenação visual se aplicam ao bloco carregado."}</CmsText></p>
+      <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.button.6"><button type="button" aria-pressed={fullTable} onClick={() => setFullTable(value => !value)} className="text-xs underline"><CmsText>{fullTable ? "Usar janela de tabela" : "Exibir todo o bloco da tabela (acesso por teclado)"}</CmsText></button></CmsElement>
       {/* Results Table */}
-      <Card>
+      <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.Card.7"><Card>
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs text-[#94a3b8] font-mono">
-            {loading ? "Consultando banco em tempo real..." : `Exibindo ${filtered.length} de ${total} ativos`}
+            <CmsText>{loading ? "Consultando banco em tempo real..." : `Exibindo ${filtered.length} de ${total} ativos`}</CmsText>
           </span>
-          <span className="text-xs text-[#94a3b8]">
-            Clique nos cabeçalhos para ordenar
-          </span>
+          <span className="text-xs text-[#94a3b8]"><CmsText>{"Clique nos cabeçalhos para ordenar"}</CmsText></span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
               <tr className="border-b border-white/5 text-[#94a3b8] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="pb-3 pl-2">Ticker</th>
-                <th className="pb-3">Tipo</th>
+                <th className="pb-3 pl-2"><CmsText>{"Ticker"}</CmsText></th>
+                <th className="pb-3"><CmsText>{"Tipo"}</CmsText></th>
                 <th
                   className="pb-3 text-right cursor-pointer hover:text-white"
                   onClick={() => toggleSort("currentPrice")}
-                >
-                  Preço {sortField === "currentPrice" && (sortAsc ? "↑" : "↓")}
+                ><CmsText>{"Preço "}</CmsText><CmsText>{sortField === "currentPrice" && (sortAsc ? "↑" : "↓")}</CmsText>
                 </th>
                 <th
                   className="pb-3 text-right cursor-pointer hover:text-white"
                   onClick={() => toggleSort("change24h")}
-                >
-                  Var. 24h {sortField === "change24h" && (sortAsc ? "↑" : "↓")}
+                ><CmsText>{"Var. 24h "}</CmsText><CmsText>{sortField === "change24h" && (sortAsc ? "↑" : "↓")}</CmsText>
                 </th>
                 <th
                   className="pb-3 text-right cursor-pointer hover:text-white"
                   onClick={() => toggleSort("dividendYield")}
-                >
-                  D.Y. (12M) {sortField === "dividendYield" && (sortAsc ? "↑" : "↓")}
+                ><CmsText>{"D.Y. (12M) "}</CmsText><CmsText>{sortField === "dividendYield" && (sortAsc ? "↑" : "↓")}</CmsText>
                 </th>
                 <th
                   className="pb-3 text-right cursor-pointer hover:text-white"
                   onClick={() => toggleSort("pvp")}
-                >
-                  P/VP {sortField === "pvp" && (sortAsc ? "↑" : "↓")}
+                ><CmsText>{"P/VP "}</CmsText><CmsText>{sortField === "pvp" && (sortAsc ? "↑" : "↓")}</CmsText>
                 </th>
-                <th className="pb-3 text-right pr-2">Ação</th>
+                <th className="pb-3 text-right pr-2"><CmsText>{"Ação"}</CmsText></th>
               </tr>
             </thead>
             <VirtualTableBody key={`${windowStart}:${debouncedSearch}:${filter}`} items={filtered} columns={7} full={fullTable} getKey={a => `B3:${a.type}:${a.ticker}`} renderRow={(a) => (
                 <tr key={a.ticker} className="hover:bg-white/[0.02]">
                   <td className="py-3 pl-2 font-bold text-white font-sans">
-                    <Link
+                    <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.Link.8"><Link
                       href={
                         a.type === "FII"
                           ? `/fiis/${a.ticker}`
@@ -294,14 +282,14 @@ export function ScreenerClient() {
                       }
                       className="hover:text-[var(--positive)] transition-colors"
                     >
-                      {a.ticker}
-                    </Link>
+                      <CmsText>{a.ticker}</CmsText>
+                    </Link></CmsElement>
                   </td>
                   <td className="py-3 font-sans">
-                    <Badge variant="neutral">{a.type}</Badge>
+                    <Badge variant="neutral"><CmsText>{a.type}</CmsText></Badge>
                   </td>
                   <td className="py-3 text-right font-bold text-white">
-                    {formatCurrency(a.currentPrice)}
+                    <CmsText>{formatCurrency(a.currentPrice)}</CmsText>
                   </td>
                   <td className="py-3 text-right">
                     <span
@@ -309,17 +297,17 @@ export function ScreenerClient() {
                         a.change24h >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"
                       }`}
                     >
-                      {formatPercent(a.change24h)}
+                      <CmsText>{formatPercent(a.change24h)}</CmsText>
                     </span>
                   </td>
                   <td className="py-3 text-right font-bold text-[#00d9f5]">
-                    {formatPercent(a.dividendYield, false)}
+                    <CmsText>{formatPercent(a.dividendYield, false)}</CmsText>
                   </td>
                   <td className="py-3 text-right text-white">
-                    {formatMultiple(a.pvp)}
+                    <CmsText>{formatMultiple(a.pvp)}</CmsText>
                   </td>
                   <td className="py-3 text-right pr-2 font-sans">
-                    <Link
+                    <CmsElement feature="ui.app/-frontend-/screener/ScreenerClient.Link.9"><Link
                       href={
                         a.type === "FII"
                           ? `/fiis/${a.ticker}`
@@ -328,9 +316,7 @@ export function ScreenerClient() {
                           : `/acoes/${a.ticker}`
                       }
                       className="text-[11px] px-2.5 py-1 rounded bg-white/5 hover:bg-[#00f5a0] hover:text-black font-semibold transition-all"
-                    >
-                      Ver
-                    </Link>
+                    ><CmsText>{"Ver"}</CmsText></Link></CmsElement>
                   </td>
                 </tr>
               )} />
@@ -351,7 +337,7 @@ export function ScreenerClient() {
           entityName="ativos"
           emptyMessage="Nenhum ativo correspondeu aos filtros aplicados."
         />
-      </Card>
+      </Card></CmsElement>
     </div>
   );
 }

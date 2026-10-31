@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { resolveAssetHref } from "@/lib/routes";
@@ -53,13 +55,13 @@ export function TickerTape({ items: initialItems }: TickerTapeProps) {
 
   return (
     <div className="w-full bg-[#060709]/90 border-b border-white/5 py-1.5 overflow-hidden select-none relative z-30">
-      {items.length === 0 && <p role="status" className="text-xs text-center text-[#94a3b8]">{mode === "loading" ? "Carregando cotações de referência…" : "Cotações de referência indisponíveis"}</p>}
+      <CmsText>{items.length === 0 && <p role="status" className="text-xs text-center text-[#94a3b8]"><CmsText>{mode === "loading" ? "Carregando cotações de referência…" : "Cotações de referência indisponíveis"}</CmsText></p>}</CmsText>
       <DataStatus {...items[0]?.provenance} mode={mode} />
       <div className="animate-ticker">
-        {duplicated.map((item, idx) => {
+        <CmsText>{duplicated.map((item, idx) => {
           const isPositive = item.change >= 0;
           return (
-            <Link
+            <CmsElement feature="ui.components/ui/TickerTape.Link.1" key={`tape-${item.ticker}-${idx}`}><Link
               key={`tape-${item.ticker}-${idx}`}
               href={resolveAssetHref(item.ticker)}
               aria-hidden={idx >= items.length}
@@ -67,18 +69,18 @@ export function TickerTape({ items: initialItems }: TickerTapeProps) {
               className="inline-flex items-center gap-2.5 px-4 text-xs hover:bg-white/[0.04] py-0.5 rounded transition-colors group"
             >
               <span className="font-bold text-[#f0f4f8] group-hover:text-[#00d9f5] transition-colors">
-                {item.ticker}
+                <CmsText>{item.ticker}</CmsText>
               </span>
               <span className="text-[#94a3b8] hidden sm:inline text-[11px]">
-                {item.name}
+                <CmsText>{item.name}</CmsText>
               </span>
               <span className="mono-nums text-[#94a3b8] font-medium">
-                {item.prefix || ""}
-                {item.value.toLocaleString("pt-BR", {
+                <CmsText>{item.prefix || ""}</CmsText>
+                <CmsText>{item.value.toLocaleString("pt-BR", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
-                })}
-                {item.suffix || ""}
+                })}</CmsText>
+                <CmsText>{item.suffix || ""}</CmsText>
               </span>
               <span
                 className={`mono-nums font-semibold text-[11px] px-1.5 py-0.5 rounded ${
@@ -87,12 +89,12 @@ export function TickerTape({ items: initialItems }: TickerTapeProps) {
                     : "bg-[rgba(255,59,105,0.1)] text-[var(--negative)]"
                 }`}
               >
-                {formatPercent(item.change)}
+                <CmsText>{formatPercent(item.change)}</CmsText>
               </span>
-              <span className="text-white/10 mx-2">•</span>
-            </Link>
+              <span className="text-white/10 mx-2"><CmsText>{"•"}</CmsText></span>
+            </Link></CmsElement>
           );
-        })}
+        })}</CmsText>
       </div>
     </div>
   );

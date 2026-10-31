@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -42,71 +44,63 @@ export default function HistoricoPLBovespaPage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
-          <span className="badge-neon badge-neon-cyan">Valuation Macro B3</span>
-          <span className="text-xs text-[#64748b]">Corredor Histórico de Preço / Lucro</span>
+          <span className="badge-neon badge-neon-cyan"><CmsText>{"Valuation Macro B3"}</CmsText></span>
+          <span className="text-xs text-[#64748b]"><CmsText>{"Corredor Histórico de Preço / Lucro"}</CmsText></span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
-          Histórico P/L Bovespa (Ibovespa)
-        </h1>
-        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl">
-          Análise histórica da relação Preço sobre Lucro ponderada pelo valor de mercado das empresas constituintes do índice Ibovespa e suas bandas de desvio padrão.
-        </p>
+        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white"><CmsText>{"Histórico P/L Bovespa (Ibovespa)"}</CmsText></h1>
+        <p className="text-sm text-[#94a3b8] mt-1 max-w-xl"><CmsText>{"Análise histórica da relação Preço sobre Lucro ponderada pelo valor de mercado das empresas constituintes do índice Ibovespa e suas bandas de desvio padrão."}</CmsText></p>
       </div>
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-        <MetricCard
+        <CmsElement feature="ui.app/-frontend-/acoes/historico-pl-bovespa/page.MetricCard.1"><MetricCard
           title="P/L Ponderado Atual"
           value={`${latest.pl_ponderado.toFixed(2)}x`}
           subtitle={isCheap ? "Abaixo da Média Histórica" : "Acima da Média Histórica"}
           glow={isCheap ? "emerald" : "violet"}
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/acoes/historico-pl-bovespa/page.MetricCard.2"><MetricCard
           title="Média Histórica (5 Anos)"
           value={`${latest.media_historica_5y.toFixed(2)}x`}
           subtitle="Equilíbrio estrutural da bolsa"
           glow="cyan"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/acoes/historico-pl-bovespa/page.MetricCard.3"><MetricCard
           title="Zona de Barganha (-1 DP)"
           value={`${latest.banda_inferior_1dp.toFixed(2)}x`}
           subtitle="Desconto acentuado de valuation"
           glow="emerald"
-        />
-        <MetricCard
+        /></CmsElement>
+        <CmsElement feature="ui.app/-frontend-/acoes/historico-pl-bovespa/page.MetricCard.4"><MetricCard
           title="Zona de Euforia (+1 DP)"
           value={`${latest.banda_superior_1dp.toFixed(2)}x`}
           subtitle="Regime de sobreavaliação"
           glow="crimson"
-        />
+        /></CmsElement>
       </div>
 
       {/* Corridor Table & Analysis */}
-      <Card glow="cyan">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-[#64748b] mb-4">
-          Série Histórica e Bandas Estatísticas de Valuation (Ibov)
-        </h3>
+      <CmsElement feature="ui.app/-frontend-/acoes/historico-pl-bovespa/page.Card.5"><Card glow="cyan">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-[#64748b] mb-4"><CmsText>{"Série Histórica e Bandas Estatísticas de Valuation (Ibov)"}</CmsText></h3>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs font-mono">
             <thead>
               <tr className="border-b border-white/5 text-[#64748b] uppercase tracking-wider font-semibold text-[10px]">
-                <th className="py-2.5 pl-2 font-sans">Data Ref</th>
-                <th className="py-2.5 text-right font-sans">Pontos Ibov</th>
-                <th className="py-2.5 text-right font-sans">P/L Ponderado</th>
-                <th className="py-2.5 text-right font-sans">P/L Mediano</th>
-                <th className="py-2.5 text-right font-sans">Média (5A)</th>
-                <th className="py-2.5 text-right font-sans">Banda -1σ (Barganha)</th>
-                <th className="py-2.5 text-right font-sans">Banda +1σ (Euforia)</th>
-                <th className="py-2.5 text-right pr-2 font-sans">Status</th>
+                <th className="py-2.5 pl-2 font-sans"><CmsText>{"Data Ref"}</CmsText></th>
+                <th className="py-2.5 text-right font-sans"><CmsText>{"Pontos Ibov"}</CmsText></th>
+                <th className="py-2.5 text-right font-sans"><CmsText>{"P/L Ponderado"}</CmsText></th>
+                <th className="py-2.5 text-right font-sans"><CmsText>{"P/L Mediano"}</CmsText></th>
+                <th className="py-2.5 text-right font-sans"><CmsText>{"Média (5A)"}</CmsText></th>
+                <th className="py-2.5 text-right font-sans"><CmsText>{"Banda -1σ (Barganha)"}</CmsText></th>
+                <th className="py-2.5 text-right font-sans"><CmsText>{"Banda +1σ (Euforia)"}</CmsText></th>
+                <th className="py-2.5 text-right pr-2 font-sans"><CmsText>{"Status"}</CmsText></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {loading ? (
+              <CmsText>{loading ? (
                 <tr>
-                  <td colSpan={8} className="py-8 text-center text-[#64748b] font-sans animate-pulse">
-                    Carregando série histórica de múltiplos...
-                  </td>
+                  <td colSpan={8} className="py-8 text-center text-[#64748b] font-sans animate-pulse"><CmsText>{"Carregando série histórica de múltiplos..."}</CmsText></td>
                 </tr>
               ) : (
                 history.map((pt) => {
@@ -125,28 +119,26 @@ export default function HistoricoPLBovespaPage() {
 
                   return (
                     <tr key={pt.data_referencia} className="hover:bg-white/[0.02]">
-                      <td className="py-2.5 pl-2 text-white font-sans">{pt.data_referencia}</td>
+                      <td className="py-2.5 pl-2 text-white font-sans"><CmsText>{pt.data_referencia}</CmsText></td>
                       <td className="py-2.5 text-right text-white font-bold">
-                        {pt.fechamento_indice.toLocaleString("pt-BR")} pts
-                      </td>
+                        <CmsText>{pt.fechamento_indice.toLocaleString("pt-BR")}</CmsText><CmsText>{" pts"}</CmsText></td>
                       <td className="py-2.5 text-right font-bold text-[#00d9f5]">
-                        {pt.pl_ponderado.toFixed(2)}x
-                      </td>
-                      <td className="py-2.5 text-right text-white">{pt.pl_mediano.toFixed(2)}x</td>
-                      <td className="py-2.5 text-right text-[#94a3b8]">{pt.media_historica_5y.toFixed(2)}x</td>
-                      <td className="py-2.5 text-right text-[#00f5a0]">{pt.banda_inferior_1dp.toFixed(2)}x</td>
-                      <td className="py-2.5 text-right text-[#ff3b69]">{pt.banda_superior_1dp.toFixed(2)}x</td>
+                        <CmsText>{pt.pl_ponderado.toFixed(2)}</CmsText><CmsText>{"x"}</CmsText></td>
+                      <td className="py-2.5 text-right text-white"><CmsText>{pt.pl_mediano.toFixed(2)}</CmsText><CmsText>{"x"}</CmsText></td>
+                      <td className="py-2.5 text-right text-[#94a3b8]"><CmsText>{pt.media_historica_5y.toFixed(2)}</CmsText><CmsText>{"x"}</CmsText></td>
+                      <td className="py-2.5 text-right text-[#00f5a0]"><CmsText>{pt.banda_inferior_1dp.toFixed(2)}</CmsText><CmsText>{"x"}</CmsText></td>
+                      <td className="py-2.5 text-right text-[#ff3b69]"><CmsText>{pt.banda_superior_1dp.toFixed(2)}</CmsText><CmsText>{"x"}</CmsText></td>
                       <td className="py-2.5 text-right pr-2 font-sans">
-                        <Badge variant={badgeVariant}>{statusLabel}</Badge>
+                        <Badge variant={badgeVariant}><CmsText>{statusLabel}</CmsText></Badge>
                       </td>
                     </tr>
                   );
                 })
-              )}
+              )}</CmsText>
             </tbody>
           </table>
         </div>
-      </Card>
+      </Card></CmsElement>
     </div>
   );
 }

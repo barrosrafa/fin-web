@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText } from "@/components/content/Cms";
 import React from "react";
 import { NormalizedSeriesPoint } from "@/schemas/financial";
 
@@ -24,9 +26,7 @@ export function RelativePerformanceBase100Chart({
 }: Base100ChartProps) {
   if (!series || series.length === 0) {
     return (
-      <div className="flex items-center justify-center p-8 text-xs text-[#64748b] bg-[#0a0f1d] rounded-xl border border-white/5">
-        Sem dados de série normalizada para o período.
-      </div>
+      <div className="flex items-center justify-center p-8 text-xs text-[#64748b] bg-[#0a0f1d] rounded-xl border border-white/5"><CmsText>{"Sem dados de série normalizada para o período."}</CmsText></div>
     );
   }
 
@@ -67,18 +67,16 @@ export function RelativePerformanceBase100Chart({
     <div className="flex flex-col gap-3">
       {/* Legend */}
       <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
-        {allKeys.map((k, i) => (
+        <CmsText>{allKeys.map((k, i) => (
           <div key={k} className="flex items-center gap-1.5">
             <span
               className="w-3 h-1 rounded-full"
               style={{ backgroundColor: COLOR_PALETTE[i % COLOR_PALETTE.length] }}
             />
-            <span className="text-white font-bold">{k}</span>
-            <span className="text-[#94a3b8] text-[11px]">
-              ({series[series.length - 1]?.values[k]?.toFixed(1) ?? 100.0})
-            </span>
+            <span className="text-white font-bold"><CmsText>{k}</CmsText></span>
+            <span className="text-[#94a3b8] text-[11px]"><CmsText>{"("}</CmsText><CmsText>{series[series.length - 1]?.values[k]?.toFixed(1) ?? 100.0}</CmsText><CmsText>{")"}</CmsText></span>
           </div>
-        ))}
+        ))}</CmsText>
       </div>
 
       <div className="relative w-full overflow-hidden bg-[#0a0f1d] p-3 rounded-xl border border-white/5">
@@ -105,9 +103,7 @@ export function RelativePerformanceBase100Chart({
             fontSize="10"
             textAnchor="end"
             className="mono-nums font-mono"
-          >
-            100
-          </text>
+          ><CmsText>{"100"}</CmsText></text>
 
           {/* Top line */}
           <text
@@ -118,11 +114,11 @@ export function RelativePerformanceBase100Chart({
             textAnchor="end"
             className="mono-nums font-mono"
           >
-            {maxVal}
+            <CmsText>{maxVal}</CmsText>
           </text>
 
           {/* Draw each key series */}
-          {allKeys.map((k, keyIdx) => {
+          <CmsText>{allKeys.map((k, keyIdx) => {
             const color = COLOR_PALETTE[keyIdx % COLOR_PALETTE.length];
             const pts = series
               .map((pt, i) => {
@@ -144,10 +140,10 @@ export function RelativePerformanceBase100Chart({
                 strokeLinejoin="round"
               />
             );
-          })}
+          })}</CmsText>
 
           {/* X Axis Dates */}
-          {series.map((pt, i) => (
+          <CmsText>{series.map((pt, i) => (
             <text
               key={pt.date}
               x={getX(i)}
@@ -157,9 +153,9 @@ export function RelativePerformanceBase100Chart({
               textAnchor="middle"
               className="mono-nums font-mono"
             >
-              {pt.date.slice(5)}
+              <CmsText>{pt.date.slice(5)}</CmsText>
             </text>
-          ))}
+          ))}</CmsText>
         </svg>
       </div>
     </div>

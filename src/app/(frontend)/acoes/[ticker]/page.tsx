@@ -1,3 +1,5 @@
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -45,17 +47,17 @@ async function StockContent({ ticker }: { ticker: string }) {
   };
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(graph).replace(/</g, "\\u003c") }} />
-    <section aria-label={`Cadastro público de ${ticker}`} className="mb-6 p-4 rounded-xl border border-white/10">
-      <h1 className="text-xl font-bold">{ticker} — {name}</h1>
-      <p className="text-sm text-[#94a3b8]">Instrumento B3:{ticker}{details?.details.sector ? ` • Setor: ${details.details.sector}` : ""}. Preços em BRL.</p>
+    <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/page.section.1"><section aria-label={`Cadastro público de ${ticker}`} className="mb-6 p-4 rounded-xl border border-white/10">
+      <h1 className="text-xl font-bold"><CmsText>{ticker}</CmsText><CmsText>{" — "}</CmsText><CmsText>{name}</CmsText></h1>
+      <p className="text-sm text-[#94a3b8]"><CmsText>{"Instrumento B3:"}</CmsText><CmsText>{ticker}</CmsText><CmsText>{details?.details.sector ? ` • Setor: ${details.details.sector}` : ""}</CmsText><CmsText>{". Preços em BRL."}</CmsText></p>
       <DataStatus mode={details ? "periodic" : "missing"} asOf={details?.details.data_cotacao} />
-      {history?.data?.length ? <table className="text-sm w-full mt-3">
-        <caption className="text-left">Histórico de referência — fechamento nominal em BRL; últimos registros disponíveis. Fonte documental não informada.</caption>
-        <thead><tr><th scope="col" className="text-left">Data</th><th scope="col" className="text-right">Fechamento</th></tr></thead>
-        <tbody>{history.data.map(row => <tr key={row.date}><th scope="row" className="text-left"><time dateTime={row.date}>{row.date}</time></th><td className="text-right">{formatCurrency(row.close)}</td></tr>)}</tbody>
-      </table> : <p className="text-sm">Histórico indisponível.</p>}
-    </section>
-    <Suspense fallback={<p>Carregando ferramentas de análise…</p>}>
+      <CmsText>{history?.data?.length ? <table className="text-sm w-full mt-3">
+        <caption className="text-left"><CmsText>{"Histórico de referência — fechamento nominal em BRL; últimos registros disponíveis. Fonte documental não informada."}</CmsText></caption>
+        <thead><tr><th scope="col" className="text-left"><CmsText>{"Data"}</CmsText></th><th scope="col" className="text-right"><CmsText>{"Fechamento"}</CmsText></th></tr></thead>
+        <tbody><CmsText>{history.data.map(row => <tr key={row.date}><th scope="row" className="text-left"><time dateTime={row.date}><CmsText>{row.date}</CmsText></time></th><td className="text-right"><CmsText>{formatCurrency(row.close)}</CmsText></td></tr>)}</CmsText></tbody>
+      </table> : <p className="text-sm"><CmsText>{"Histórico indisponível."}</CmsText></p>}</CmsText>
+    </section></CmsElement>
+    <Suspense fallback={<p><CmsText>{"Carregando ferramentas de análise…"}</CmsText></p>}>
       <AcaoDetailClient key={ticker} ticker={ticker} initialDetails={details} initialValuation={valuation} />
     </Suspense>
   </>;

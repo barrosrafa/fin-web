@@ -1,5 +1,7 @@
 "use client";
 
+
+import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState, useEffect } from "react";
 import { TripleCoverageBar } from "@/components/portfolio/TripleCoverageBar";
 import { DebtorConcentrationCard, DebtorItem } from "@/components/portfolio/DebtorConcentrationCard";
@@ -79,37 +81,27 @@ export default function DebtorAnalysisPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
           <div>
             <div className="flex items-center gap-3">
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                NOVA ENGINE v3.5
-              </span>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                Cockpit de Concentração por Devedor &amp; Reconciliação
-              </h1>
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20"><CmsText>{"NOVA ENGINE v3.5"}</CmsText></span>
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white"><CmsText>{"Cockpit de Concentração por Devedor & Reconciliação"}</CmsText></h1>
             </div>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Desdobramento de FIIs e Fundos via CDA CVM 175 e ANBIMA Data com auditoria falsificável
-            </p>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1"><CmsText>{"Desdobramento de FIIs e Fundos via CDA CVM 175 e ANBIMA Data com auditoria falsificável"}</CmsText></p>
           </div>
 
-          <button
+          <CmsElement feature="ui.app/-frontend-/cockpit/debtor-analysis/page.button.1"><button
             type="button"
             onClick={() => setIsDivergenceModalOpen(true)}
             className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-amber-500/30 text-amber-300 text-xs font-medium transition shadow-sm"
           >
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-            Por que meu número não bate? (KNIP11)
-          </button>
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" /><CmsText>{"Por que meu número não bate? (KNIP11)"}</CmsText></button></CmsElement>
         </div>
 
         {/* Toast Alert */}
-        {successToast && (
+        <CmsText>{successToast && (
           <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-xs font-medium text-emerald-300 flex items-center justify-between animate-in fade-in">
-            <span>✓ {successToast}</span>
-            <button type="button" onClick={() => setSuccessToast(null)} className="text-slate-400 hover:text-white">
-              &times;
-            </button>
+            <span><CmsText>{"✓ "}</CmsText><CmsText>{successToast}</CmsText></span>
+            <CmsElement feature="ui.app/-frontend-/cockpit/debtor-analysis/page.button.2"><button type="button" onClick={() => setSuccessToast(null)} className="text-slate-400 hover:text-white"><CmsText>{"×"}</CmsText></button></CmsElement>
           </div>
-        )}
+        )}</CmsText>
 
         {/* 1. Radical Coverage Bar (v1 Invariant) */}
         <TripleCoverageBar
@@ -119,7 +111,7 @@ export default function DebtorAnalysisPage() {
         />
 
         {/* 2. Falsifiable AI Committee Phrase */}
-        <FalsifiablePhraseCard
+        <CmsElement feature="ui.app/-frontend-/cockpit/debtor-analysis/page.FalsifiablePhraseCard.3"><FalsifiablePhraseCard
           text="Sua exposição a crédito imobiliário de papel é 34.0% do patrimônio — soma de KNIP11 (22.0%), Fundo CVM 175 Y (9.0%) e CRI JHSF 129S (3.0%). O rating do CRI JHSF 129S caiu de AA para A em 12/09 (fonte: Brick360, atualizado 14:32). O KNIP11 tem 18.5% do PL no mesmo emissor (fonte: Clube FII / SiiLA). Você não tem concentração por ticker — tem concentração por devedor."
           interactivePills={[
             {
@@ -153,44 +145,37 @@ export default function DebtorAnalysisPage() {
             template_id: "portfolio_debtor_concentration_v1",
             created_at: "2026-10-26T23:30:00.000Z",
           }}
-        />
+        /></CmsElement>
 
         {/* 3. Debtor Concentration Card */}
-        <DebtorConcentrationCard
+        <CmsElement feature="ui.app/-frontend-/cockpit/debtor-analysis/page.DebtorConcentrationCard.4"><DebtorConcentrationCard
           debtors={debtors}
           userThresholdPct={25.0}
           onOpenOverride={(entity) => setOverrideEntity(entity)}
-        />
+        /></CmsElement>
 
         {/* Override Modal */}
-        {overrideEntity && (
+        <CmsText>{overrideEntity && (
           <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-slate-900 border border-slate-700 rounded-xl max-w-sm w-full p-5 shadow-2xl">
-              <h4 className="font-semibold text-sm text-slate-100 mb-2">
-                Ajuste Local de Mapeamento: {overrideEntity}
+              <h4 className="font-semibold text-sm text-slate-100 mb-2"><CmsText>{"Ajuste Local de Mapeamento: "}</CmsText><CmsText>{overrideEntity}</CmsText>
               </h4>
-              <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-                Este ajuste afetará apenas a sua conta pessoal, persistindo mesmo após novas ingestões mensais da CVM.
-              </p>
+              <p className="text-xs text-slate-400 mb-4 leading-relaxed"><CmsText>{"Este ajuste afetará apenas a sua conta pessoal, persistindo mesmo após novas ingestões mensais da CVM."}</CmsText></p>
               <div className="space-y-3">
-                <button
+                <CmsElement feature="ui.app/-frontend-/cockpit/debtor-analysis/page.button.5"><button
                   type="button"
                   onClick={handleApplyOverride}
                   className="w-full py-2 bg-rose-600/80 hover:bg-rose-600 text-white text-xs font-semibold rounded-lg transition"
-                >
-                  Excluir aresta da minha carteira
-                </button>
-                <button
+                ><CmsText>{"Excluir aresta da minha carteira"}</CmsText></button></CmsElement>
+                <CmsElement feature="ui.app/-frontend-/cockpit/debtor-analysis/page.button.6"><button
                   type="button"
                   onClick={() => setOverrideEntity(null)}
                   className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium rounded-lg transition"
-                >
-                  Cancelar
-                </button>
+                ><CmsText>{"Cancelar"}</CmsText></button></CmsElement>
               </div>
             </div>
           </div>
-        )}
+        )}</CmsText>
 
         {/* Multi-Source Divergence Explainer Modal */}
         <DivergenceExplainerModal

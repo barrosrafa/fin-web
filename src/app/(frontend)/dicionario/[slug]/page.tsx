@@ -1,3 +1,5 @@
+
+import { CmsText } from "@/components/content/Cms";
 import React, { Suspense } from "react";
 import { TermDetail } from "./TermDetail";
 import { cacheLife } from "next/cache";
@@ -40,9 +42,7 @@ export default async function TermDetailPage({
   return (
     <Suspense
       fallback={
-        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono">
-          Carregando definição de {slug}...
-        </div>
+        <div className="flex items-center justify-center p-24 text-sm text-[#94a3b8] font-mono"><CmsText>{"Carregando definição de "}</CmsText><CmsText>{slug}</CmsText><CmsText>{"..."}</CmsText></div>
       }
     >
       <TermDetail term={term} />
