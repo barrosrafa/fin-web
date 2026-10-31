@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { SectionState } from "@/components/shared/SectionState";
 import { formatCurrency, formatPercent } from "@/lib/formatters";
-import { getQuoteHistory, QuoteHistoryResponse, API_BASE } from "@/lib/api";
+import { getFullQuoteHistory, QuoteHistoryResponse, API_BASE } from "@/lib/api";
 
 interface StockPriceHistorySectionProps {
   ticker: string;
@@ -30,7 +30,7 @@ export function StockPriceHistorySection({ ticker }: StockPriceHistorySectionPro
     setLoading(true);
     setError(null);
     setHistory(null);
-    void getQuoteHistory(ticker, timeframe, adjusted, 500, 0, controller.signal).then(data => {
+    void getFullQuoteHistory(ticker, timeframe, adjusted, controller.signal).then(data => {
       if (!controller.signal.aborted) { setHistory(data); setPage(0); }
     }).catch(() => {
       if (!controller.signal.aborted) setError("Histórico indisponível. Tente novamente.");

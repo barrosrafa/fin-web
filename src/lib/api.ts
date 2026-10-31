@@ -683,6 +683,24 @@ export async function getQuoteHistory(
   }
 }
 
+/** Load every API page before exposing the period to charts and local pagination. */
+export async function getFullQuoteHistory(
+  ticker: string, timeframe: string = "1Y", adjusted: boolean = true, signal?: AbortSignal,
+): Promise<QuoteHistoryResponse> {
+  const pageSize = 5000;
+  const first = await getQuoteHistory(ticker, timeframe, adjusted, pageSize, 0, signal);
+  const data = [...first.data];
+  let cacheStatus = first.cache_status;
+  while (data.length < first.total_days) {
+    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+    const next = await getQuoteHistory(ticker, timeframe, adjusted, pageSize, data.length, signal);
+    if (next.data.length === 0) throw new Error("Histórico incompleto");
+    data.push(...next.data);
+    if (next.cache_status === "offline-stale") cacheStatus = "offline-stale";
+  }
+  return { ...first, data, cache_status: cacheStatus };
+}
+
 export async function queryScreener(
   params: ScreenerFilterParams
 ): Promise<ScreenerQueryResult> {
