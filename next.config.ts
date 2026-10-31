@@ -12,10 +12,11 @@ const nextConfig: NextConfig = {
     },
   },
   async rewrites() {
-    const backendUrl =
-      process.env.API_BACKEND_URL ||
-      process.env.NEXT_PUBLIC_API_URL ||
-      "https://fin-api-jbrz.onrender.com";
+    const backendUrl = process.env.API_BACKEND_URL ||
+      (process.env.NODE_ENV === "development" ? "http://localhost:8000" : "");
+    if (!backendUrl) {
+      throw new Error("API_BACKEND_URL must point to the environment gateway (staging for Preview, production for Production).");
+    }
     const cleanedBackend = backendUrl.replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
     return [
       {

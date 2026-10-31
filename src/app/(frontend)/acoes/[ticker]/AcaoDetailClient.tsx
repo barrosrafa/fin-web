@@ -1199,8 +1199,7 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
               </div>
               <button
                 onClick={() => {
-                  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-                  window.open(`${apiUrl}/stocks/${ticker}/dividends/export`, "_blank");
+                  window.open(`/api/v1/stocks/${ticker}/dividends/export`, "_blank");
                 }}
                 className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition-all cursor-pointer self-start sm:self-auto"
               >

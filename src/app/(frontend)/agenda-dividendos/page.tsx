@@ -44,12 +44,11 @@ export default function AgendaDividendosPage() {
   }, [loadData]);
 
   const handleExportCSV = () => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     const q = new URLSearchParams();
     if (filterType !== "ALL") q.set("event_type", filterType);
     if (filterStatus !== "ALL") q.set("status", filterStatus);
     if (search.trim()) q.set("ticker", search.trim().toUpperCase());
-    window.open(`${apiUrl}/analytics/dividend-calendar/export?${q.toString()}`, "_blank");
+    window.open(`/api/v1/analytics/dividend-calendar/export?${q.toString()}`, "_blank");
   };
 
   return (

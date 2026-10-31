@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { getGlossary, GlossaryItem } from "@/lib/api";
+import { getEditorialGlossary, GlossaryItem, EditorialMeta } from "@/lib/api";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -13,14 +13,21 @@ export default function DicionarioPage() {
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [meta, setMeta] = useState<EditorialMeta | null>(null);
 
   useEffect(() => {
     async function load() {
+      setLoading(true);
+      setError(false);
       try {
-        const data = await getGlossary(selectedLetter || undefined, search || undefined);
-        setTerms(data);
+        const content = await getEditorialGlossary();
+        setMeta(content.meta);
+        setTerms(content.data.filter((term) => (!selectedLetter || term.letra_inicial === selectedLetter) &&
+          (!search || term.termo.toLocaleLowerCase("pt-BR").includes(search.toLocaleLowerCase("pt-BR")))));
       } catch (err) {
         console.error("Failed to load glossary:", err);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -82,11 +89,13 @@ export default function DicionarioPage() {
         </div>
       </Card>
 
+      {error && <p role="alert">Não foi possível carregar o dicionário. Tente novamente mais tarde.</p>}
+      {meta?.stale && <p role="status">Conteúdo salvo, temporariamente desatualizado. Publicação: {meta.as_of || "data não informada"}.</p>}
       {/* Terms Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {loading ? (
           <div className="col-span-2 py-12 text-center text-[#64748b]">Carregando termos...</div>
-        ) : terms.length === 0 ? (
+        ) : error ? null : terms.length === 0 ? (
           <div className="col-span-2 py-12 text-center text-[#64748b]">Nenhum termo encontrado.</div>
         ) : (
           terms.map((term) => (

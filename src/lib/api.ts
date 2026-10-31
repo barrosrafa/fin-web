@@ -1,3 +1,4 @@
+import type { components } from "@/generated/api";
 import { historyKey, readPublicHistory, writePublicHistory } from "./cache/market-db";
 import {
   AssetSummary,
@@ -52,10 +53,12 @@ export {
   getRankingsSnapshot,
 };
 
-const rawApiUrl = process.env.NEXT_PUBLIC_API_URL?.trim();
-export const API_BASE = rawApiUrl
-  ? (rawApiUrl.endsWith("/api/v1") ? rawApiUrl : `${rawApiUrl.replace(/\/+$/, "")}/api/v1`)
-  : (typeof window !== "undefined" ? "/api/v1" : "https://fin-api-jbrz.onrender.com/api/v1");
+const serverApiUrl = process.env.API_BACKEND_URL?.trim();
+const normalizedApiUrl = (value: string) =>
+  value.endsWith("/api/v1") ? value : `${value.replace(/\/+$/, "")}/api/v1`;
+export const API_BASE = typeof window !== "undefined"
+  ? "/api/v1"
+  : normalizedApiUrl(serverApiUrl || (process.env.NODE_ENV === "development" ? "http://localhost:8000" : ""));
 
 function getStoredToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -1308,7 +1311,7 @@ export async function getDetailedDividendCalendarPaginated(params: {
 }
 
 export interface GlossaryItem {
-  id: number;
+  id: number | string;
   slug: string;
   termo: string;
   letra_inicial: string;
@@ -1318,31 +1321,30 @@ export interface GlossaryItem {
   conteudo_markdown?: string;
 }
 
-export async function getGlossary(
-  letter?: string,
-  q?: string
-): Promise<GlossaryItem[]> {
-  try {
-    const params = new URLSearchParams();
-    if (letter) params.set("letter", letter);
-    if (q) params.set("q", q);
-    const res = await fetchJson<{ total: number; items: GlossaryItem[] }>(
-      `/cms/glossary?${params.toString()}`
-    );
-    return res.items ?? [];
-  } catch (err) {
-    console.error("Failed to fetch glossary:", err);
-    return [];
-  }
+export type EditorialMeta = components["schemas"]["ContentMeta"];
+export type EditorialEnvelope<T> = Omit<components["schemas"]["ContentEnvelope"], "data"> & { data: T[] };
+interface EditorialTerm {
+  id: string; slug: string; term: string; short_definition: string;
+  definition: string; category?: string; formula?: string;
 }
-
+export async function getEditorialGlossary(): Promise<EditorialEnvelope<GlossaryItem>> {
+  const content = await fetchJson<EditorialEnvelope<EditorialTerm>>("/content/glossary", { cache: "no-store" });
+  return { ...content, data: content.data.map((term) => ({
+    id: term.id, slug: term.slug, termo: term.term,
+    letra_inicial: term.term.charAt(0).toUpperCase(), categoria: term.category || "",
+    definicao_curta: term.short_definition, conteudo_markdown: term.definition, formula_latex: term.formula,
+  })) };
+}
+export async function getGlossary(letter?: string, q?: string): Promise<GlossaryItem[]> {
+  const content = await getEditorialGlossary();
+  return content.data.filter((term) => (!letter || term.letra_inicial === letter.toUpperCase()) &&
+    (!q || term.termo.toLocaleLowerCase("pt-BR").includes(q.toLocaleLowerCase("pt-BR"))));
+}
 export async function getGlossaryTerm(slug: string, signal?: AbortSignal): Promise<GlossaryItem | null> {
-  try {
-    return await fetchJson<GlossaryItem>(`/cms/glossary/${encodeURIComponent(slug)}`, { signal });
-  } catch (err) {
-    console.error(`Failed to fetch glossary term ${slug}:`, err);
-    return null;
-  }
+  const content = await fetchJson<EditorialEnvelope<EditorialTerm>>("/content/glossary", { signal, cache: "no-store" });
+  const term = content.data.find((row) => row.slug === slug);
+  return term ? { id: term.id, slug: term.slug, termo: term.term, letra_inicial: term.term.charAt(0).toUpperCase(),
+    categoria: term.category || "", definicao_curta: term.short_definition, conteudo_markdown: term.definition, formula_latex: term.formula } : null;
 }
 
 export interface BookItem {
@@ -1370,7 +1372,7 @@ export async function getBooks(category?: string): Promise<BookItem[]> {
 }
 
 export interface ArticleItem {
-  id: number;
+  id: number | string;
   slug: string;
   titulo: string;
   subtitulo?: string;
@@ -1382,26 +1384,25 @@ export interface ArticleItem {
   publicado_em?: string;
 }
 
+export interface ArticleDetail extends ArticleItem { conteudo_markdown: string }
+interface EditorialArticle {
+  id: string; slug: string; title: string; excerpt?: string; body: string;
+  author_name: string; category?: string; tags?: string[]; reading_time_minutes?: number;
+  is_premium?: boolean; published_at?: string;
+}
+export async function getEditorialArticles(): Promise<EditorialEnvelope<ArticleDetail>> {
+  const content = await fetchJson<EditorialEnvelope<EditorialArticle>>("/content/articles", { cache: "no-store" });
+  return { ...content, data: content.data.map((row) => ({
+    id: row.id, slug: row.slug, titulo: row.title, subtitulo: row.excerpt, autor_nome: row.author_name,
+    categoria: row.category || "", tags: row.tags || [], tempo_leitura_min: row.reading_time_minutes || 1,
+    is_premium: row.is_premium ?? false, publicado_em: row.published_at, conteudo_markdown: row.body,
+  })) };
+}
 export async function getArticles(limit: number = 10): Promise<ArticleItem[]> {
-  try {
-    return await fetchJson<ArticleItem[]>(`/cms/articles?limit=${limit}`);
-  } catch (err) {
-    console.error("Failed to fetch articles:", err);
-    return [];
-  }
+  return (await getEditorialArticles()).data.slice(0, limit);
 }
-
-export interface ArticleDetail extends ArticleItem {
-  conteudo_markdown: string;
-}
-
 export async function getArticleBySlug(slug: string): Promise<ArticleDetail | null> {
-  try {
-    return await fetchJson<ArticleDetail>(`/cms/articles/${slug}`);
-  } catch (err) {
-    console.error(`Failed to fetch article ${slug}:`, err);
-    return null;
-  }
+  return (await getEditorialArticles()).data.find((row) => row.slug === slug) || null;
 }
 
 export async function submitSupportTicket(ticket: {

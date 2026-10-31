@@ -2,7 +2,7 @@ import "server-only";
 import { cacheLife } from "next/cache";
 import type { StockCompleteDetails, StockValuationDetail, QuoteHistoryResponse } from "@/lib/api";
 
-const backend = (process.env.API_BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || "https://fin-api-jbrz.onrender.com")
+const backend = (process.env.API_BACKEND_URL || (process.env.NODE_ENV === "development" ? "http://localhost:8000" : ""))
   .replace(/\/api\/v1\/?$/, "").replace(/\/+$/, "");
 export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://fin-web-wheat.vercel.app").replace(/\/+$/, "");
 

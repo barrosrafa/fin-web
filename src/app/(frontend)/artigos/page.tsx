@@ -5,19 +5,23 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { getArticles, ArticleItem } from "@/lib/api";
+import { getEditorialArticles, ArticleItem, EditorialMeta } from "@/lib/api";
 
 export default function ArtigosPage() {
   const [articles, setArticles] = useState<ArticleItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [meta, setMeta] = useState<EditorialMeta | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await getArticles(20);
-        setArticles(data);
+        const content = await getEditorialArticles();
+        setArticles(content.data);
+        setMeta(content.meta);
       } catch (err) {
         console.error("Failed to load articles:", err);
+        setError(true);
       } finally {
         setLoading(false);
       }
@@ -33,46 +37,7 @@ export default function ArtigosPage() {
     );
   }
 
-  const fallbackArticles: ArticleItem[] = [
-    {
-      id: 1,
-      slug: "como-analisar-bancos-margem-financeira-basileia",
-      titulo: "Como Analisar Ações de Bancos na B3: Do ROE ao Índice de Basileia",
-      subtitulo: "Entenda por que métricas tradicionais como Margem Bruta e EBITDA não funcionam para instituições financeiras.",
-      autor_nome: "Equipe de Análise",
-      categoria: "Setorial",
-      tags: ["Bancos", "Valuation", "B3"],
-      tempo_leitura_min: 7,
-      is_premium: false,
-      publicado_em: "2026-10-25",
-    },
-    {
-      id: 2,
-      slug: "metodo-bazin-preco-teto-dividendos",
-      titulo: "Guia Definitivo do Método Bazin: Como Calcular o Preço Teto",
-      subtitulo: "Aprenda a fórmula original de Décio Bazin para nunca mais pagar caro em ações pagadoras de dividendos.",
-      autor_nome: "Equipe de Análise",
-      categoria: "Dividendos",
-      tags: ["Bazin", "Preço Teto", "Renda Passiva"],
-      tempo_leitura_min: 6,
-      is_premium: true,
-      publicado_em: "2026-10-24",
-    },
-    {
-      id: 3,
-      slug: "fiis-de-papel-vs-tijolo-ciclo-de-juros",
-      titulo: "FIIs de Papel vs. FIIs de Tijolo: O Que Esperar com a Taxa Selic",
-      subtitulo: "A dinâmica de repasse da inflação em CRIs e o impacto do custo de oportunidade na precificação de galpões.",
-      autor_nome: "Equipe de Análise",
-      categoria: "Fundos Imobiliários",
-      tags: ["FIIs", "Selic", "Imóveis"],
-      tempo_leitura_min: 8,
-      is_premium: false,
-      publicado_em: "2026-10-22",
-    },
-  ];
-
-  const displayList = articles.length > 0 ? articles : fallbackArticles;
+  const displayList = articles;
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up">
@@ -91,6 +56,9 @@ export default function ArtigosPage() {
         </p>
       </div>
 
+      {error && <p role="alert">Não foi possível carregar os artigos. Tente novamente mais tarde.</p>}
+      {meta?.stale && <p role="status">Conteúdo salvo, temporariamente desatualizado. Publicação: {meta.as_of || "data não informada"}.</p>}
+      {!error && articles.length === 0 && <p>Nenhum artigo publicado.</p>}
       {/* Articles Feed */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayList.map((art) => (

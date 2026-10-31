@@ -106,3 +106,19 @@ pnpm start
 * **`fin-db`**: Banco de Dados PostgreSQL 18 / TimescaleDB no Neon Serverless (`https://github.com/barrosrafa/fin-db`)
 * **`fin-api`**: Backend FastAPI com endpoints REST e WebSockets (`https://github.com/barrosrafa/fin-api`)
 * **`fin-ingestion`**: Pipeline de coleta assíncrona com Prefect e scrapers regulatórios (`https://github.com/barrosrafa/fin-ingestion`)
+
+## 6. Preview, API de Staging e CMS
+
+### Frontend e API
+
+As rotas `/api/v1/*` do navegador permanecem no mesmo domínio do preview e são reescritas pelo servidor Next para `API_BACKEND_URL`. Configure essa variável como a origem HTTPS do gateway leve de staging do `fin-infra` nos deployments **Preview** da Vercel. Configure o gateway de produção somente no ambiente **Production**. Não configure `NEXT_PUBLIC_API_URL`: o browser deve seguir pelo rewrite do Next e não chamar a API diretamente.
+
+O build de deploy falha sem `API_BACKEND_URL`, evitando fallback acidental para uma API de outro ambiente. Para desenvolvimento local, o destino padrão é `http://localhost:8000`.
+
+### Directus e Aiven
+
+O CMS ativo é o repositório `fin-cms`, fixado no Directus 11.17.4, com banco editorial e papel runtime exclusivos na Aiven. O painel fica na URL do serviço Directus; não existe `/admin` Payload publicado pelo Next.js. O trabalho anterior de Payload foi preservado na pasta privada `reference/payload`.
+
+Artigos e glossário passam por `/api/v1/content/*`, com contratos da API, isolamento de rascunhos e indicação de conteúdo desatualizado. Credenciais do Directus são configuradas somente no `fin-api`; não entram no bundle do navegador. Configure `API_BACKEND_URL` separadamente por ambiente.
+
+`pnpm api:generate` atualiza os tipos de `src/generated/api.d.ts` a partir de `../fin-api/contracts/openapi.json`. O CI verifica lint, tipos, testes e build. Use Node 22.23.4 ou versão compatível com o campo `engines`.
