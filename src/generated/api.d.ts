@@ -2188,11 +2188,8 @@ export interface components {
             months?: (number | null)[];
             /** Annual Total */
             annual_total: number;
-            /**
-             * Yield On Cost Pct
-             * @default 0
-             */
-            yield_on_cost_pct: number;
+            /** Yield On Cost Pct */
+            yield_on_cost_pct?: number | null;
         };
         /** DividendSimulationRequest */
         DividendSimulationRequest: {

@@ -1206,7 +1206,7 @@ export interface MonthlyMilestone {
   aporte_realizado: number;
   provento_recebido: number;
   total_investido_bolso: number;
-  yield_on_cost_pct: number;
+  yield_on_cost_pct: number | null;
 }
 
 export interface DividendSimulationResponse {

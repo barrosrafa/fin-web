@@ -812,7 +812,7 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     <th className="py-3 text-right"><CmsText>{"Nov"}</CmsText></th>
                     <th className="py-3 text-right"><CmsText>{"Dez"}</CmsText></th>
                     <th className="py-3 text-right font-bold text-white"><CmsText>{"Total Anual"}</CmsText></th>
-                    <th className="py-3 text-right pr-4 text-[#00d9f5]"><CmsText>{"Yield informado pela fonte"}</CmsText></th>
+                    <th className="py-3 text-right pr-4 text-[#00d9f5]"><CmsText>{"Yield sobre última cotação"}</CmsText></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -822,17 +822,17 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                       <CmsText>{row.months.map((m, mIdx) => (
                         <td key={mIdx} className="py-2.5 text-right text-white">
                           <CmsText>{m !== null && m !== undefined ? (
-                            <span className="text-[var(--positive)] font-bold"><CmsText>{formatCurrency(m)}</CmsText></span>
+                            <span className="text-[var(--positive)] font-bold"><CmsText>{formatDividendUnit(m)}</CmsText></span>
                           ) : (
                             <span className="text-[#94a3b8]"><CmsText>{"—"}</CmsText></span>
                           )}</CmsText>
                         </td>
                       ))}</CmsText>
                       <td className="py-2.5 text-right font-bold text-white">
-                        <CmsText>{formatCurrency(row.annual_total)}</CmsText>
+                        <CmsText>{formatDividendUnit(row.annual_total)}</CmsText>
                       </td>
                       <td className="py-2.5 text-right pr-4 font-bold text-[#00d9f5]">
-                        <CmsText>{row.yield_on_cost_pct > 0 ? formatPercent(row.yield_on_cost_pct, false) : "—"}</CmsText>
+                        <CmsText>{(row.yield_on_cost_pct ?? 0) > 0 ? formatPercent(row.yield_on_cost_pct, false) : "—"}</CmsText>
                       </td>
                     </tr>
                   ))}</CmsText>
@@ -1094,7 +1094,7 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                     <th className="pb-3"><CmsText>{"Data-Com"}</CmsText></th>
                     <th className="pb-3"><CmsText>{"Pagamento"}</CmsText></th>
                     <th className="pb-3 text-right"><CmsText>{"Valor por Ação"}</CmsText></th>
-                    <th className="pb-3 text-right pr-2"><CmsText>{"Yield informado pela fonte"}</CmsText></th>
+                    <th className="pb-3 text-right pr-2"><CmsText>{"Yield sobre última cotação"}</CmsText></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5 mono-nums">
