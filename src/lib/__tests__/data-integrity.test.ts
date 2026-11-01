@@ -33,3 +33,10 @@ it("rejects malformed, future and unsupported snapshot envelopes", async () => {
     expect(await fetchCdnSnapshot("market", "overview.json")).toBeNull();
   }
 });
+
+
+it("preserves the published PETR4 per-share amounts", () => {
+  expect(formatDividendUnit(0.20250435)).toContain("0,20250435");
+  expect(formatDividendUnit(0.35048636)).toContain("0,35048636");
+  expect(formatDividendUnit(1.17)).toContain("1,17");
+});

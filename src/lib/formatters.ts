@@ -86,18 +86,18 @@ export function formatMultiple(
 }
 
 /**
- * Preserves 4 decimal places for unit share dividends (e.g. R$ 0,4460) as required by D1.
+ * Preserves up to 11 decimal places published for per-share cash payments.
  */
 export function formatDividendUnit(value?: number | null): string {
   if (value === undefined || value === null || !Number.isFinite(value)) return "—";
-  // If the value has fractions beyond 2 decimals, format with 4 decimals
+  // Keep sub-cent values visible without padding every amount to 11 places.
   const hasSubCents = Math.abs(value * 100 - Math.round(value * 100)) > 0.001;
-  const decimals = hasSubCents ? 4 : 2;
+  const decimals = hasSubCents ? 8 : 2;
   return value.toLocaleString("pt-BR", {
     style: "currency",
     currency: "BRL",
     minimumFractionDigits: decimals,
-    maximumFractionDigits: 4,
+    maximumFractionDigits: 11,
   });
 }
 

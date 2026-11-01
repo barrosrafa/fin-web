@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { BarChart } from "@/components/ui/BarChart";
 import {
   formatCurrency,
+  formatDividendUnit,
   formatPercent,
   formatMultiple,
   formatNumber,
@@ -1108,7 +1109,7 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
                       <td className="py-3 text-[#94a3b8]"><CmsText>{div.dateCom}</CmsText></td>
                       <td className="py-3 text-[#94a3b8]"><CmsText>{div.paymentDate}</CmsText></td>
                       <td className="py-3 text-right font-bold text-white">
-                        <CmsText>{formatCurrency(div.valuePerShare, false, 4)}</CmsText>
+                        <CmsText>{formatDividendUnit(div.valuePerShare)}</CmsText>
                       </td>
                       <td className="py-3 text-right pr-2 font-bold text-[var(--positive)]">
                         <CmsText>{formatPercent(div.yieldOnCostPct, false)}</CmsText>
