@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { formatCurrency, formatPercent, formatDividendUnit } from "@/lib/formatters";
 import { FIIDividendItem } from "@/lib/api";
+import { dividendSummary } from "@/lib/dividend-summary";
 
 export interface DividendHistoryTableProps {
   dividends?: FIIDividendItem[];
@@ -38,11 +39,8 @@ export function DividendHistoryTable({
 
   const displayed = filtered.slice(0, visibleCount);
 
-  // Compute key dividend stats
-  const lastDiv = dividends[0]?.value_per_share ?? 1.17;
-  const totalPaid12m = dividends.slice(0, 12).reduce((acc, curr) => acc + curr.value_per_share, 0);
-  const avgMonthly = dividends.length > 0 ? totalPaid12m / Math.min(12, dividends.length) : 1.11;
-  const dy12m = currentPrice > 0 ? (totalPaid12m / currentPrice) * 100 : 8.85;
+  const asOfDay = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(new Date());
+  const { lastDiv, totalPaid12m, avgMonthly, dy12m } = dividendSummary(dividends, currentPrice, asOfDay);
 
   const exportCsv = () => {
     const headers = "Tipo;Data Com;Data Pagamento;Valor por Cota;Yield %;Status\r\n";
@@ -108,7 +106,7 @@ export function DividendHistoryTable({
         <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
           <span className="text-[10px] uppercase font-bold text-[#64748b] block"><CmsText>{"Último Rendimento"}</CmsText></span>
           <div className="text-2xl font-black font-mono text-[#00f5a0] mt-1">
-            <CmsText>{formatCurrency(lastDiv)}</CmsText>
+            <CmsText>{formatDividendUnit(lastDiv)}</CmsText>
           </div>
           <span className="text-[11px] text-[#94a3b8] mt-0.5 block"><CmsText>{"por cota"}</CmsText></span>
         </div>
