@@ -5,7 +5,7 @@ import { CmsText, CmsElement } from "@/components/content/Cms";
 import React, { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { formatCurrency, formatPercent } from "@/lib/formatters";
+import { formatCurrency, formatPercent, formatDividendUnit } from "@/lib/formatters";
 import { FIIDividendItem } from "@/lib/api";
 
 export interface DividendHistoryTableProps {
@@ -49,7 +49,7 @@ export function DividendHistoryTable({
     const rows = filtered
       .map(
         (d) =>
-          `${d.type};${d.date_com};${d.date_payment};${d.value_per_share.toFixed(4)};${d.yield_pct.toFixed(2)}%;${d.status}`
+          `${d.type};${d.date_com};${d.date_payment};${d.value_per_share.toFixed(11)};${d.yield_pct.toFixed(2)}%;${d.status}`
       )
       .join("\r\n");
     const blob = new Blob([headers + rows], { type: "text/csv;charset=utf-8;" });
@@ -171,7 +171,7 @@ export function DividendHistoryTable({
                     <CmsText>{d.date_payment ? new Date(d.date_payment + "T00:00:00").toLocaleDateString("pt-BR") : "—"}</CmsText>
                   </td>
                   <td className="py-3 text-right font-black font-mono text-[#00f5a0] text-sm">
-                    <CmsText>{formatCurrency(d.value_per_share)}</CmsText>
+                    <CmsText>{formatDividendUnit(d.value_per_share)}</CmsText>
                   </td>
                   <td className="py-3 text-right font-mono font-bold text-white">
                     <CmsText>{formatPercent(d.yield_pct, false)}</CmsText>
