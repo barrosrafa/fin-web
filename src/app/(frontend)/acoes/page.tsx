@@ -1,4 +1,7 @@
 "use client";
+import { DataStatus } from "@/components/shared/DataStatus";
+import { TradingStatusNotice } from "@/components/shared/TradingStatusNotice";
+import { quoteProvenance } from "@/lib/quote-provenance";
 
 
 import { CmsText, CmsElement } from "@/components/content/Cms";
@@ -98,7 +101,7 @@ function AcoesContent() {
     loadMetadata();
   }, []);
 
-  const highestDYStock = highlights.highest_dy ?? (stocks.length > 0 ? [...stocks].sort((a, b) => b.dividendYield - a.dividendYield)[0] : null);
+  const highestDYStock = highlights.highest_dy ?? (stocks.length > 0 ? [...stocks].sort((a, b) => (b.dividendYield ?? -Infinity) - (a.dividendYield ?? -Infinity))[0] : null);
   const bestPerformerStock = stocks.length > 0 ? [...stocks].sort((a, b) => (b.change12m ?? 0) - (a.change12m ?? 0))[0] : null;
   const lowestPvpStock = highlights.lowest_pvp ?? (stocks.length > 0 ? [...stocks].filter(s => (s.pvp ?? 0) > 0).sort((a, b) => (a.pvp ?? 999) - (b.pvp ?? 999))[0] : null);
 
@@ -199,10 +202,12 @@ function AcoesContent() {
 
       {/* Stocks Cards Grid */}
       <VirtualAssetList key={`${windowStart}:${debouncedSearch}:${selectedSector}`} items={stocks} getKey={stock => `B3:${stock.ticker}`} renderItem={(stock) => {
-          const isPositive = stock.change24h >= 0;
+          const isPositive = stock.change24h != null && stock.change24h >= 0;
           return (
             <CmsElement feature="ui.app/-frontend-/acoes/page.Card.8" key={stock.ticker}><Card key={stock.ticker} glow="cyan" className="flex flex-col justify-between">
               <div>
+                <DataStatus {...quoteProvenance(stock.source, stock.quote_date)} />
+                <TradingStatusNotice trading={stock.trading} />
                 {/* Header */}
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
@@ -239,7 +244,7 @@ function AcoesContent() {
                     </div>
                     <div
                       className={`text-xs font-mono font-medium ${
-                        isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
+                        stock.change24h == null ? "text-[#94a3b8]" : isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                       }`}
                     >
                       <CmsText>{formatPercent(stock.change24h)}</CmsText>

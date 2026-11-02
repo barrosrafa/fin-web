@@ -1,3 +1,4 @@
+import { quoteProvenance } from "./quote-provenance";
 import type { components } from "@/generated/api";
 import { historyKey, readPublicHistory, writePublicHistory } from "./cache/market-db";
 import {
@@ -72,6 +73,7 @@ async function fetchJson<T>(path: string, options?: RequestInit): Promise<T> {
   const defaultCache = options?.cache ?? "no-store";
   const res = await fetch(url, {
     ...options,
+    signal: options?.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(15_000)]) : AbortSignal.timeout(15_000),
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
@@ -107,6 +109,7 @@ async function fetchWithHeaders<T>(
   const defaultCache = options?.cache ?? "no-store";
   const res = await fetch(url, {
     ...options,
+    signal: options?.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(15_000)]) : AbortSignal.timeout(15_000),
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
@@ -142,6 +145,8 @@ function camelizeKeys<T>(value: unknown): T {
 }
 
 export interface BenchmarkItem {
+  source?: string;
+  as_of?: string;
   name: string;
   ticker: string;
   value: number;
@@ -246,27 +251,27 @@ export interface FIICadastralData {
 }
 
 export interface FIIIndicatorsData {
-  pvp: number;
-  vp_per_share: number;
-  dividend_yield_12m: number;
-  last_dividend: number;
-  expense_pct: number;
-  cash_pct: number;
-  default_pct: number;
-  physical_vacancy_pct: number;
-  financial_vacancy_pct: number;
-  shares_count: number;
-  shareholders_count: number;
-  market_cap: number;
-  daily_trades: number;
-  daily_volume: number;
-  net_worth: number;
-  change_1d: number;
-  change_12m: number;
-  min_52w: number;
-  max_52w: number;
-  cagr_dividends_3y: number;
-  cagr_share_value_3y: number;
+  pvp: number | null;
+  vp_per_share: number | null;
+  dividend_yield_12m: number | null;
+  last_dividend: number | null;
+  expense_pct: number | null;
+  cash_pct: number | null;
+  default_pct: number | null;
+  physical_vacancy_pct: number | null;
+  financial_vacancy_pct: number | null;
+  shares_count: number | null;
+  shareholders_count: number | null;
+  market_cap: number | null;
+  daily_trades: number | null;
+  daily_volume: number | null;
+  net_worth: number | null;
+  change_1d: number | null;
+  change_12m: number | null;
+  min_52w: number | null;
+  max_52w: number | null;
+  cagr_dividends_3y: number | null;
+  cagr_share_value_3y: number | null;
   quote_datetime?: string;
 }
 
@@ -340,17 +345,30 @@ export interface FIILucratividadeData {
   distributed_per_share: number;
 }
 
+export interface TradingStatus {
+  status: "active" | "inactive" | "unknown";
+  ended_on?: string;
+  successor?: string;
+  source_url?: string;
+}
+
 export interface FIIDetailData {
+  fundamentals_source?: string;
+  fundamentals_date?: string;
+  source?: string;
+  quote_date?: string;
+  trading?: TradingStatus;
+  fundamentals_note?: string;
   ticker: string;
   name: string;
   segment: string;
-  current_price: number;
-  pvp: number;
-  dividend_yield_12m: number;
-  net_worth: number;
-  physical_vacancy_pct: number;
-  financial_vacancy_pct: number;
-  wault_years: number;
+  current_price: number | null;
+  pvp: number | null;
+  dividend_yield_12m: number | null;
+  net_worth: number | null;
+  physical_vacancy_pct: number | null;
+  financial_vacancy_pct: number | null;
+  wault_years: number | null;
   properties: FIIProperty[];
   brick_score: BrickScoreAxis[];
   top_tenants: Array<{
@@ -379,26 +397,29 @@ export interface FIIDetailData {
 
 export interface ETFDrawdownData {
   ticker: string;
-  max_drawdown_pct: number;
+  max_drawdown_pct: number | null;
   valley_date?: string | null;
   recovery_days?: number | null;
   drawdown_curve: Array<[timestamp: number, pct: number]>;
 }
 
 export interface ETFDetailData {
+  source?: string | null;
+  quote_date?: string | null;
+  trading?: TradingStatus;
   ticker: string;
   name: string;
-  benchmark_index: string;
-  provider: string;
-  current_price: number;
+  benchmark_index: string | null;
+  provider: string | null;
+  current_price: number | null;
   nav_per_share?: number | null;
   nav_spread_pct?: number | null;
-  ter_pct: number;
-  primary_fee_pct: number;
-  secondary_fee_pct: number;
-  policy: "ACUMULATIVO" | "DISTRIBUTIVO";
-  shares_lending_pct: number;
-  max_lending_limit_pct: number;
+  ter_pct: number | null;
+  primary_fee_pct: number | null;
+  secondary_fee_pct: number | null;
+  policy: "ACUMULATIVO" | "DISTRIBUTIVO" | null;
+  shares_lending_pct: number | null;
+  max_lending_limit_pct: number | null;
   underlying_holdings: Array<{
     ticker: string;
     name: string;
@@ -510,7 +531,8 @@ export async function getBenchmarks(signal?: AbortSignal): Promise<BenchmarkItem
         }));
       }
     }
-    return await fetchJson<BenchmarkItem[]>("/market/benchmarks", { signal });
+    const data = await fetchJson<BenchmarkItem[]>("/market/benchmarks", { signal });
+    return data.map(item => ({ ...item, provenance: quoteProvenance(item.source, item.as_of) }));
   } catch (err) {
     console.error("Failed to fetch benchmarks:", err);
     throw err;
@@ -722,9 +744,9 @@ export async function getStockValuation(ticker: string, signal?: AbortSignal): P
   }
 }
 
-export async function getFIIDetail(ticker: string): Promise<FIIDetailData | null> {
+export async function getFIIDetail(ticker: string, signal?: AbortSignal): Promise<FIIDetailData | null> {
   try {
-    const data = await fetchJson<FIIDetailData>(`/fiis/${ticker}`);
+    const data = await fetchJson<FIIDetailData>(`/fiis/${encodeURIComponent(ticker)}`, { signal });
     return { ...data, properties: camelizeKeys<FIIProperty[]>(data.properties ?? []) };
   } catch (err) {
     console.error(`Failed to fetch FII detail for ${ticker}:`, err);
@@ -732,9 +754,9 @@ export async function getFIIDetail(ticker: string): Promise<FIIDetailData | null
   }
 }
 
-export async function getETFDetail(ticker: string): Promise<ETFDetailData | null> {
+export async function getETFDetail(ticker: string, signal?: AbortSignal): Promise<ETFDetailData | null> {
   try {
-    return await fetchJson<ETFDetailData>(`/etfs/${ticker}`);
+    return await fetchJson<ETFDetailData>(`/etfs/${encodeURIComponent(ticker)}`, { signal });
   } catch (err) {
     console.error(`Failed to fetch ETF detail for ${ticker}:`, err);
     return null;
@@ -818,6 +840,8 @@ export async function getDemoPortfolioPositions(signal?: AbortSignal): Promise<D
 }
 
 export interface StockDetails {
+  source?: string;
+  trading?: TradingStatus;
   ticker: string;
   name: string;
   tipo?: string;

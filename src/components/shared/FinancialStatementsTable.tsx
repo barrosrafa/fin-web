@@ -19,57 +19,12 @@ export function FinancialStatementsTable({
   lucratividade,
   ticker,
 }: FinancialStatementsTableProps) {
-  // Balance sheet fallback
-  const bs = balanceSheet || {
-    data_referencia: "2026-10-26",
-    total_assets: 7758507490.0,
-    liquid_assets: {
-      caixa: 25607490.0,
-      titulos_publicos: 85200000.0,
-      titulos_privados: 0.0,
-      renda_fixa: 0.0,
-      total: 110807490.0,
-    },
-    investments: {
-      imoveis: 7250000000.0,
-      fiis: 95000000.0,
-      cris: 280000000.0,
-      outros: 0.0,
-      total: 7625000000.0,
-    },
-    receivables: {
-      alugueis: 18500000.0,
-      venda_imoveis: 0.0,
-      outros: 4200000.0,
-      total: 22700000.0,
-    },
-    total_liabilities: {
-      rendimentos_distribuir: 53354041.65,
-      taxa_administracao: 2782836.0,
-      taxa_performance: 0.0,
-      outros_valores_pagar: 15400000.0,
-      total: 71536877.65,
-    },
-    net_worth: 7589554105.43,
-  };
-
-  // Lucratividade fallback
-  const luc = lucratividade || {
-    rental_income: 84500000.0,
-    property_sale_income: 12300000.0,
-    securities_income: 4800000.0,
-    financial_income: 6200000.0,
-    operating_expenses: -1800000.0,
-    admin_fee_expense: -4200000.0,
-    other_expenses: -1100000.0,
-    net_profit: 100700000.0,
-    distributed_per_share: 1.17,
-  };
-
-  // Asset allocation percentages
-  const imovPct = bs.total_assets > 0 ? (bs.investments.imoveis / bs.total_assets) * 100 : 93.4;
-  const criPct = bs.total_assets > 0 ? (bs.investments.cris / bs.total_assets) * 100 : 3.6;
-  const caixaPct = bs.total_assets > 0 ? (bs.liquid_assets.total / bs.total_assets) * 100 : 1.5;
+  if (!balanceSheet || !lucratividade) return <p role="status">Balanço e DRE indisponíveis para {ticker}.</p>;
+  const bs = balanceSheet;
+  const luc = lucratividade;
+  const imovPct = bs.total_assets > 0 ? (bs.investments.imoveis / bs.total_assets) * 100 : 0;
+  const criPct = bs.total_assets > 0 ? (bs.investments.cris / bs.total_assets) * 100 : 0;
+  const caixaPct = bs.total_assets > 0 ? (bs.liquid_assets.total / bs.total_assets) * 100 : 0;
   const outrosPct = Math.max(0, 100 - imovPct - criPct - caixaPct);
 
   return (

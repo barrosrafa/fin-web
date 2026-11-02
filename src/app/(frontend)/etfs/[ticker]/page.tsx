@@ -17,7 +17,7 @@ export default async function ETFDetailPage({
   params: Promise<{ ticker: string }>;
 }) {
   const resolved = await params;
-  const ticker = (resolved.ticker || "BOVA11").toUpperCase();
+  const ticker = resolved.ticker.toUpperCase();
 
   return (
     <Suspense

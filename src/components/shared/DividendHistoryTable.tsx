@@ -47,7 +47,7 @@ export function DividendHistoryTable({
     const rows = filtered
       .map(
         (d) =>
-          `${d.type};${d.date_com};${d.date_payment};${d.value_per_share.toFixed(11)};${d.yield_pct.toFixed(2)}%;${d.status}`
+          `${d.type};${d.date_com};${d.date_payment};${d.value_per_share.toFixed(11)};${(d.yield_pct == null ? "" : d.yield_pct.toFixed(2))}%;${d.status}`
       )
       .join("\r\n");
     const blob = new Blob([headers + rows], { type: "text/csv;charset=utf-8;" });
@@ -120,7 +120,7 @@ export function DividendHistoryTable({
         </div>
 
         <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5">
-          <span className="text-[10px] uppercase font-bold text-[#64748b] block"><CmsText>{"Dividend Yield (12M)"}</CmsText></span>
+          <span className="text-[10px] uppercase font-bold text-[#64748b] block"><CmsText>{"DY observado (12M)"}</CmsText></span>
           <div className="text-2xl font-black font-mono text-[#00f5a0] mt-1">
             <CmsText>{formatPercent(dy12m, false)}</CmsText>
           </div>
@@ -132,7 +132,7 @@ export function DividendHistoryTable({
           <div className="text-2xl font-black font-mono text-white mt-1">
             <CmsText>{formatCurrency(avgMonthly)}</CmsText>
           </div>
-          <span className="text-[11px] text-[#94a3b8] mt-0.5 block"><CmsText>{"frequência mensal"}</CmsText></span>
+          <span className="text-[11px] text-[#94a3b8] mt-0.5 block"><CmsText>{"média dos pagamentos disponíveis"}</CmsText></span>
         </div>
       </div>
 

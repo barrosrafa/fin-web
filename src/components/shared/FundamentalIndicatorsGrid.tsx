@@ -23,31 +23,8 @@ export function FundamentalIndicatorsGrid({
 }: FundamentalIndicatorsGridProps) {
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
 
-  // Fallback defaults if indicators are partially loading
-  const ind = indicators || {
-    pvp: 0.91,
-    vp_per_share: 166.43,
-    dividend_yield_12m: 8.85,
-    last_dividend: 1.17,
-    expense_pct: 0.44,
-    cash_pct: 1.46,
-    default_pct: 0.0,
-    physical_vacancy_pct: 2.4,
-    financial_vacancy_pct: 1.8,
-    shares_count: 45601745,
-    shareholders_count: 608345,
-    market_cap: 6718961108.3,
-    daily_trades: 12450,
-    daily_volume: 22341579.19,
-    net_worth: 7589554105.43,
-    change_1d: -1.63,
-    change_12m: 1.87,
-    min_52w: 145.11,
-    max_52w: 161.0,
-    cagr_dividends_3y: 0.53,
-    cagr_share_value_3y: 6.85,
-    quote_datetime: "2026-10-28T16:15:00",
-  };
+  if (!indicators) return <p role="status">Indicadores indisponíveis para {ticker}.</p>;
+  const ind = indicators;
 
   const metricList = [
     {
@@ -55,8 +32,8 @@ export function FundamentalIndicatorsGrid({
       label: "P/VP",
       tooltip: "Preço sobre Valor Patrimonial. Abaixo de 1,0 indica desconto sobre o laudo.",
       value: formatMultiple(ind.pvp),
-      badge: ind.pvp <= 1.0 ? "Desconto Patrimonial" : "Ágio",
-      variant: (ind.pvp <= 1.0 ? "emerald" : "amber") as "emerald" | "amber",
+      badge: ind.pvp == null ? "Base insuficiente" : ind.pvp <= 1.0 ? "Desconto Patrimonial" : "Ágio",
+      variant: (ind.pvp != null && ind.pvp <= 1.0 ? "emerald" : "amber") as "emerald" | "amber",
     },
     {
       id: "vp",
@@ -68,10 +45,10 @@ export function FundamentalIndicatorsGrid({
     },
     {
       id: "dy",
-      label: "Dividend Yield (12M)",
+      label: "DY observado (12M)",
       tooltip: "Rendimentos distribuídos acumulados nos últimos 12 meses sobre a cotação.",
       value: formatPercent(ind.dividend_yield_12m, false),
-      badge: "Isento de IR (PF)",
+      badge: "Pagamentos documentados",
       variant: "emerald" as const,
     },
     {
@@ -87,8 +64,8 @@ export function FundamentalIndicatorsGrid({
       label: "Vacância Física",
       tooltip: "Área Bruta Locável desocupada em relação à ABL total do portfólio.",
       value: formatPercent(ind.physical_vacancy_pct, false),
-      badge: ind.physical_vacancy_pct < 5 ? "Ocupação Excelente" : "Atenção",
-      variant: (ind.physical_vacancy_pct < 5 ? "emerald" : "amber") as "emerald" | "amber",
+      badge: ind.physical_vacancy_pct == null ? "Base insuficiente" : ind.physical_vacancy_pct < 5 ? "Ocupação Excelente" : "Atenção",
+      variant: (ind.physical_vacancy_pct != null && ind.physical_vacancy_pct < 5 ? "emerald" : "amber") as "emerald" | "amber",
     },
     {
       id: "vacancia_fin",
@@ -150,7 +127,7 @@ export function FundamentalIndicatorsGrid({
       id: "cotistas",
       label: "Quantidade de Cotistas",
       tooltip: "Número total de investidores pessoa física e institucional na base.",
-      value: ind.shareholders_count.toLocaleString("pt-BR"),
+      value: ind.shareholders_count?.toLocaleString("pt-BR") ?? "—",
       badge: "Base Pulverizada",
       variant: "cyan" as const,
     },
@@ -158,7 +135,7 @@ export function FundamentalIndicatorsGrid({
       id: "cotas",
       label: "Quantidade de Cotas",
       tooltip: "Total de cotas negociáveis no mercado secundário.",
-      value: ind.shares_count.toLocaleString("pt-BR"),
+      value: ind.shares_count?.toLocaleString("pt-BR") ?? "—",
       badge: "Free Float",
       variant: "cyan" as const,
     },

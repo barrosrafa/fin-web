@@ -11,13 +11,18 @@ import { MetricCard } from "@/components/ui/MetricCard";
 import { formatCurrency } from "@/lib/formatters";
 import { getETFDetail, ETFDetailData } from "@/lib/api";
 import { UnderwaterDrawdownChart } from "@/components/etfs/UnderwaterDrawdownChart";
+import { SectionState } from "@/components/shared/SectionState";
+import { DataStatus } from "@/components/shared/DataStatus";
+import { TradingStatusNotice } from "@/components/shared/TradingStatusNotice";
+import { quoteProvenance } from "@/lib/quote-provenance";
 
 export function ETFDetailClient({ ticker }: { ticker: string }) {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
 
   const [etfData, setEtfData] = useState<ETFDetailData | null>(null);
-  const [, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -27,17 +32,19 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
   };
 
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await getETFDetail(ticker);
-        if (res) setEtfData(res);
-      } catch (err) {
-        console.error("Failed to load ETF details:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
+    const controller = new AbortController();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
+    setError(null);
+    setEtfData(null);
+    void getETFDetail(ticker, controller.signal).then(res => {
+      if (controller.signal.aborted) return;
+      if (!res || res.ticker.toUpperCase() !== ticker.toUpperCase()) setError("Dados indisponíveis para este ETF.");
+      else setEtfData(res);
+    }).catch(() => {
+      if (!controller.signal.aborted) setError("Falha ao consultar este ETF.");
+    }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
   }, [ticker]);
 
   // Deep linking: if tab or hash param is present, smooth scroll to section
@@ -56,39 +63,8 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
     }
   }, [tabParam]);
 
-  const isIvvb = ticker.toUpperCase() === "IVVB11";
-
-  const etf = etfData ?? {
-    ticker: ticker,
-    name: isIvvb ? "iShares S&P 500 Fundo de Índice" : `iShares ${ticker} Fundo de Índice`,
-    benchmark_index: isIvvb ? "S&P 500" : "IBOVESPA",
-    provider: isIvvb ? "BlackRock Brasil / S&P Dow Jones" : "BlackRock Brasil",
-    current_price: isIvvb ? 432.80 : 128.40,
-    nav_per_share: isIvvb ? 432.10 : 128.25,
-    nav_spread_pct: 0.117,
-    ter_pct: isIvvb ? 0.23 : 0.30,
-    primary_fee_pct: isIvvb ? 0.23 : 0.30,
-    secondary_fee_pct: 0.00,
-    policy: "ACUMULATIVO" as const,
-    shares_lending_pct: 14.5,
-    max_lending_limit_pct: 30.0,
-    underlying_holdings: isIvvb
-      ? [
-          { ticker: "MSFT", name: "Microsoft Corporation", weight_pct: 6.8, sector: "Tecnologia da Informação" },
-          { ticker: "AAPL", name: "Apple Inc.", weight_pct: 6.5, sector: "Tecnologia da Informação" },
-          { ticker: "NVDA", name: "NVIDIA Corporation", weight_pct: 6.2, sector: "Tecnologia da Informação" },
-          { ticker: "AMZN", name: "Amazon.com Inc.", weight_pct: 3.6, sector: "Consumo Discricionário" },
-          { ticker: "GOOGL", name: "Alphabet Inc. Class A", weight_pct: 2.3, sector: "Serviços de Comunicação" },
-          { ticker: "META", name: "Meta Platforms Inc.", weight_pct: 2.2, sector: "Serviços de Comunicação" },
-        ]
-      : [
-          { ticker: "VALE3", name: "Vale S.A.", weight_pct: 13.2, sector: "Materiais Básicos" },
-          { ticker: "PETR4", name: "Petrobras PN", weight_pct: 11.5, sector: "Petróleo e Gás" },
-          { ticker: "ITUB4", name: "Itaú Unibanco PN", weight_pct: 8.4, sector: "Financeiro" },
-          { ticker: "BBDC4", name: "Banco Bradesco PN", weight_pct: 4.5, sector: "Financeiro" },
-        ],
-    flow_history_30d: [],
-  };
+  if (loading || !etfData) return <SectionState loading={loading} error={error || "Dados indisponíveis para este ETF."} />;
+  const etf = etfData;
 
   const navItems = [
     { id: "composicao", label: `1. Composição (${etf.underlying_holdings.length})` },
@@ -99,6 +75,8 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
 
   return (
     <div className="flex flex-col gap-8 animate-fade-up pb-16">
+      <DataStatus {...quoteProvenance(etf.source ?? undefined, etf.quote_date ?? undefined)} />
+      <TradingStatusNotice trading={etf.trading} />
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-[#64748b]">
         <CmsElement feature="ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Link.1"><Link href="/" className="hover:text-white transition-colors"><CmsText>{"Cockpit"}</CmsText></Link></CmsElement>
@@ -116,7 +94,7 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
             <Badge variant="cyan"><CmsText>{etf.name}</CmsText></Badge>
             <Badge variant="emerald"><CmsText>{etf.policy}</CmsText></Badge>
           </div>
-          <p className="text-sm text-[#94a3b8] mt-1"><CmsText>{"Índice Subjacente: "}</CmsText><span className="text-white font-semibold"><CmsText>{etf.benchmark_index}</CmsText></span><CmsText>{" • Provedor: "}</CmsText><CmsText>{etf.provider}</CmsText><CmsText>{" • Aluguel: "}</CmsText><CmsText>{etf.shares_lending_pct}</CmsText><CmsText>{"% do PL"}</CmsText></p>
+          <p className="text-sm text-[#94a3b8] mt-1"><CmsText>{"Índice Subjacente: "}</CmsText><span className="text-white font-semibold"><CmsText>{etf.benchmark_index ?? "—"}</CmsText></span><CmsText>{" • Provedor: "}</CmsText><CmsText>{etf.provider ?? "—"}</CmsText><CmsText>{" • Empréstimo de ativos: "}</CmsText><CmsText>{etf.shares_lending_pct == null ? "—" : `${etf.shares_lending_pct}% do PL`}</CmsText></p>
         </div>
 
         <div className="flex items-center gap-6 bg-[#0a0f1d] p-4 rounded-xl border border-[#1e293b]">
@@ -140,8 +118,8 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <CmsElement feature="ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.MetricCard.3"><MetricCard
           title="Taxa Total Efetiva (TER)"
-          value={`${etf.ter_pct.toFixed(2)}% a.a.`}
-          subtitle={`Primária: ${etf.primary_fee_pct.toFixed(2)}% | Secundária: ${etf.secondary_fee_pct.toFixed(2)}%`}
+          value={etf.ter_pct == null ? "—" : `${etf.ter_pct.toFixed(2)}% a.a.`}
+          subtitle={`Primária: ${etf.primary_fee_pct == null ? "—" : `${etf.primary_fee_pct.toFixed(2)}%`} | Secundária: ${etf.secondary_fee_pct == null ? "—" : `${etf.secondary_fee_pct.toFixed(2)}%`}`}
           glow="cyan"
         /></CmsElement>
         <CmsElement feature="ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.MetricCard.4"><MetricCard
@@ -156,13 +134,13 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
         /></CmsElement>
         <CmsElement feature="ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.MetricCard.5"><MetricCard
           title="Aluguel de Ações (BTC Receita)"
-          value={`${etf.shares_lending_pct}%`}
-          subtitle={`Limite legal de doação: ${etf.max_lending_limit_pct}%`}
+          value={etf.shares_lending_pct == null ? "—" : `${etf.shares_lending_pct}%`}
+          subtitle={`Limite informado: ${etf.max_lending_limit_pct == null ? "—" : `${etf.max_lending_limit_pct}%`}`}
           glow="violet"
         /></CmsElement>
         <CmsElement feature="ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.MetricCard.6"><MetricCard
           title="Política de Proventos"
-          value={etf.policy}
+          value={etf.policy ?? "—"}
           subtitle="Reinvestimento automático sem bitributação"
           glow="emerald"
         /></CmsElement>
@@ -192,7 +170,7 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-cyan-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"1. Composição da Carteira Teórica ("}</CmsText><CmsText>{etf.benchmark_index}</CmsText><CmsText>{")"}</CmsText></h2>
+            <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"1. Composição da Carteira Teórica ("}</CmsText><CmsText>{etf.benchmark_index ?? "—"}</CmsText><CmsText>{")"}</CmsText></h2>
           </div>
           <Badge variant="cyan"><CmsText>{etf.underlying_holdings.length}</CmsText><CmsText>{" Ativos Subjacentes"}</CmsText></Badge>
         </div>
@@ -200,7 +178,7 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
         <div id="panel-VISAO_GERAL">
           <CmsElement feature="ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Card.10"><Card glow="cyan">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Principais Ações Subjacentes ("}</CmsText><CmsText>{etf.benchmark_index}</CmsText><CmsText>{")"}</CmsText></h3>
+              <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Principais Ativos Subjacentes ("}</CmsText><CmsText>{etf.benchmark_index ?? "—"}</CmsText><CmsText>{")"}</CmsText></h3>
               <span className="text-xs text-[#64748b]"><CmsText>{"Metodologia de Ponderação por Valor de Mercado"}</CmsText></span>
             </div>
 
@@ -229,8 +207,8 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
             </div>
 
             <div className="mt-3 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between text-[11px] text-[#64748b]">
-              <span><CmsText>{"Fonte Auditada: "}</CmsText><CmsText>{etf.provider}</CmsText><CmsText>{" / B3"}</CmsText></span>
-              <span><CmsText>{"Data-base da Carteira: Outubro/2026"}</CmsText></span>
+              <span><CmsText>{"Gestor cadastrado: "}</CmsText><CmsText>{etf.provider ?? "—"}</CmsText></span>
+              <span><CmsText>{"Data-base da carteira: não informada"}</CmsText></span>
             </div>
           </Card></CmsElement>
         </div>
@@ -257,10 +235,10 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
               </Badge>
             </div>
             <div className="p-4 rounded-xl bg-[#0a0f1d] border border-white/10 space-y-3 text-xs leading-relaxed text-[#94a3b8]">
-              <p><CmsText>{"O ETF é negociado no mercado secundário a "}</CmsText><strong className="text-white"><CmsText>{formatCurrency(etf.current_price)}</CmsText></strong><CmsText>{", enquanto o seu valor intrínseco contábil (NAV) é de "}</CmsText><strong className="text-white"><CmsText>{typeof etf.nav_per_share === "number" && etf.nav_per_share > 0 ? formatCurrency(etf.nav_per_share) : "N/D (em conciliação)"}</CmsText></strong><CmsText>{"."}</CmsText></p>
+              <p><CmsText>{"Fechamento de mercado: "}</CmsText><strong className="text-white"><CmsText>{formatCurrency(etf.current_price)}</CmsText></strong><CmsText>{"; valor patrimonial por cota registrado: "}</CmsText><strong className="text-white"><CmsText>{typeof etf.nav_per_share === "number" && etf.nav_per_share > 0 ? formatCurrency(etf.nav_per_share) : "indisponível"}</CmsText></strong><CmsText>{"."}</CmsText></p>
               <p>
                 <CmsText>{typeof etf.nav_spread_pct === "number" ? (
-                  <><CmsText>{"O spread atual de "}</CmsText><strong className="text-[#00f5a0]"><CmsText>{etf.nav_spread_pct > 0 ? "+" : ""}</CmsText><CmsText>{etf.nav_spread_pct.toFixed(2)}</CmsText><CmsText>{"%"}</CmsText></strong><CmsText>{" encontra-se dentro do túnel de arbitragem tolerado pelo formador de mercado (Authorized Participant), garantindo que as cotas não se descolem significativamente da carteira subjacente do "}</CmsText><CmsText>{etf.benchmark_index}</CmsText><CmsText>{"."}</CmsText></>
+                  <><CmsText>{"O spread calculado é "}</CmsText><strong className="text-[#00f5a0]"><CmsText>{etf.nav_spread_pct > 0 ? "+" : ""}</CmsText><CmsText>{etf.nav_spread_pct.toFixed(2)}</CmsText><CmsText>{"%"}</CmsText></strong><CmsText>{" entre preço e NAV registrados; isso não mede liquidez nem garante arbitragem."}</CmsText></>
                 ) : (
                   <><CmsText>{"O cálculo contábil do spread aguarda a publicação diária de cotas emitidas e patrimônio líquido oficial pelo administrador fiduciário perante a CVM."}</CmsText></>
                 )}</CmsText>
@@ -277,18 +255,18 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
             <span className="w-2 h-2 rounded-full bg-violet-400" />
             <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"3. Remuneração por Empréstimo de Ativos (BTC) & Receita Revertida"}</CmsText></h2>
           </div>
-          <Badge variant="violet"><CmsText>{etf.shares_lending_pct}</CmsText><CmsText>{"% do PL em Aluguel"}</CmsText></Badge>
+          <Badge variant="violet"><CmsText>{etf.shares_lending_pct == null ? "Informação indisponível" : `${etf.shares_lending_pct}% do PL em empréstimo`}</CmsText></Badge>
         </div>
 
         <div id="panel-ALUGUEL">
           <CmsElement feature="ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.Card.14"><Card glow="violet">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Remuneração por Empréstimo de Ativos da Carteira"}</CmsText></h3>
-              <Badge variant="violet"><CmsText>{"Aluguel Ativo"}</CmsText></Badge>
+              <Badge variant="neutral"><CmsText>{etf.shares_lending_pct == null ? "Não informado" : "Empréstimo registrado"}</CmsText></Badge>
             </div>
             <div className="p-4 rounded-xl bg-[#0a0f1d] border border-white/10 space-y-3 text-xs leading-relaxed text-[#94a3b8]">
-              <p><CmsText>{"O gestor "}</CmsText><CmsText>{etf.provider}</CmsText><CmsText>{" mantém atualmente "}</CmsText><strong className="text-white"><CmsText>{etf.shares_lending_pct}</CmsText><CmsText>{"%"}</CmsText></strong><CmsText>{" do patrimônio do fundo doado em operações de empréstimo (BTC) na B3."}</CmsText></p>
-              <p><CmsText>{"Toda a receita gerada com o empréstimo das ações é repassada integralmente ao patrimônio líquido do fundo, reduzindo efetivamente o custo de carregamento (TER) para o investidor final."}</CmsText></p>
+              <p><CmsText>{etf.shares_lending_pct == null ? "Posições de empréstimo não têm fonte verificável disponível para este ETF." : `Empréstimo registrado: ${etf.shares_lending_pct}% do patrimônio.`}</CmsText></p>
+              <p><CmsText>{"A política de repasse de receitas de empréstimo não está informada."}</CmsText></p>
             </div>
           </Card></CmsElement>
         </div>
@@ -311,14 +289,14 @@ export function ETFDetailClient({ ticker }: { ticker: string }) {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Curva Subaquática & Risco Histórico"}</CmsText></h3>
-                <p className="text-xs text-[#94a3b8] mt-0.5"><CmsText>{"Cálculo em tempo real sobre a série de cotações diárias oficiais de fechamento na B3"}</CmsText></p>
+                <p className="text-xs text-[#94a3b8] mt-0.5"><CmsText>{"Cálculo sobre os fechamentos diários oficiais verificados disponíveis"}</CmsText></p>
               </div>
               <CmsText>{etf.drawdown && typeof etf.drawdown.max_drawdown_pct === "number" && (
                 <Badge variant="crimson"><CmsText>{"Queda Máx: "}</CmsText><CmsText>{etf.drawdown.max_drawdown_pct.toFixed(2)}</CmsText><CmsText>{"%"}</CmsText></Badge>
               )}</CmsText>
             </div>
 
-            <CmsText>{etf.drawdown && etf.drawdown.drawdown_curve && etf.drawdown.drawdown_curve.length > 0 ? (
+            <CmsText>{etf.drawdown && typeof etf.drawdown.max_drawdown_pct === "number" && etf.drawdown.drawdown_curve.length > 0 ? (
               <CmsElement feature="ui.app/-frontend-/etfs/-ticker-/ETFDetailClient.UnderwaterDrawdownChart.17"><UnderwaterDrawdownChart
                 data={etf.drawdown.drawdown_curve}
                 maxDrawdownPct={etf.drawdown.max_drawdown_pct}

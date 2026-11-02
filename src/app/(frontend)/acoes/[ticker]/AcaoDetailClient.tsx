@@ -27,6 +27,8 @@ import {
 } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
 import { FinancialMatrixData, DividendMatrixData } from "@/schemas/oceans14";
+import { TradingStatusNotice } from "@/components/shared/TradingStatusNotice";
+import { quoteProvenance } from "@/lib/quote-provenance";
 import { DataStatus } from "@/components/shared/DataStatus";
 import { SectionState } from "@/components/shared/SectionState";
 import { StockFundamentalsGrid } from "@/components/stocks/StockFundamentalsGrid";
@@ -259,7 +261,8 @@ export function AcaoDetailClient({ ticker, initialDetails = null, initialValuati
         </div>
       </div>
 
-      <DataStatus mode={loading ? "loading" : errors.details && completeDetails ? "stale" : completeDetails ? "periodic" : "missing"} asOf={completeDetails?.details.data_cotacao} />
+      <TradingStatusNotice trading={completeDetails?.details.trading} />
+      <DataStatus {...quoteProvenance(completeDetails?.details.source, completeDetails?.details.data_cotacao)} mode={loading ? "loading" : errors.details && completeDetails ? "stale" : completeDetails?.details.current_price == null ? "missing" : quoteProvenance(completeDetails.details.source, completeDetails.details.data_cotacao).mode} />
       <CmsText>{Object.entries(errors).filter(([key]) => key !== "details").map(([key, error]) => <SectionState key={key} error={error} onRetry={() => setRevision(n => n + 1)} />)}</CmsText>
       <p className="text-xs text-[#94a3b8]"><CmsText>{"Valuation é uma estimativa baseada nos parâmetros abaixo, não uma recomendação. DCF usa aproximação de 80% do lucro por ação, não fluxo de caixa reportado. Séries contábeis distintas não foram reconciliadas."}</CmsText></p>
       {/* KPI Top Bar - Executive Dashboard */}
