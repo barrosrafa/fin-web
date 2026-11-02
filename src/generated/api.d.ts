@@ -1735,6 +1735,11 @@ export interface components {
         };
         /** AssetSummaryResponse */
         AssetSummaryResponse: {
+            /** Source */
+            source?: string | null;
+            /** Quote Date */
+            quote_date?: string | null;
+            trading?: components["schemas"]["TradingStatus"];
             /** Ticker */
             ticker: string;
             /** Name */
@@ -1748,11 +1753,11 @@ export interface components {
             /** Currentprice */
             currentPrice?: number | null;
             /** Change24H */
-            change24h: number;
+            change24h?: number | null;
             /** Change12M */
             change12m?: number | null;
             /** Dividendyield */
-            dividendYield: number;
+            dividendYield?: number | null;
             /** Marketcap */
             marketCap?: number | null;
             /** Pvp */
@@ -2263,35 +2268,37 @@ export interface components {
         };
         /** ETFDetailResponse */
         ETFDetailResponse: {
+            /** Source */
+            source?: string | null;
+            /** Quote Date */
+            quote_date?: string | null;
+            trading?: components["schemas"]["TradingStatus"];
             /** Ticker */
             ticker: string;
             /** Name */
             name: string;
             /** Benchmark Index */
-            benchmark_index: string;
+            benchmark_index?: string | null;
             /** Provider */
-            provider: string;
+            provider?: string | null;
             /** Current Price */
-            current_price: number;
+            current_price?: number | null;
             /** Nav Per Share */
             nav_per_share?: number | null;
             /** Nav Spread Pct */
             nav_spread_pct?: number | null;
             /** Ter Pct */
-            ter_pct: number;
+            ter_pct?: number | null;
             /** Primary Fee Pct */
-            primary_fee_pct: number;
+            primary_fee_pct?: number | null;
             /** Secondary Fee Pct */
-            secondary_fee_pct: number;
+            secondary_fee_pct?: number | null;
             /** Policy */
-            policy: string;
+            policy?: string | null;
             /** Shares Lending Pct */
-            shares_lending_pct: number;
-            /**
-             * Max Lending Limit Pct
-             * @default 30
-             */
-            max_lending_limit_pct: number;
+            shares_lending_pct?: number | null;
+            /** Max Lending Limit Pct */
+            max_lending_limit_pct?: number | null;
             /** Underlying Holdings */
             underlying_holdings?: components["schemas"]["ETFUnderlyingAsset"][];
             /** Flow History 30D */
@@ -2303,7 +2310,7 @@ export interface components {
             /** Ticker */
             ticker: string;
             /** Max Drawdown Pct */
-            max_drawdown_pct: number;
+            max_drawdown_pct?: number | null;
             /** Valley Date */
             valley_date?: string | null;
             /** Recovery Days */
@@ -2368,7 +2375,7 @@ export interface components {
             /** Data Referencia */
             data_referencia: string;
             /** Total Assets */
-            total_assets: number;
+            total_assets?: number | null;
             /** Liquid Assets */
             liquid_assets: {
                 [key: string]: unknown;
@@ -2386,16 +2393,16 @@ export interface components {
                 [key: string]: unknown;
             };
             /** Net Worth */
-            net_worth: number;
+            net_worth?: number | null;
         };
         /** FIIBrickScoreAxis */
         FIIBrickScoreAxis: {
             /** Name */
             name: string;
             /** Score */
-            score: number;
+            score?: number | null;
             /** Weight */
-            weight: number;
+            weight?: number | null;
             /** Status */
             status: string;
             /** Comment */
@@ -2410,9 +2417,9 @@ export interface components {
             /** Indexer */
             indexer: string;
             /** Coupon Pct */
-            coupon_pct: number;
+            coupon_pct?: number | null;
             /** Ltv Pct */
-            ltv_pct: number;
+            ltv_pct?: number | null;
             /** Guarantees */
             guarantees: string;
             /**
@@ -2458,6 +2465,20 @@ export interface components {
         };
         /** FIIDetailResponse */
         FIIDetailResponse: {
+            /** Fundamentals Source */
+            fundamentals_source?: string | null;
+            /** Fundamentals Date */
+            fundamentals_date?: string | null;
+            /** Source */
+            source?: string | null;
+            /** Quote Date */
+            quote_date?: string | null;
+            trading?: components["schemas"]["TradingStatus"];
+            /**
+             * Fundamentals Note
+             * @default Base patrimonial: último informe CVM disponível até a referência da cotação. Ausência de informe implica indicador indisponível. DY observado: pagamentos documentados disponíveis nos 12 meses até a cotação; cobertura pode ser parcial.
+             */
+            fundamentals_note: string;
             /** Ticker */
             ticker: string;
             /** Name */
@@ -2465,22 +2486,19 @@ export interface components {
             /** Segment */
             segment: string;
             /** Current Price */
-            current_price: number;
+            current_price?: number | null;
             /** Pvp */
-            pvp: number;
+            pvp?: number | null;
             /** Dividend Yield 12M */
-            dividend_yield_12m: number;
+            dividend_yield_12m?: number | null;
             /** Net Worth */
-            net_worth: number;
+            net_worth?: number | null;
             /** Physical Vacancy Pct */
-            physical_vacancy_pct: number;
+            physical_vacancy_pct?: number | null;
             /** Financial Vacancy Pct */
-            financial_vacancy_pct: number;
-            /**
-             * Wault Years
-             * @default 4.2
-             */
-            wault_years: number;
+            financial_vacancy_pct?: number | null;
+            /** Wault Years */
+            wault_years?: number | null;
             /** Properties */
             properties?: components["schemas"]["FIIPropertyItem"][];
             /** Brick Score */
@@ -2540,79 +2558,79 @@ export interface components {
             /** Date Payment */
             date_payment: string;
             /** Value Per Share */
-            value_per_share: number;
+            value_per_share?: number | null;
             /** Yield Pct */
-            yield_pct: number;
+            yield_pct?: number | null;
             /** Status */
             status: string;
         };
         /** FIIIndicatorsData */
         FIIIndicatorsData: {
             /** Pvp */
-            pvp: number;
+            pvp?: number | null;
             /** Vp Per Share */
-            vp_per_share: number;
+            vp_per_share?: number | null;
             /** Dividend Yield 12M */
-            dividend_yield_12m: number;
+            dividend_yield_12m?: number | null;
             /** Last Dividend */
-            last_dividend: number;
+            last_dividend?: number | null;
             /** Expense Pct */
-            expense_pct: number;
+            expense_pct?: number | null;
             /** Cash Pct */
-            cash_pct: number;
+            cash_pct?: number | null;
             /** Default Pct */
-            default_pct: number;
+            default_pct?: number | null;
             /** Physical Vacancy Pct */
-            physical_vacancy_pct: number;
+            physical_vacancy_pct?: number | null;
             /** Financial Vacancy Pct */
-            financial_vacancy_pct: number;
+            financial_vacancy_pct?: number | null;
             /** Shares Count */
-            shares_count: number;
+            shares_count?: number | null;
             /** Shareholders Count */
-            shareholders_count: number;
+            shareholders_count?: number | null;
             /** Market Cap */
-            market_cap: number;
+            market_cap?: number | null;
             /** Daily Trades */
-            daily_trades: number;
+            daily_trades?: number | null;
             /** Daily Volume */
-            daily_volume: number;
+            daily_volume?: number | null;
             /** Net Worth */
-            net_worth: number;
+            net_worth?: number | null;
             /** Change 1D */
-            change_1d: number;
+            change_1d?: number | null;
             /** Change 12M */
-            change_12m: number;
+            change_12m?: number | null;
             /** Min 52W */
-            min_52w: number;
+            min_52w?: number | null;
             /** Max 52W */
-            max_52w: number;
+            max_52w?: number | null;
             /** Cagr Dividends 3Y */
-            cagr_dividends_3y: number;
+            cagr_dividends_3y?: number | null;
             /** Cagr Share Value 3Y */
-            cagr_share_value_3y: number;
+            cagr_share_value_3y?: number | null;
             /** Quote Datetime */
             quote_datetime?: string | null;
         };
         /** FIILucratividadeData */
         FIILucratividadeData: {
             /** Rental Income */
-            rental_income: number;
+            rental_income?: number | null;
             /** Property Sale Income */
-            property_sale_income: number;
+            property_sale_income?: number | null;
             /** Securities Income */
-            securities_income: number;
+            securities_income?: number | null;
             /** Financial Income */
-            financial_income: number;
+            financial_income?: number | null;
             /** Operating Expenses */
-            operating_expenses: number;
+            operating_expenses?: number | null;
             /** Admin Fee Expense */
-            admin_fee_expense: number;
+            admin_fee_expense?: number | null;
             /** Other Expenses */
-            other_expenses: number;
+            other_expenses?: number | null;
             /** Net Profit */
-            net_profit: number;
+            net_profit?: number | null;
             /** Distributed Per Share */
-            distributed_per_share: number;
+            distributed_per_share?: number | null;
         };
         /** FIIPropertyItem */
         FIIPropertyItem: {
@@ -2621,29 +2639,26 @@ export interface components {
             /** Name */
             name: string;
             /** Type */
-            type: string;
+            type?: string | null;
             /** Address */
-            address: string;
+            address?: string | null;
             /** City */
-            city: string;
+            city?: string | null;
             /** State */
-            state: string;
+            state?: string | null;
             /** Abl M2 */
-            abl_m2: number;
+            abl_m2?: number | null;
             /** Occupancy Pct */
-            occupancy_pct: number;
+            occupancy_pct?: number | null;
             /** Siila Standard */
-            siila_standard: string;
-            /**
-             * Fund Share Pct
-             * @default 100
-             */
-            fund_share_pct: number;
+            siila_standard?: string | null;
+            /** Fund Share Pct */
+            fund_share_pct?: number | null;
         };
         /** FIIRankingItem */
         FIIRankingItem: {
             /** Rank */
-            rank: number;
+            rank?: number | null;
             /** Ticker */
             ticker: string;
             /** Name */
@@ -2651,19 +2666,19 @@ export interface components {
             /** Segment */
             segment: string;
             /** Price */
-            price: number;
+            price?: number | null;
             /** Dy 12M */
-            dy_12m: number;
+            dy_12m?: number | null;
             /** Pvp */
-            pvp: number;
+            pvp?: number | null;
             /** Net Worth */
-            net_worth: number;
+            net_worth?: number | null;
             /** Physical Vacancy Pct */
-            physical_vacancy_pct: number;
+            physical_vacancy_pct?: number | null;
             /** Financial Vacancy Pct */
-            financial_vacancy_pct: number;
+            financial_vacancy_pct?: number | null;
             /** Liquidity Daily */
-            liquidity_daily: number;
+            liquidity_daily?: number | null;
         };
         /** FIITenantConcentration */
         FIITenantConcentration: {
@@ -2672,7 +2687,7 @@ export interface components {
             /** Sector */
             sector: string;
             /** Revenue Pct */
-            revenue_pct: number;
+            revenue_pct?: number | null;
             /** Contract Type */
             contract_type: string;
         };
@@ -2688,9 +2703,9 @@ export interface components {
             /** Data Referencia */
             data_referencia: string;
             /** Vacancia Fisica Pct */
-            vacancia_fisica_pct: number;
+            vacancia_fisica_pct?: number | null;
             /** Vacancia Financeira Pct */
-            vacancia_financeira_pct: number;
+            vacancia_financeira_pct?: number | null;
             /** Abl Propria M2 */
             abl_propria_m2?: number | null;
             /** Area Ocupada M2 */
@@ -3538,6 +3553,9 @@ export interface components {
         };
         /** StockDetailsResponse */
         StockDetailsResponse: {
+            /** Source */
+            source?: string | null;
+            trading?: components["schemas"]["TradingStatus"];
             /** Ticker */
             ticker: string;
             /** Name */
@@ -3680,7 +3698,12 @@ export interface components {
             /** Price */
             price?: number | null;
             /** Dy */
-            dy: number;
+            dy?: number | null;
+            /** Source */
+            source?: string | null;
+            /** Quote Date */
+            quote_date?: string | null;
+            trading?: components["schemas"]["TradingStatus"];
             /** Pl */
             pl?: number | null;
             /** Pvp */
@@ -3953,12 +3976,9 @@ export interface components {
             /** Price */
             price: number;
             /** Change Pct */
-            change_pct: number;
-            /**
-             * Volume
-             * @default 0
-             */
-            volume: number;
+            change_pct?: number | null;
+            /** Volume */
+            volume?: number | null;
             /** P L */
             p_l?: number | null;
             /** Dy Pct */
@@ -3970,6 +3990,20 @@ export interface components {
              * @default fin-cache
              */
             source: string | null;
+        };
+        /** TradingStatus */
+        TradingStatus: {
+            /**
+             * Status
+             * @default unknown
+             */
+            status: string;
+            /** Ended On */
+            ended_on?: string | null;
+            /** Successor */
+            successor?: string | null;
+            /** Source Url */
+            source_url?: string | null;
         };
         /** TreasuryBondItem */
         TreasuryBondItem: {

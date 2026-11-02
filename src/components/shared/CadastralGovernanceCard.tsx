@@ -50,8 +50,8 @@ export function CadastralGovernanceCard({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-white/5">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-mono uppercase tracking-wider text-[#00d9f5] font-bold"><CmsText>{"Registro & Governança CVM"}</CmsText></span>
-            <Badge variant="cyan"><CmsText>{"Auditoria Oficial B3"}</CmsText></Badge>
+            <span className="text-xs font-mono uppercase tracking-wider text-[#00d9f5] font-bold"><CmsText>{"Registro & Governança"}</CmsText></span>
+            <Badge variant="cyan"><CmsText>{"Cadastro disponível"}</CmsText></Badge>
           </div>
           <h2 className="text-lg md:text-xl font-bold text-white tracking-tight">
             <CmsText>{legalName || `${tradingCode} - Fundo de Investimento Imobiliário`}</CmsText>
@@ -60,7 +60,7 @@ export function CadastralGovernanceCard({
         <div className="text-xs font-mono text-[#94a3b8] flex items-center gap-2">
           <span><CmsText>{"CNPJ:"}</CmsText></span>
           <span className="font-bold text-white bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
-            <CmsText>{cnpj || "11.728.688/0001-47"}</CmsText>
+            <CmsText>{cnpj || "—"}</CmsText>
           </span>
         </div>
       </div>
@@ -70,7 +70,7 @@ export function CadastralGovernanceCard({
         <div className="flex flex-col gap-1">
           <span className="text-[#64748b] uppercase tracking-wider font-semibold text-[10px]"><CmsText>{"Administrador Fiduciário"}</CmsText></span>
           <span className="font-bold text-white text-sm">
-            <CmsText>{administratorName || "GENIAL INVESTIMENTOS CORRETORA DE MOBILIARIOS S.A."}</CmsText>
+            <CmsText>{administratorName || "—"}</CmsText>
           </span>
           <CmsText>{administratorCnpj && (
             <span className="text-[11px] text-[#94a3b8] font-mono"><CmsText>{"CNPJ Adm: "}</CmsText><CmsText>{administratorCnpj}</CmsText>
@@ -99,15 +99,15 @@ export function CadastralGovernanceCard({
         <div className="flex flex-col gap-1">
           <span className="text-[#64748b] uppercase tracking-wider font-semibold text-[10px]"><CmsText>{"Gestão de Recursos & Mandato"}</CmsText></span>
           <span className="font-bold text-white text-sm">
-            <CmsText>{managerName || "Pátria Investimentos Gestão de Recursos Ltda."}</CmsText>
+            <CmsText>{managerName || "—"}</CmsText>
           </span>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-[#94a3b8]"><CmsText>{"Tipo de Gestão:"}</CmsText></span>
-            <Badge variant="emerald"><CmsText>{managementType || "Ativa"}</CmsText></Badge>
+            <Badge variant="emerald"><CmsText>{managementType || "—"}</CmsText></Badge>
           </div>
-          <div className="text-[11px] text-[#94a3b8] mt-0.5"><CmsText>{"Mandato: "}</CmsText><strong className="text-white"><CmsText>{mandate || "Renda / Híbrido"}</CmsText></strong>
+          <div className="text-[11px] text-[#94a3b8] mt-0.5"><CmsText>{"Mandato: "}</CmsText><strong className="text-white"><CmsText>{mandate || "—"}</CmsText></strong>
           </div>
-          <div className="text-[11px] text-[#94a3b8]"><CmsText>{"Segmento: "}</CmsText><strong className="text-white"><CmsText>{segment || "Galpões Logísticos Industriais"}</CmsText></strong>
+          <div className="text-[11px] text-[#94a3b8]"><CmsText>{"Segmento: "}</CmsText><strong className="text-white"><CmsText>{segment || "—"}</CmsText></strong>
           </div>
         </div>
 
@@ -115,19 +115,19 @@ export function CadastralGovernanceCard({
         <div className="flex flex-col gap-1">
           <span className="text-[#64748b] uppercase tracking-wider font-semibold text-[10px]"><CmsText>{"Remuneração & Estrutura de Taxas"}</CmsText></span>
           <span className="font-medium text-white text-xs leading-relaxed">
-            <CmsText>{adminFeeDesc || "0,44% sobre patrimônio ou 0,47% sobre valor de mercado"}</CmsText>
+            <CmsText>{adminFeeDesc || "—"}</CmsText>
           </span>
           <div className="mt-2 pt-2 border-t border-white/5 grid grid-cols-2 gap-2">
             <div>
               <span className="text-[10px] text-[#64748b] block"><CmsText>{"Prazo de Duração"}</CmsText></span>
               <span className="font-mono text-white font-semibold">
-                <CmsText>{durationTerm || "Indeterminado"}</CmsText>
+                <CmsText>{durationTerm || "—"}</CmsText>
               </span>
             </div>
             <div>
               <span className="text-[10px] text-[#64748b] block"><CmsText>{"Público-Alvo"}</CmsText></span>
               <span className="font-mono text-white font-semibold">
-                <CmsText>{targetAudience || "Geral"}</CmsText>
+                <CmsText>{targetAudience || "—"}</CmsText>
               </span>
             </div>
           </div>

@@ -6,6 +6,8 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { AcaoDetailClient } from "./AcaoDetailClient";
 import { getPublicStock, siteUrl } from "@/lib/server/stock";
 import { formatCurrency } from "@/lib/formatters";
+import { TradingStatusNotice } from "@/components/shared/TradingStatusNotice";
+import { quoteProvenance } from "@/lib/quote-provenance";
 import { DataStatus } from "@/components/shared/DataStatus";
 
 type Props = { params: Promise<{ ticker: string }> };
@@ -50,9 +52,10 @@ async function StockContent({ ticker }: { ticker: string }) {
     <CmsElement feature="ui.app/-frontend-/acoes/-ticker-/page.section.1"><section aria-label={`Cadastro público de ${ticker}`} className="mb-6 p-4 rounded-xl border border-white/10">
       <h1 className="text-xl font-bold"><CmsText>{ticker}</CmsText><CmsText>{" — "}</CmsText><CmsText>{name}</CmsText></h1>
       <p className="text-sm text-[#94a3b8]"><CmsText>{"Instrumento B3:"}</CmsText><CmsText>{ticker}</CmsText><CmsText>{details?.details.sector ? ` • Setor: ${details.details.sector}` : ""}</CmsText><CmsText>{". Preços em BRL."}</CmsText></p>
-      <DataStatus mode={details ? "periodic" : "missing"} asOf={details?.details.data_cotacao} />
+      <TradingStatusNotice trading={details?.details.trading} />
+      <DataStatus {...quoteProvenance(details?.details.source, details?.details.data_cotacao)} />
       <CmsText>{history?.data?.length ? <table className="text-sm w-full mt-3">
-        <caption className="text-left"><CmsText>{"Histórico de referência — fechamento nominal em BRL; últimos registros disponíveis. Fonte documental não informada."}</CmsText></caption>
+        <caption className="text-left"><CmsText>{"Histórico de referência — fechamento nominal em BRL; últimos registros disponíveis. Fonte: B3 / COTAHIST (registros verificados)."}</CmsText></caption>
         <thead><tr><th scope="col" className="text-left"><CmsText>{"Data"}</CmsText></th><th scope="col" className="text-right"><CmsText>{"Fechamento"}</CmsText></th></tr></thead>
         <tbody><CmsText>{history.data.map(row => <tr key={row.date}><th scope="row" className="text-left"><time dateTime={row.date}><CmsText>{row.date}</CmsText></time></th><td className="text-right"><CmsText>{formatCurrency(row.close)}</CmsText></td></tr>)}</CmsText></tbody>
       </table> : <p className="text-sm"><CmsText>{"Histórico indisponível."}</CmsText></p>}</CmsText>

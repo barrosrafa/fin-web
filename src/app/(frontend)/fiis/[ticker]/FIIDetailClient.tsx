@@ -9,12 +9,14 @@ import { Badge } from "@/components/ui/Badge";
 import { RadarChart, RadarDataPoint } from "@/components/ui/RadarChart";
 import {
   formatCurrency,
+  formatNumber,
   formatPercent,
   formatMultiple,
-  calculateMagicNumber,
 } from "@/lib/formatters";
-import { getFIIDetail, getAssets, FIIDetailData } from "@/lib/api";
-import { AssetSummary } from "@/schemas/financial";
+import { getFIIDetail, FIIDetailData } from "@/lib/api";
+import { DataStatus } from "@/components/shared/DataStatus";
+import { SectionState } from "@/components/shared/SectionState";
+import { quoteProvenance } from "@/lib/quote-provenance";
 
 // Shared Components
 import { CadastralGovernanceCard } from "@/components/shared/CadastralGovernanceCard";
@@ -26,57 +28,40 @@ import { FIIPropertyPortfolioTable } from "@/components/fiis/FIIPropertyPortfoli
 
 export function FIIDetailClient({ ticker }: { ticker: string }) {
   const [fiiDetail, setFiiDetail] = useState<FIIDetailData | null>(null);
-  const [fiiAsset, setFiiAsset] = useState<AssetSummary | null>(null);
+  const [revision, setRevision] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Magic Number interactive state
-  const monthlyYield = fiiDetail?.indicators?.last_dividend ?? 1.10; // R$ por cota
+  const monthlyYield = Number.NaN; // A single event does not establish recurring monthly income.
   const [targetIncome, setTargetIncome] = useState(5000); // R$ 5.000 de renda mensal
 
   useEffect(() => {
-    async function load() {
-      try {
-        const [dRes, aRes] = await Promise.all([
-          getFIIDetail(ticker),
-          getAssets("FII"),
-        ]);
-        if (dRes) setFiiDetail(dRes);
-        const found = aRes.find((a) => a.ticker.toUpperCase() === ticker.toUpperCase());
-        if (found) {
-          setFiiAsset(found);
-        } else if (dRes) {
-          setFiiAsset({
-            ticker: dRes.ticker,
-            name: dRes.name,
-            type: "FII",
-            sector: "Imobiliário",
-            subsector: dRes.segment,
-            currentPrice: dRes.current_price,
-            change24h: 0.15,
-            change12m: 1.87,
-            dividendYield: dRes.dividend_yield_12m,
-            pvp: dRes.pvp,
-            sparkline: [dRes.current_price * 0.98, dRes.current_price],
-            badge: "Brick Score AAA",
-          });
-        }
-      } catch (err) {
-        console.error("Failed to load FII detail:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [ticker]);
+    const controller = new AbortController();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
+    setError(null);
+    setFiiDetail(null);
+    void getFIIDetail(ticker, controller.signal).then(data => {
+      if (controller.signal.aborted) return;
+      if (!data || data.ticker.toUpperCase() !== ticker.toUpperCase()) {
+        setError("Dados indisponíveis para este FII.");
+      } else setFiiDetail(data);
+    }).catch(() => {
+      if (!controller.signal.aborted) setError("Falha ao consultar este FII.");
+    }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [ticker, revision]);
 
-  const currentPrice = fiiAsset?.currentPrice ?? fiiDetail?.current_price ?? 147.28;
-  const isPositive = (fiiAsset?.change24h ?? 0) >= 0;
+  const currentPrice = fiiDetail?.current_price ?? Number.NaN;
+  const isPositive = (fiiDetail?.indicators?.change_1d ?? Number.NaN) >= 0;
 
-  const magicCotas = calculateMagicNumber(currentPrice, monthlyYield);
-  const capitalForMagic = magicCotas * currentPrice;
+  const hasVerifiedIncomeInput = false;
+  const magicCotas = Number.NaN;
+  const capitalForMagic = Number.NaN;
 
-  const cotasForTargetIncome = Math.ceil(targetIncome / monthlyYield);
-  const capitalForTarget = cotasForTargetIncome * currentPrice;
+  const cotasForTargetIncome = hasVerifiedIncomeInput ? Math.ceil(targetIncome / monthlyYield) : Number.NaN;
+  const capitalForTarget = hasVerifiedIncomeInput ? cotasForTargetIncome * currentPrice : Number.NaN;
 
   // Radar Chart data from Brick Score
   const brickScoreList = fiiDetail?.brick_score ?? [];
@@ -86,12 +71,12 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
     weight: axis.weight,
   }));
 
-  const overallScore = Math.round(
+  const overallScore = brickScoreList.length ? Math.round(
     brickScoreList.reduce(
       (acc, curr) => acc + curr.score * curr.weight,
       0
     )
-  );
+  ) : null;
 
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
@@ -103,16 +88,21 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
   const navItems = [
     { id: "dados-cadastrais", label: "Cadastral & Governança" },
     { id: "indicadores", label: "Indicadores" },
-    { id: "dividendos", label: `Dividendos (${fiiDetail?.dividends?.length ?? 55})` },
-    { id: "comunicados", label: `Comunicados CVM (${fiiDetail?.disclosures?.length ?? 7})` },
-    { id: "imoveis", label: `Imóveis & Ativos (${fiiDetail?.properties?.length ?? 5})` },
+    { id: "dividendos", label: `Dividendos (${fiiDetail?.dividends?.length ?? 0})` },
+    { id: "comunicados", label: `Comunicados CVM (${fiiDetail?.disclosures?.length ?? 0})` },
+    { id: "imoveis", label: `Imóveis & Ativos (${fiiDetail?.properties?.length ?? 0})` },
     { id: "balanco-dre", label: "Balanço & DRE" },
     { id: "brick-score", label: "Brick Score 360°" },
     { id: "magic-number", label: "Bola de Neve" },
   ];
 
+  if (loading || !fiiDetail) return <SectionState loading={loading} error={error || "Dados indisponíveis para este FII."} onRetry={() => setRevision(n => n + 1)} />;
+
   return (
     <div className="flex flex-col gap-10 animate-fade-up pb-16">
+      <DataStatus {...quoteProvenance(fiiDetail.source, fiiDetail.quote_date)} />
+      <DataStatus {...quoteProvenance(fiiDetail.fundamentals_source, fiiDetail.fundamentals_date)} />
+      <p role="note" className="text-xs text-[#94a3b8]">{fiiDetail.fundamentals_note}</p>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-[#64748b]">
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Link.1"><Link href="/" className="hover:text-white transition-colors"><CmsText>{"Cockpit"}</CmsText></Link></CmsElement>
@@ -135,28 +125,28 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
               <h1 className="text-3xl font-black text-white tracking-tight">
                 <CmsText>{ticker}</CmsText>
               </h1>
-              <Badge variant="emerald"><CmsText>{fiiAsset?.badge ?? "Brick Score AAA"}</CmsText></Badge>
+              <Badge variant="emerald"><CmsText>{"Dados disponíveis"}</CmsText></Badge>
               <Badge variant="cyan"><CmsText>{fiiDetail?.segment ?? "Logística e Galpões"}</CmsText></Badge>
               <CmsText>{fiiDetail?.cadastral?.mandate && (
                 <Badge variant="outline"><CmsText>{fiiDetail.cadastral.mandate}</CmsText></Badge>
               )}</CmsText>
             </div>
             <div className="text-base text-[#e2e8f0] font-semibold mt-1">
-              <CmsText>{fiiDetail?.cadastral?.legal_name ?? fiiAsset?.name ?? fiiDetail?.name ?? ticker}</CmsText>
+              <CmsText>{fiiDetail?.cadastral?.legal_name ?? fiiDetail?.name ?? ticker}</CmsText>
             </div>
             <div className="flex flex-wrap items-center gap-3 text-xs text-[#64748b] mt-1.5 font-mono">
-              <span><CmsText>{"CNPJ: "}</CmsText><CmsText>{fiiDetail?.cadastral?.cnpj ?? "11.728.688/0001-47"}</CmsText></span>
+              <span><CmsText>{"CNPJ: "}</CmsText><CmsText>{fiiDetail?.cadastral?.cnpj ?? "—"}</CmsText></span>
               <span><CmsText>{"•"}</CmsText></span>
-              <span><CmsText>{"Admin: "}</CmsText><CmsText>{fiiDetail?.cadastral?.administrator_name ?? "CREDIT SUISSE HEDGING-GRIFFO"}</CmsText></span>
+              <span><CmsText>{"Admin: "}</CmsText><CmsText>{fiiDetail?.cadastral?.administrator_name ?? "—"}</CmsText></span>
               <span><CmsText>{"•"}</CmsText></span>
-              <span><CmsText>{"Gestor: "}</CmsText><CmsText>{fiiDetail?.cadastral?.manager_name ?? "PÁTRIA INVESTIMENTOS"}</CmsText></span>
+              <span><CmsText>{"Gestor: "}</CmsText><CmsText>{fiiDetail?.cadastral?.manager_name ?? "—"}</CmsText></span>
             </div>
           </div>
         </div>
 
         <div className="flex items-end md:items-center gap-6 z-10 bg-white/[0.03] p-4 rounded-2xl border border-white/5">
           <div className="text-right">
-            <div className="text-[10px] text-[#64748b] uppercase font-bold tracking-wider"><CmsText>{"Cotação Atual (Tempo Real B3)"}</CmsText></div>
+            <div className="text-[10px] text-[#64748b] uppercase font-bold tracking-wider"><CmsText>{"Fechamento nominal (BRL)"}</CmsText></div>
             <div className="text-3xl font-black font-mono text-white mt-0.5 tracking-tight">
               <CmsText>{formatCurrency(currentPrice)}</CmsText>
             </div>
@@ -165,9 +155,9 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
                 isPositive ? "text-[#00f5a0]" : "text-[#ff3b69]"
               }`}
             >
-              <span><CmsText>{isPositive ? "▲" : "▼"}</CmsText> <CmsText>{formatPercent(fiiAsset?.change24h ?? 0)}</CmsText><CmsText>{" Hoje"}</CmsText></span>
+              <span><CmsText>{isPositive ? "▲" : "▼"}</CmsText> <CmsText>{formatPercent(fiiDetail?.indicators?.change_1d ?? Number.NaN)}</CmsText><CmsText>{" Hoje"}</CmsText></span>
               <span className="text-[#64748b]"><CmsText>{"•"}</CmsText></span>
-              <span className="text-[#94a3b8]"><CmsText>{"12M: "}</CmsText><CmsText>{formatPercent(fiiAsset?.change12m ?? 1.87)}</CmsText></span>
+              <span className="text-[#94a3b8]"><CmsText>{"12M: "}</CmsText><CmsText>{formatPercent(fiiDetail?.indicators?.change_12m ?? Number.NaN)}</CmsText></span>
             </div>
           </div>
         </div>
@@ -176,36 +166,36 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
       {/* KPI Top Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.3"><Card className="text-center p-3 border-emerald-500/20 bg-emerald-500/[0.02]">
-          <span className="text-[10px] uppercase font-bold text-[#64748b]"><CmsText>{"Dividend Yield (12M)"}</CmsText></span>
+          <span className="text-[10px] uppercase font-bold text-[#64748b]"><CmsText>{"DY observado (12M)"}</CmsText></span>
           <div className="text-xl font-black font-mono text-[#00f5a0] mt-1">
-            <CmsText>{formatPercent(fiiDetail?.indicators?.dividend_yield_12m ?? fiiDetail?.dividend_yield_12m ?? 8.85, false)}</CmsText>
+            <CmsText>{formatPercent(fiiDetail?.indicators?.dividend_yield_12m ?? fiiDetail?.dividend_yield_12m ?? Number.NaN, false)}</CmsText>
           </div>
-          <span className="text-[10px] text-[#64748b] font-mono"><CmsText>{"Último: "}</CmsText><CmsText>{formatCurrency(fiiDetail?.indicators?.last_dividend ?? 1.10)}</CmsText>
+          <span className="text-[10px] text-[#64748b] font-mono"><CmsText>{"Último: "}</CmsText><CmsText>{formatCurrency(fiiDetail?.indicators?.last_dividend ?? Number.NaN)}</CmsText>
           </span>
         </Card></CmsElement>
 
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.4"><Card className="text-center p-3">
           <span className="text-[10px] uppercase font-bold text-[#64748b]"><CmsText>{"P/VP (Cotação / VP)"}</CmsText></span>
           <div className="text-xl font-black font-mono text-white mt-1">
-            <CmsText>{formatMultiple(fiiDetail?.indicators?.pvp ?? fiiDetail?.pvp ?? 0.91)}</CmsText>
+            <CmsText>{formatMultiple(fiiDetail?.indicators?.pvp ?? fiiDetail?.pvp ?? Number.NaN)}</CmsText>
           </div>
           <span className="text-[10px] text-[#00f5a0] font-mono">
-            <CmsText>{(fiiDetail?.indicators?.pvp ?? 0.91) < 1 ? "Com desconto patrimonial" : "Ágio sobre cota"}</CmsText>
+            <CmsText>{fiiDetail?.pvp == null ? "Base insuficiente" : fiiDetail.pvp < 1 ? "Com desconto patrimonial" : "Ágio sobre cota"}</CmsText>
           </span>
         </Card></CmsElement>
 
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.5"><Card className="text-center p-3">
           <span className="text-[10px] uppercase font-bold text-[#64748b]"><CmsText>{"VP por Cota"}</CmsText></span>
           <div className="text-xl font-black font-mono text-white mt-1">
-            <CmsText>{formatCurrency(fiiDetail?.indicators?.vp_per_share ?? 166.43)}</CmsText>
+            <CmsText>{formatCurrency(fiiDetail?.indicators?.vp_per_share ?? Number.NaN)}</CmsText>
           </div>
-          <span className="text-[10px] text-[#64748b] font-mono"><CmsText>{"Base contábil CVM"}</CmsText></span>
+          <span className="text-[10px] text-[#64748b] font-mono"><CmsText>{"Informe mensal CVM"}</CmsText></span>
         </Card></CmsElement>
 
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.6"><Card className="text-center p-3">
           <span className="text-[10px] uppercase font-bold text-[#64748b]"><CmsText>{"Patrimônio Líquido"}</CmsText></span>
           <div className="text-xl font-black font-mono text-white mt-1">
-            <CmsText>{formatCurrency(fiiDetail?.indicators?.net_worth ?? fiiDetail?.net_worth ?? 5_420_000_000, true)}</CmsText>
+            <CmsText>{formatCurrency(fiiDetail?.indicators?.net_worth ?? fiiDetail?.net_worth ?? Number.NaN, true)}</CmsText>
           </div>
           <span className="text-[10px] text-[#64748b] font-mono">
             <CmsText>{fiiDetail?.cadastral?.shares_count ? `${(fiiDetail.cadastral.shares_count / 1e6).toFixed(1)}M cotas` : "Ativo consolidado"}</CmsText>
@@ -213,18 +203,18 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
         </Card></CmsElement>
 
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.7"><Card className="text-center p-3">
-          <span className="text-[10px] uppercase font-bold text-[#64748b]"><CmsText>{"Vacância Física SiiLA"}</CmsText></span>
+          <span className="text-[10px] uppercase font-bold text-[#64748b]"><CmsText>{"Vacância Física"}</CmsText></span>
           <div className="text-xl font-black font-mono text-[#00f5a0] mt-1">
-            <CmsText>{formatPercent(fiiDetail?.indicators?.physical_vacancy_pct ?? fiiDetail?.physical_vacancy_pct ?? 2.4, false)}</CmsText>
+            <CmsText>{formatPercent(fiiDetail?.indicators?.physical_vacancy_pct ?? fiiDetail?.physical_vacancy_pct ?? Number.NaN, false)}</CmsText>
           </div>
-          <span className="text-[10px] text-[#64748b] font-mono"><CmsText>{"Financeira: "}</CmsText><CmsText>{formatPercent(fiiDetail?.indicators?.financial_vacancy_pct ?? 1.8, false)}</CmsText>
+          <span className="text-[10px] text-[#64748b] font-mono"><CmsText>{"Financeira: "}</CmsText><CmsText>{formatPercent(fiiDetail?.indicators?.financial_vacancy_pct ?? Number.NaN, false)}</CmsText>
           </span>
         </Card></CmsElement>
 
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.8"><Card className="text-center p-3">
           <span className="text-[10px] uppercase font-bold text-[#64748b]"><CmsText>{"Cotistas Ativos"}</CmsText></span>
           <div className="text-xl font-black font-mono text-cyan-400 mt-1">
-            <CmsText>{(fiiDetail?.cadastral?.shareholders_count ?? 435000).toLocaleString("pt-BR")}</CmsText>
+            <CmsText>{fiiDetail?.cadastral?.shareholders_count?.toLocaleString("pt-BR") ?? "—"}</CmsText>
           </div>
           <span className="text-[10px] text-[#64748b] font-mono"><CmsText>{"Base ampla e líquida"}</CmsText></span>
         </Card></CmsElement>
@@ -299,7 +289,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
             <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"3. Histórico Completo de Dividendos & Pagamentos"}</CmsText></h2>
           </div>
           <Badge variant="emerald">
-            <CmsText>{fiiDetail?.dividends?.length ?? 55}</CmsText><CmsText>{" Pagamentos Registrados"}</CmsText></Badge>
+            <CmsText>{fiiDetail?.dividends?.length ?? 0}</CmsText><CmsText>{" Pagamentos Registrados"}</CmsText></Badge>
         </div>
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.DividendHistoryTable.15"><DividendHistoryTable
           dividends={fiiDetail?.dividends}
@@ -331,7 +321,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
             <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"5. Portfólio de Imóveis Físicos SiiLA & Inquilinos"}</CmsText></h2>
           </div>
           <Badge variant="violet">
-            <CmsText>{fiiDetail?.properties?.length ?? 5}</CmsText><CmsText>{" Ativos Físicos Auditados"}</CmsText></Badge>
+            <CmsText>{fiiDetail?.properties?.length ?? 0}</CmsText><CmsText>{" Ativos Físicos Cadastrados"}</CmsText></Badge>
         </div>
         <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.FIIPropertyPortfolioTable.18"><FIIPropertyPortfolioTable
           properties={fiiDetail?.properties ?? []}
@@ -364,7 +354,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
             <span className="w-2 h-2 rounded-full bg-purple-400" />
             <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"7. Avaliação Multidimensional Brick Score 360° (6 Eixos)"}</CmsText></h2>
           </div>
-          <Badge variant="violet"><CmsText>{overallScore}</CmsText><CmsText>{" / 100 Pts"}</CmsText></Badge>
+          <Badge variant="violet"><CmsText>{overallScore ?? "—"}</CmsText><CmsText>{" / 100 Pts"}</CmsText></Badge>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -372,7 +362,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
             <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.22"><Card glow="violet" className="w-full flex flex-col items-center p-4">
               <div className="flex items-center justify-between w-full mb-2">
                 <span className="text-xs font-bold text-white uppercase tracking-wider"><CmsText>{"Radar Poligonal de Qualidade"}</CmsText></span>
-                <Badge variant="violet"><CmsText>{"Score "}</CmsText><CmsText>{overallScore}</CmsText><CmsText>{"/100"}</CmsText></Badge>
+                <Badge variant="violet"><CmsText>{overallScore == null ? "Score indisponível" : `Score ${overallScore}/100`}</CmsText></Badge>
               </div>
               <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.RadarChart.23"><RadarChart data={radarData} size={300} color="#a855f7" fillOpacity={0.25} /></CmsElement>
             </Card></CmsElement>
@@ -412,7 +402,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
             <h2 className="text-lg font-bold text-white tracking-tight"><CmsText>{"8. Simulador de Independência Financeira (Magic Number & Bola de Neve)"}</CmsText></h2>
           </div>
-          <Badge variant="emerald"><CmsText>{"Simulador Interativo"}</CmsText></Badge>
+          <Badge variant="neutral"><CmsText>{"Projeção indisponível"}</CmsText></Badge>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -421,18 +411,18 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
             <CmsElement feature="ui.app/-frontend-/fiis/-ticker-/FIIDetailClient.Card.25"><Card glow="emerald">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-white tracking-tight"><CmsText>{"Efeito Bola de Neve (Magic Number)"}</CmsText></h3>
-                <Badge variant="emerald"><CmsText>{"Auto-Sustentável"}</CmsText></Badge>
+                <Badge variant="neutral"><CmsText>{"Indisponível"}</CmsText></Badge>
               </div>
 
               <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 mb-6 text-center">
                 <span className="text-xs text-[#64748b] uppercase font-semibold"><CmsText>{"Cotas para Autocompra Mensal"}</CmsText></span>
                 <div className="text-4xl font-black font-mono text-[#00f5a0] my-2">
-                  <CmsText>{magicCotas}</CmsText><CmsText>{" Cotas"}</CmsText></div>
+                  <CmsText>{formatNumber(magicCotas, 0)}</CmsText><CmsText>{" Cotas"}</CmsText></div>
                 <span className="text-xs text-[#94a3b8]"><CmsText>{"Investimento Necessário: "}</CmsText><CmsText>{formatCurrency(capitalForMagic)}</CmsText>
                 </span>
               </div>
 
-              <div className="text-xs text-[#64748b] leading-relaxed"><CmsText>{"Ao atingir "}</CmsText><CmsText>{magicCotas}</CmsText><CmsText>{" cotas, o provento mensal distribuído pelo fundo ("}</CmsText><CmsText>{formatCurrency(magicCotas * monthlyYield)}</CmsText><CmsText>{") é suficiente para adquirir 1 nova cota todos os meses sem necessidade de novos aportes do investidor."}</CmsText></div>
+              <div role="status" className="text-xs text-[#64748b] leading-relaxed"><CmsText>{"Simulação indisponível: um pagamento isolado não comprova renda mensal recorrente e o DY de 12 meses não tem cobertura verificada."}</CmsText></div>
             </Card></CmsElement>
           </div>
 
@@ -465,7 +455,7 @@ export function FIIDetailClient({ ticker }: { ticker: string }) {
                 <div>
                   <div className="text-[10px] text-[#64748b] uppercase font-semibold"><CmsText>{"Cotas Necessárias"}</CmsText></div>
                   <div className="text-xl font-bold font-mono text-white mt-1">
-                    <CmsText>{cotasForTargetIncome.toLocaleString("pt-BR")}</CmsText>
+                    <CmsText>{formatNumber(cotasForTargetIncome)}</CmsText>
                   </div>
                 </div>
                 <div>

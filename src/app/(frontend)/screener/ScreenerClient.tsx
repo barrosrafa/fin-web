@@ -114,7 +114,7 @@ export function ScreenerClient() {
 
   // Filter pipeline for sliders
   const filtered = assets.filter((a) => {
-    const matchesDY = a.dividendYield >= minDY;
+    const matchesDY = (a.dividendYield ?? -Infinity) >= minDY;
     const matchesPVP = a.pvp !== undefined ? a.pvp <= maxPVP : true;
     return matchesDY && matchesPVP;
   });
@@ -294,7 +294,7 @@ export function ScreenerClient() {
                   <td className="py-3 text-right">
                     <span
                       className={`font-bold ${
-                        a.change24h >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"
+                        a.change24h == null ? "text-[#94a3b8]" : a.change24h >= 0 ? "text-[var(--positive)]" : "text-[var(--negative)]"
                       }`}
                     >
                       <CmsText>{formatPercent(a.change24h)}</CmsText>

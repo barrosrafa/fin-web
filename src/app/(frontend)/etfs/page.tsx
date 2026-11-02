@@ -9,6 +9,9 @@ import { MetricCard } from "@/components/ui/MetricCard";
 import { Badge } from "@/components/ui/Badge";
 import { InfiniteScrollFooter } from "@/components/ui/InfiniteScrollFooter";
 import { formatCurrency, formatPercent, formatMultiple } from "@/lib/formatters";
+import { DataStatus } from "@/components/shared/DataStatus";
+import { TradingStatusNotice } from "@/components/shared/TradingStatusNotice";
+import { quoteProvenance } from "@/lib/quote-provenance";
 import { getAssetsPaginated } from "@/lib/api";
 import { AssetSummary } from "@/schemas/financial";
 import { useInfiniteScroll } from "@/hooks/useInfiniteScroll";
@@ -131,7 +134,7 @@ export default function ETFsPage() {
             </thead>
             <tbody className="divide-y divide-white/5 mono-nums">
               <CmsText>{etfs.map((asset) => {
-                const isPositive = asset.change24h >= 0;
+                const isPositive = asset.change24h != null && asset.change24h >= 0;
                 return (
                   <tr key={asset.ticker} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-3 pl-2">
@@ -146,6 +149,8 @@ export default function ETFsPage() {
                       <span className="text-[11px] text-[#94a3b8] font-sans block mt-0.5">
                         <CmsText>{asset.name}</CmsText>
                       </span>
+                      <DataStatus {...quoteProvenance(asset.source, asset.quote_date)} />
+                      <TradingStatusNotice trading={asset.trading} />
                     </td>
                     <td className="py-3 font-sans text-white"><CmsText>{asset.sector}</CmsText></td>
                     <td className="py-3 text-right font-bold text-white">
@@ -153,7 +158,7 @@ export default function ETFsPage() {
                     </td>
                     <td
                       className={`py-3 text-right font-bold ${
-                        isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
+                        asset.change24h == null ? "text-[#94a3b8]" : isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                       }`}
                     >
                       <CmsText>{formatPercent(asset.change24h)}</CmsText>
@@ -162,7 +167,7 @@ export default function ETFsPage() {
                       <CmsText>{formatPercent(asset.change12m)}</CmsText>
                     </td>
                     <td className="py-3 text-right text-[#94a3b8]">
-                      <CmsText>{formatMultiple(asset.pvp ?? 1.0)}</CmsText>
+                      <CmsText>{formatMultiple(asset.pvp)}</CmsText>
                     </td>
                     <td className="py-3 text-right pr-2">
                       <CmsElement feature="ui.app/-frontend-/etfs/page.Link.8"><Link

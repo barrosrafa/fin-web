@@ -1,4 +1,7 @@
 "use client";
+import { DataStatus } from "@/components/shared/DataStatus";
+import { TradingStatusNotice } from "@/components/shared/TradingStatusNotice";
+import { quoteProvenance } from "@/lib/quote-provenance";
 
 
 import { CmsText, CmsElement } from "@/components/content/Cms";
@@ -70,7 +73,7 @@ export default function FIIsPage() {
     loadMetadata();
   }, []);
 
-  const highestDYFII = highlights.highest_dy ?? (fiis.length > 0 ? [...fiis].sort((a, b) => b.dividendYield - a.dividendYield)[0] : null);
+  const highestDYFII = highlights.highest_dy ?? (fiis.length > 0 ? [...fiis].filter(f => Number.isFinite(f.dividendYield)).sort((a, b) => (b.dividendYield ?? -Infinity) - (a.dividendYield ?? -Infinity))[0] : null);
   const lowestPvpFII = highlights.lowest_pvp ?? (fiis.length > 0 ? [...fiis].filter(f => (f.pvp ?? 0) > 0).sort((a, b) => (a.pvp ?? 999) - (b.pvp ?? 999))[0] : null);
 
   return (
@@ -96,13 +99,13 @@ export default function FIIsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <CmsElement feature="ui.app/-frontend-/fiis/page.MetricCard.1"><MetricCard
           title="Maior Rendimento Anualizado"
-          value={highestDYFII ? `${highestDYFII.ticker} • ${formatPercent(highestDYFII.dividendYield, false)}` : "KEVE11 • 36,2%"}
+          value={highestDYFII ? `${highestDYFII.ticker} • ${formatPercent(highestDYFII.dividendYield, false)}` : "—"}
           subtitle="Rendimentos isentos de IR para pessoa física"
           glow="emerald"
         /></CmsElement>
         <CmsElement feature="ui.app/-frontend-/fiis/page.MetricCard.2"><MetricCard
           title="Maior Desconto Patrimonial"
-          value={lowestPvpFII ? `${lowestPvpFII.ticker} • ${formatMultiple(lowestPvpFII.pvp)}` : "HGLG11 • 0,91x"}
+          value={lowestPvpFII ? `${lowestPvpFII.ticker} • ${formatMultiple(lowestPvpFII.pvp)}` : "—"}
           subtitle="Desconto em relação ao valor patrimonial por cota"
           glow="cyan"
         /></CmsElement>
@@ -171,10 +174,12 @@ export default function FIIsPage() {
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <CmsText>{fiis.map((fii) => {
-          const isPositive = fii.change24h >= 0;
+          const isPositive = fii.change24h != null && fii.change24h >= 0;
           return (
             <CmsElement feature="ui.app/-frontend-/fiis/page.Card.8" key={fii.ticker}><Card key={fii.ticker} glow="emerald" className="flex flex-col justify-between">
               <div>
+                <DataStatus {...quoteProvenance(fii.source, fii.quote_date)} />
+                <TradingStatusNotice trading={fii.trading} />
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
                     <div className="flex items-center gap-2">
@@ -201,7 +206,7 @@ export default function FIIsPage() {
                     </div>
                     <div
                       className={`text-xs font-mono font-medium ${
-                        isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
+                        fii.change24h == null ? "text-[#94a3b8]" : isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                       }`}
                     >
                       <CmsText>{formatPercent(fii.change24h)}</CmsText>
@@ -211,7 +216,7 @@ export default function FIIsPage() {
 
                 <div className="grid grid-cols-3 gap-2 my-4 p-3 rounded-xl bg-[#131926] border border-white/5 text-center">
                   <div>
-                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold"><CmsText>{"D.Y. (12M)"}</CmsText></div>
+                    <div className="text-[10px] text-[#94a3b8] uppercase font-semibold"><CmsText>{"DY observado (12M)"}</CmsText></div>
                     <div className="text-xs font-bold font-mono text-[var(--positive)] mt-0.5">
                       <CmsText>{formatPercent(fii.dividendYield, false)}</CmsText>
                     </div>

@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/Button";
 import { Tabs } from "@/components/ui/Tabs";
 import { Sparkline } from "@/components/ui/Sparkline";
 import { formatCurrency, formatPercent, formatDividendUnit, formatMultiple } from "@/lib/formatters";
+import { DataStatus } from "@/components/shared/DataStatus";
+import { TradingStatusNotice } from "@/components/shared/TradingStatusNotice";
+import { quoteProvenance } from "@/lib/quote-provenance";
 import {
   getBenchmarks,
   getAssets,
@@ -142,7 +145,7 @@ export default function HomePage() {
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   <CmsText>{filteredAssets.map((asset) => {
-                    const isPositive = asset.change24h >= 0;
+                    const isPositive = asset.change24h != null && asset.change24h >= 0;
                     const detailHref =
                       asset.type === "FII"
                         ? `/fiis/${asset.ticker}`
@@ -161,6 +164,8 @@ export default function HomePage() {
                               <CmsText>{asset.ticker.slice(0, 2)}</CmsText>
                             </div>
                             <div>
+                              <DataStatus {...quoteProvenance(asset.source, asset.quote_date)} />
+                              <TradingStatusNotice trading={asset.trading} />
                               <div className="flex items-center gap-1.5">
                                 <span className="font-bold text-white text-xs group-hover:text-[var(--positive)] transition-colors">
                                   <CmsText>{asset.ticker}</CmsText>
@@ -193,7 +198,7 @@ export default function HomePage() {
 
                         <td
                           className={`py-3.5 text-right font-mono font-medium ${
-                            isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
+                            asset.change24h == null ? "text-[#94a3b8]" : isPositive ? "text-[var(--positive)]" : "text-[#ff3b5c]"
                           }`}
                         >
                           <CmsText>{formatPercent(asset.change24h)}</CmsText>
@@ -214,7 +219,7 @@ export default function HomePage() {
                         <td className="py-3.5 text-right hidden lg:table-cell">
                           <div className="inline-block w-20 h-5">
                             <Sparkline
-                              data={asset.sparkline && asset.sparkline.length > 0 ? asset.sparkline : [asset.currentPrice, asset.currentPrice]}
+                              data={asset.sparkline && asset.sparkline.length > 0 ? asset.sparkline : []}
                               color={isPositive ? "#00f5a0" : "#ff3b5c"}
                               height={20}
                             />

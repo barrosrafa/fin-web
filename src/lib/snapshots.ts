@@ -39,6 +39,7 @@ export async function fetchCdnSnapshot<T>(
   try {
     const res = await fetch(url, {
       ...options,
+      signal: options?.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(15_000)]) : AbortSignal.timeout(15_000),
       cache: options?.cache ?? "default",
       headers: {
         Accept: "application/json",
